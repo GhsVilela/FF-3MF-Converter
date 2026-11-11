@@ -1,0 +1,1111 @@
+{
+  "generatedAt": "2026-11-11",
+  "sources": {
+    "230": {
+      "name": "OrcaSlicer",
+      "version": "2.3.0",
+      "license": "AGPL-3.0-or-later",
+      "url": "https://github.com/OrcaSlicer/OrcaSlicer"
+    },
+    "250": {
+      "name": "OrcaSlicer",
+      "version": "2.5.0",
+      "license": "AGPL-3.0-or-later",
+      "url": "https://github.com/OrcaSlicer/OrcaSlicer"
+    }
+  },
+  "printers": [
+    {
+      "id": "ad5x",
+      "name": "FlashForge AD5X",
+      "series": "Adventurer",
+      "maxColors": 4,
+      "compatibility": {
+        "templateSource": "OrcaSlicer 2.3.0",
+        "flashStudio": "1.7+ (AD5M/AD5X/5M Pro); newer for Creator 5"
+      },
+      "nozzles": [
+        {
+          "diameter": "0.25",
+          "machineProfile": "FlashForge AD5X 0.25 nozzle",
+          "template": "templates/ad5x.json",
+          "defaultProcess": "fdm_process_common",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "0x0",
+              "220x0",
+              "220x220",
+              "0x220"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            }
+          ]
+        },
+        {
+          "diameter": "0.4",
+          "machineProfile": "Flashforge AD5X 0.4 nozzle",
+          "template": "templates/ad5x.json",
+          "defaultProcess": "0.20mm Standard @FF AD5X",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "0x0",
+              "220x0",
+              "220x220",
+              "0x220"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.16mm Standard @FF AD5X",
+              "layerHeight": "0.16"
+            },
+            {
+              "name": "0.20mm Standard @FF AD5X",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "0.24mm Draft @FF AD5X",
+              "layerHeight": "0.24"
+            }
+          ]
+        },
+        {
+          "diameter": "0.6",
+          "machineProfile": "Flashforge AD5X 0.6 nozzle",
+          "template": "templates/ad5x.json",
+          "defaultProcess": "0.30mm Standard @FF AD5X 0.6 nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "0x0",
+              "220x0",
+              "220x220",
+              "0x220"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.18mm Fine @FF AD5X 0.6 nozzle",
+              "layerHeight": "0.18"
+            },
+            {
+              "name": "0.30mm Standard @FF AD5X 0.6 nozzle",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "0.42mm Draft @FF AD5X 0.6 nozzle",
+              "layerHeight": "0.42"
+            }
+          ]
+        },
+        {
+          "diameter": "0.8",
+          "machineProfile": "Flashforge AD5X 0.8 nozzle",
+          "template": "templates/ad5x.json",
+          "defaultProcess": "0.40mm Standard @FF AD5X 0.8 nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "0x0",
+              "220x0",
+              "220x220",
+              "0x220"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.24mm Fine @FF AD5X 0.8 nozzle",
+              "layerHeight": "0.24"
+            },
+            {
+              "name": "0.40mm Standard @FF AD5X 0.8 nozzle",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.56mm Draft @FF AD5X 0.8 nozzle",
+              "layerHeight": "0.56"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ad5m",
+      "name": "Adventurer 5M",
+      "series": "Adventurer",
+      "maxColors": 1,
+      "compatibility": {
+        "templateSource": "OrcaSlicer 2.3.0",
+        "flashStudio": "1.7+ (AD5M/AD5X/5M Pro); newer for Creator 5"
+      },
+      "nozzles": [
+        {
+          "diameter": "0.25",
+          "machineProfile": "Flashforge Adventurer 5M 0.25 Nozzle",
+          "template": "templates/ad5m.json",
+          "defaultProcess": "0.12mm Standard @Flashforge AD5M 0.25 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA @FF AD5M 0.25 Nozzle",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.12mm Standard @Flashforge AD5M 0.25 Nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.10mm Standard @Flashforge AD5M 0.25 Nozzle",
+              "layerHeight": "0.1"
+            },
+            {
+              "name": "0.06mm Standard @Flashforge AD5M 0.25 Nozzle",
+              "layerHeight": "0.06"
+            },
+            {
+              "name": "0.08mm Standard @Flashforge AD5M 0.25 Nozzle",
+              "layerHeight": "0.08"
+            },
+            {
+              "name": "0.14mm Standard @Flashforge AD5M 0.25 Nozzle",
+              "layerHeight": "0.14"
+            }
+          ]
+        },
+        {
+          "diameter": "0.4",
+          "machineProfile": "Flashforge Adventurer 5M 0.4 Nozzle",
+          "template": "templates/ad5m.json",
+          "defaultProcess": "0.20mm Standard @Flashforge AD5M 0.4 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.20mm Standard @Flashforge AD5M 0.4 Nozzle",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "0.12mm Fine @Flashforge AD5M 0.4 Nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.24mm Draft @Flashforge AD5M 0.4 Nozzle",
+              "layerHeight": "0.24"
+            }
+          ]
+        },
+        {
+          "diameter": "0.6",
+          "machineProfile": "Flashforge Adventurer 5M 0.6 Nozzle",
+          "template": "templates/ad5m.json",
+          "defaultProcess": "0.30mm Standard @Flashforge AD5M 0.6 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.30mm Standard @Flashforge AD5M 0.6 Nozzle",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "0.18mm Fine @Flashforge AD5M 0.6 Nozzle",
+              "layerHeight": "0.18"
+            },
+            {
+              "name": "0.42mm Draft @Flashforge AD5M 0.6 Nozzle",
+              "layerHeight": "0.42"
+            }
+          ]
+        },
+        {
+          "diameter": "0.8",
+          "machineProfile": "Flashforge Adventurer 5M 0.8 Nozzle",
+          "template": "templates/ad5m.json",
+          "defaultProcess": "0.40mm Standard @Flashforge AD5M 0.8 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.40mm Standard @Flashforge AD5M 0.8 Nozzle",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.24mm Fine @Flashforge AD5M 0.8 Nozzle",
+              "layerHeight": "0.24"
+            },
+            {
+              "name": "0.56mm Draft @Flashforge AD5M 0.8 Nozzle",
+              "layerHeight": "0.56"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ad5m-pro",
+      "name": "Adventurer 5M Pro",
+      "series": "Adventurer",
+      "maxColors": 1,
+      "compatibility": {
+        "templateSource": "OrcaSlicer 2.3.0",
+        "flashStudio": "1.7+ (AD5M/AD5X/5M Pro); newer for Creator 5"
+      },
+      "nozzles": [
+        {
+          "diameter": "0.25",
+          "machineProfile": "Flashforge Adventurer 5M Pro 0.25 Nozzle",
+          "template": "templates/ad5m-pro.json",
+          "defaultProcess": "0.12mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA @FF AD5M 0.25 Nozzle",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.12mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.10mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+              "layerHeight": "0.1"
+            },
+            {
+              "name": "0.06mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+              "layerHeight": "0.06"
+            },
+            {
+              "name": "0.08mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+              "layerHeight": "0.08"
+            },
+            {
+              "name": "0.14mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
+              "layerHeight": "0.14"
+            }
+          ]
+        },
+        {
+          "diameter": "0.4",
+          "machineProfile": "Flashforge Adventurer 5M Pro 0.4 Nozzle",
+          "template": "templates/ad5m-pro.json",
+          "defaultProcess": "0.20mm Standard @Flashforge AD5M Pro 0.4 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.20mm Standard @Flashforge AD5M Pro 0.4 Nozzle",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "0.12mm Fine @Flashforge AD5M Pro 0.4 Nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.24mm Draft @Flashforge AD5M Pro 0.4 Nozzle",
+              "layerHeight": "0.24"
+            }
+          ]
+        },
+        {
+          "diameter": "0.6",
+          "machineProfile": "Flashforge Adventurer 5M Pro 0.6 Nozzle",
+          "template": "templates/ad5m-pro.json",
+          "defaultProcess": "0.30mm Standard @Flashforge AD5M Pro 0.6 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.30mm Standard @Flashforge AD5M Pro 0.6 Nozzle",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "0.18mm Fine @Flashforge AD5M Pro 0.6 Nozzle",
+              "layerHeight": "0.18"
+            },
+            {
+              "name": "0.42mm Draft @Flashforge AD5M Pro 0.6 Nozzle",
+              "layerHeight": "0.42"
+            }
+          ]
+        },
+        {
+          "diameter": "0.8",
+          "machineProfile": "Flashforge Adventurer 5M Pro 0.8 Nozzle",
+          "template": "templates/ad5m-pro.json",
+          "defaultProcess": "0.40mm Standard @Flashforge AD5M Pro 0.8 Nozzle",
+          "defaultFilament": "Flashforge Generic PLA",
+          "build": {
+            "area": [
+              "-110x-110",
+              "110x-110",
+              "110x110",
+              "-110x110"
+            ],
+            "height": 220.0,
+            "extruders": 1
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.40mm Standard @Flashforge AD5M Pro 0.8 Nozzle",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.24mm Fine @Flashforge AD5M Pro 0.8 Nozzle",
+              "layerHeight": "0.24"
+            },
+            {
+              "name": "0.56mm Draft @Flashforge AD5M Pro 0.8 Nozzle",
+              "layerHeight": "0.56"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "creator-5",
+      "name": "Creator 5",
+      "series": "Creator",
+      "maxColors": 4,
+      "compatibility": {
+        "templateSource": "OrcaSlicer 2.5.0",
+        "flashStudio": "1.7+ (AD5M/AD5X/5M Pro); newer for Creator 5"
+      },
+      "nozzles": [
+        {
+          "diameter": "0.25",
+          "machineProfile": "Flashforge Creator 5 0.25 nozzle",
+          "template": "templates/creator-5.json",
+          "defaultProcess": "0.12mm Standard @FF C5 0.25 nozzle",
+          "defaultFilament": "Generic PLA @FF C5",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.08mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.08"
+            },
+            {
+              "name": "0.10mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.1"
+            },
+            {
+              "name": "0.12mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.14mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.14"
+            }
+          ]
+        },
+        {
+          "diameter": "0.4",
+          "machineProfile": "Flashforge Creator 5 0.4 nozzle",
+          "template": "templates/creator-5.json",
+          "defaultProcess": "0.20mm Standard @FF C5",
+          "defaultFilament": "Flashforge PLA Basic @FF C5",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.12mm Standard @FF C5",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.20mm Standard @FF C5",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "0.24mm Standard @FF C5",
+              "layerHeight": "0.24"
+            }
+          ]
+        },
+        {
+          "diameter": "0.6",
+          "machineProfile": "Flashforge Creator 5 0.6 nozzle",
+          "template": "templates/creator-5.json",
+          "defaultProcess": "0.30mm Standard @FF C5 0.6 nozzle",
+          "defaultFilament": "Flashforge PLA Basic @FF C5",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.18mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.18"
+            },
+            {
+              "name": "0.30mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "0.42mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.42"
+            }
+          ]
+        },
+        {
+          "diameter": "0.8",
+          "machineProfile": "Flashforge Creator 5 0.8 nozzle",
+          "template": "templates/creator-5.json",
+          "defaultProcess": "0.4mm Standard @FF C5 0.8 nozzle",
+          "defaultFilament": "Flashforge PLA Basic @FF C5",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.32mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.32"
+            },
+            {
+              "name": "0.48mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.48"
+            },
+            {
+              "name": "0.4mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "creator-5-pro",
+      "name": "Creator 5 Pro",
+      "series": "Creator",
+      "maxColors": 4,
+      "compatibility": {
+        "templateSource": "OrcaSlicer 2.5.0",
+        "flashStudio": "1.7+ (AD5M/AD5X/5M Pro); newer for Creator 5"
+      },
+      "nozzles": [
+        {
+          "diameter": "0.25",
+          "machineProfile": "Flashforge Creator 5 Pro 0.25 nozzle",
+          "template": "templates/creator-5-pro.json",
+          "defaultProcess": "0.12mm Standard @FF C5 0.25 nozzle",
+          "defaultFilament": "Generic PLA @FF C5P",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.08mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.08"
+            },
+            {
+              "name": "0.10mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.1"
+            },
+            {
+              "name": "0.12mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.14mm Standard @FF C5 0.25 nozzle",
+              "layerHeight": "0.14"
+            }
+          ]
+        },
+        {
+          "diameter": "0.4",
+          "machineProfile": "Flashforge Creator 5 Pro 0.4 nozzle",
+          "template": "templates/creator-5-pro.json",
+          "defaultProcess": "0.20mm Standard @FF C5",
+          "defaultFilament": "Flashforge PLA Basic @FF C5P",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.12mm Standard @FF C5",
+              "layerHeight": "0.12"
+            },
+            {
+              "name": "0.20mm Standard @FF C5",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "0.24mm Standard @FF C5",
+              "layerHeight": "0.24"
+            }
+          ]
+        },
+        {
+          "diameter": "0.6",
+          "machineProfile": "Flashforge Creator 5 Pro 0.6 nozzle",
+          "template": "templates/creator-5-pro.json",
+          "defaultProcess": "0.30mm Standard @FF C5 0.6 nozzle",
+          "defaultFilament": "Flashforge PLA Basic @FF C5P",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.18mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.18"
+            },
+            {
+              "name": "0.30mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "0.42mm Standard @FF C5 0.6 nozzle",
+              "layerHeight": "0.42"
+            }
+          ]
+        },
+        {
+          "diameter": "0.8",
+          "machineProfile": "Flashforge Creator 5 Pro 0.8 nozzle",
+          "template": "templates/creator-5-pro.json",
+          "defaultProcess": "0.4mm Standard @FF C5 0.8 nozzle",
+          "defaultFilament": "Flashforge PLA Basic @FF C5P",
+          "build": {
+            "area": [
+              "0x0",
+              "256x0",
+              "256x256",
+              "0x256"
+            ],
+            "height": 256.0,
+            "extruders": 4
+          },
+          "processes": [
+            {
+              "name": "fdm_process_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_common",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.20",
+              "layerHeight": "0.2"
+            },
+            {
+              "name": "fdm_process_flashforge_0.30",
+              "layerHeight": "0.3"
+            },
+            {
+              "name": "fdm_process_flashforge_0.40",
+              "layerHeight": "0.4"
+            },
+            {
+              "name": "0.32mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.32"
+            },
+            {
+              "name": "0.48mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.48"
+            },
+            {
+              "name": "0.4mm Standard @FF C5 0.8 nozzle",
+              "layerHeight": "0.4"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

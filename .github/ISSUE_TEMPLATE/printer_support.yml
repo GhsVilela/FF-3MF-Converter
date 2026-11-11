@@ -1,0 +1,40 @@
+name: Printer support request
+description: Request a new FlashForge printer or nozzle profile
+labels: [printer-support]
+body:
+  - type: input
+    id: printer
+    attributes:
+      label: Printer model
+      placeholder: FlashForge ...
+    validations:
+      required: true
+  - type: input
+    id: nozzle
+    attributes:
+      label: Nozzle diameter(s)
+      placeholder: 0.25 / 0.4 / 0.6 / 0.8 mm
+    validations:
+      required: true
+  - type: input
+    id: slicer
+    attributes:
+      label: Slicer and profile source
+      description: Which open-source OrcaSlicer release/profile contains the machine?
+  - type: input
+    id: volume
+    attributes:
+      label: Build volume
+      placeholder: 220 x 220 x 220 mm
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Number of colours/toolheads, IFS, special G-code, availability for testing.
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation
+      options:
+        - label: I can test a converted project in Flash Studio.
+        - label: I can provide a small non-private 3MF project for validation.

@@ -1,0 +1,7012 @@
+[
+  {
+    "name": "Flashforge ABS Basic @FF C5P",
+    "type": "ABS",
+    "config": {
+      "cool_plate_temp": [
+        "80"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "80"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.10"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12",
+        "20",
+        "25",
+        "12",
+        "18",
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge ABS Basic @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "ABS"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "110"
+      ],
+      "nozzle_temperature_range_low": [
+        "230"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "filament_id": "OFibWuBd",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge ABS-GF @FF C5P",
+    "type": "ABS-GF",
+    "config": {
+      "cool_plate_temp": [
+        "80"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "80"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.10"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "10"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge ABS-GF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "ABS-GF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "110"
+      ],
+      "nozzle_temperature_range_low": [
+        "230"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "filament_id": "OFojbdhR",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge ASA Basic @FF C5P",
+    "type": "ASA",
+    "config": {
+      "cool_plate_temp": [
+        "80"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "80"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.10"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12",
+        "20",
+        "25",
+        "12",
+        "18",
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge ASA Basic @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "ASA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "110"
+      ],
+      "nozzle_temperature_range_low": [
+        "230"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "filament_id": "OFFFg2Pf",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge ASA-CF @FF C5P",
+    "type": "ASA-CF",
+    "config": {
+      "cool_plate_temp": [
+        "80"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "80"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.10"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "10"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge ASA-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "ASA-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "110"
+      ],
+      "nozzle_temperature_range_low": [
+        "230"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "filament_id": "OFq0TY7C",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge ASA-GF @FF C5P",
+    "type": "ASA-GF",
+    "config": {
+      "cool_plate_temp": [
+        "80"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "80"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.10"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "10"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge ASA-GF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "ASA-GF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "110"
+      ],
+      "nozzle_temperature_range_low": [
+        "230"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "filament_id": "OFrZDhVt",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge HIPS @FF C5P",
+    "type": "HIPS",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "25%"
+      ],
+      "overhang_fan_speed": [
+        "80"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.95"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "10"
+      ],
+      "filament_cost": [
+        "22.99"
+      ],
+      "filament_density": [
+        "1.06"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "6"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge HIPS @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "HIPS"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "265"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "60"
+      ],
+      "fan_min_speed": [
+        "0"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "100"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8"
+      ],
+      "nozzle_temperature_range_low": [
+        "220"
+      ],
+      "nozzle_temperature_range_high": [
+        "270"
+      ],
+      "additional_cooling_fan_speed": [
+        "0"
+      ],
+      "filament_id": "OFvaLVML",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_is_support": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge HS PETG @FF C5P",
+    "type": "PETG",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "85"
+      ],
+      "hot_plate_temp": [
+        "85"
+      ],
+      "textured_plate_temp": [
+        "85"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "85"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "85"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "85"
+      ],
+      "overhang_fan_threshold": [
+        "95%"
+      ],
+      "overhang_fan_speed": [
+        "50"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "2"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.27"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge HS PETG @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PETG"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "235"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "50"
+      ],
+      "fan_min_speed": [
+        "30"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "235"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "nozzle_temperature_range_low": [
+        "235"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "filament_id": "OFDxxTpW",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "filament_multitool_ramming_flow": [
+        "20",
+        "20",
+        "20",
+        "20",
+        "20",
+        "20"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0325"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge HS PLA @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "21"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge HS PLA @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFIK2H3G",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PA-CF @FF C5P",
+    "type": "PA-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "100"
+      ],
+      "hot_plate_temp": [
+        "100"
+      ],
+      "textured_plate_temp": [
+        "100"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "100"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "100"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "100"
+      ],
+      "overhang_fan_threshold": [
+        "0%"
+      ],
+      "overhang_fan_speed": [
+        "40"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "4"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.04"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "6"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PA-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PA-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "290"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "60"
+      ],
+      "fan_min_speed": [
+        "0"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode\n"
+      ],
+      "nozzle_temperature": [
+        "290"
+      ],
+      "temperature_vitrification": [
+        "108"
+      ],
+      "activate_air_filtration": [
+        "0"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8",
+        "8",
+        "8",
+        "8",
+        "8",
+        "8"
+      ],
+      "nozzle_temperature_range_high": [
+        "300"
+      ],
+      "nozzle_temperature_range_low": [
+        "260"
+      ],
+      "required_nozzle_HRC": [
+        "40"
+      ],
+      "filament_id": "OFGxuI0n",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PET-CF @FF C5P",
+    "type": "PET-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "100"
+      ],
+      "hot_plate_temp": [
+        "100"
+      ],
+      "textured_plate_temp": [
+        "100"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "100"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "100"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "100"
+      ],
+      "overhang_fan_threshold": [
+        "0%"
+      ],
+      "overhang_fan_speed": [
+        "40"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "5"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.29"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "7"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PET-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PET-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "270"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "30"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "270"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "80"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "80"
+      ],
+      "nozzle_temperature_range_low": [
+        "260"
+      ],
+      "nozzle_temperature_range_high": [
+        "290"
+      ],
+      "filament_id": "OFrjacXf",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "filament_multitool_ramming_flow": [
+        "13",
+        "13",
+        "13",
+        "13",
+        "13",
+        "13"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "50"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0325"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PETG Pro @FF C5P",
+    "type": "PETG",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "85"
+      ],
+      "hot_plate_temp": [
+        "85"
+      ],
+      "textured_plate_temp": [
+        "85"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "85"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "85"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "85"
+      ],
+      "overhang_fan_threshold": [
+        "10%"
+      ],
+      "overhang_fan_speed": [
+        "90"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.27"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "10",
+        "18",
+        "21",
+        "10",
+        "15",
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PETG Pro @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PETG"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "240"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "40"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "235"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "nozzle_temperature_range_low": [
+        "235"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "filament_id": "OFXiArjA",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0325"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PETG Transparent @FF C5P",
+    "type": "PETG",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "85"
+      ],
+      "hot_plate_temp": [
+        "85"
+      ],
+      "textured_plate_temp": [
+        "85"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "85"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "85"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "85"
+      ],
+      "overhang_fan_threshold": [
+        "10%"
+      ],
+      "overhang_fan_speed": [
+        "90"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.27"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "10",
+        "18",
+        "21",
+        "10",
+        "15",
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PETG Transparent @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PETG"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "240"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "40"
+      ],
+      "slow_down_min_speed": [
+        "15"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "235"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "nozzle_temperature_range_low": [
+        "235"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "filament_id": "OFwjMiKL",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0325"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PETG-CF @FF C5P",
+    "type": "PETG-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "85"
+      ],
+      "hot_plate_temp": [
+        "85"
+      ],
+      "textured_plate_temp": [
+        "85"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "85"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "85"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "85"
+      ],
+      "overhang_fan_threshold": [
+        "10%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.97"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.27"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PETG-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PETG-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "250"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "50"
+      ],
+      "fan_min_speed": [
+        "20"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "250"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "nozzle_temperature_range_low": [
+        "235"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "filament_id": "OFuFEtKX",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "filament_multitool_ramming_flow": [
+        "13",
+        "13",
+        "13",
+        "13",
+        "13",
+        "13"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.03"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Basic @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Basic @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFJ3F2jm",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Color Change @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Color Change @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFMkAW6r",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Galaxy @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Galaxy @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFJJ0Ar3",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Luminous @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Luminous @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFdqkWtz",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Matte @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Matte @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OF6qAuyi",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Metal @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Metal @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFAebKg8",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Pro @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Pro @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFm4SivL",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA Silk @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA Silk @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_multitool_ramming_flow": [
+        "10"
+      ],
+      "filament_id": "OFgjgN35",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PLA-CF @FF C5P",
+    "type": "PLA-CF",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12",
+        "18",
+        "18",
+        "12",
+        "18",
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PLA-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OF9cAwMK",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PPA-CF @FF C5P",
+    "type": "PPA-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "100"
+      ],
+      "hot_plate_temp": [
+        "100"
+      ],
+      "textured_plate_temp": [
+        "100"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "100"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "100"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "100"
+      ],
+      "overhang_fan_threshold": [
+        "0%"
+      ],
+      "overhang_fan_speed": [
+        "40"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.96"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "5"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.17"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PPA-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PPA-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "290"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "30"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "290"
+      ],
+      "temperature_vitrification": [
+        "210"
+      ],
+      "activate_air_filtration": [
+        "0"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8"
+      ],
+      "nozzle_temperature_range_high": [
+        "320"
+      ],
+      "nozzle_temperature_range_low": [
+        "280"
+      ],
+      "required_nozzle_HRC": [
+        "40"
+      ],
+      "filament_id": "OFLC1oRH",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PPS-CF @FF C5P",
+    "type": "PPS-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "110"
+      ],
+      "hot_plate_temp": [
+        "110"
+      ],
+      "textured_plate_temp": [
+        "110"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "110"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "110"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "110"
+      ],
+      "overhang_fan_threshold": [
+        "0%"
+      ],
+      "overhang_fan_speed": [
+        "40"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "5"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.17"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "4"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PPS-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PPS-CF"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "320"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "30"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "320"
+      ],
+      "temperature_vitrification": [
+        "220"
+      ],
+      "activate_air_filtration": [
+        "0"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8"
+      ],
+      "nozzle_temperature_range_high": [
+        "320"
+      ],
+      "nozzle_temperature_range_low": [
+        "300"
+      ],
+      "required_nozzle_HRC": [
+        "40"
+      ],
+      "filament_id": "OFTSXxzE",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge PVA @FF C5P",
+    "type": "PVA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "60"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "60"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "60"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "3.2"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge PVA @FF C5P"
+      ],
+      "filament_soluble": [
+        "1"
+      ],
+      "filament_type": [
+        "PVA"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "240"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "240"
+      ],
+      "temperature_vitrification": [
+        "45"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "filament_is_support": [
+        "1"
+      ],
+      "filament_multitool_ramming": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "6"
+      ],
+      "filament_multitool_ramming_volume": [
+        "0.1"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ],
+      "filament_id": "OFaaddbQ",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge TPU-64D @FF C5P",
+    "type": "TPU-64D",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "35"
+      ],
+      "hot_plate_temp": [
+        "35"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "35"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge TPU-64D @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-64D"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "10"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OF8GtyKJ",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_multitool_ramming_flow": [
+        "3.2"
+      ],
+      "filament_multitool_ramming_volume": [
+        "5"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge TPU-90A @FF C5P",
+    "type": "TPU-90A",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "40"
+      ],
+      "hot_plate_temp": [
+        "40"
+      ],
+      "textured_plate_temp": [
+        "40"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "40"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "40"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "40"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "2.8"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge TPU-90A @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-90A"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "12"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OFwlZ7gH",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  },
+  {
+    "name": "Flashforge TPU-95A @FF C5P",
+    "type": "TPU-95A",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "35"
+      ],
+      "hot_plate_temp": [
+        "35"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "35"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Flashforge TPU-95A @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-95A"
+      ],
+      "filament_vendor": [
+        "Flashforge"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "10"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OFx0WlzS",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_multitool_ramming_flow": [
+        "3.2"
+      ],
+      "filament_multitool_ramming_volume": [
+        "5"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  },
+  {
+    "name": "FusRock PAHT-CF @FF C5P",
+    "type": "PAHT-CF",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "80"
+      ],
+      "hot_plate_temp": [
+        "80"
+      ],
+      "textured_plate_temp": [
+        "80"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "80"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "80"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "80"
+      ],
+      "overhang_fan_threshold": [
+        "95%"
+      ],
+      "overhang_fan_speed": [
+        "30"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.96"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "5"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.04"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "7"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "FusRock PAHT-CF @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PAHT-CF"
+      ],
+      "filament_vendor": [
+        "FusRock"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "310"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "310"
+      ],
+      "temperature_vitrification": [
+        "108"
+      ],
+      "activate_air_filtration": [
+        "0"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8",
+        "8",
+        "8",
+        "8",
+        "8",
+        "8"
+      ],
+      "nozzle_temperature_range_high": [
+        "320"
+      ],
+      "nozzle_temperature_range_low": [
+        "300"
+      ],
+      "required_nozzle_HRC": [
+        "40"
+      ],
+      "filament_id": "OFKW5hEW",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "FusRock S-Multi @FF C5P",
+    "type": "PA",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "80"
+      ],
+      "hot_plate_temp": [
+        "85"
+      ],
+      "textured_plate_temp": [
+        "85"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "80"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "85"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "85"
+      ],
+      "overhang_fan_threshold": [
+        "95%"
+      ],
+      "overhang_fan_speed": [
+        "30"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.96"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "30"
+      ],
+      "filament_cost": [
+        "30"
+      ],
+      "filament_density": [
+        "1.29"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "5"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "FusRock S-Multi @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PA"
+      ],
+      "filament_vendor": [
+        "FusRock"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "280"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "50"
+      ],
+      "fan_min_speed": [
+        "20"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "280"
+      ],
+      "temperature_vitrification": [
+        "80"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "nozzle_temperature_range_low": [
+        "260"
+      ],
+      "nozzle_temperature_range_high": [
+        "280"
+      ],
+      "filament_id": "OF0AquDh",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "filament_multitool_ramming_flow": [
+        "13",
+        "13",
+        "13",
+        "13",
+        "13",
+        "13"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_is_support": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0325"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "FusRock S-PAHT @FF C5P",
+    "type": "PAHT",
+    "config": {
+      "cool_plate_temp": [
+        "0"
+      ],
+      "eng_plate_temp": [
+        "80"
+      ],
+      "hot_plate_temp": [
+        "80"
+      ],
+      "textured_plate_temp": [
+        "80"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "0"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "80"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "80"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "80"
+      ],
+      "overhang_fan_threshold": [
+        "95%"
+      ],
+      "overhang_fan_speed": [
+        "30"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "3"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.96"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "0"
+      ],
+      "fan_cooling_layer_time": [
+        "5"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.04"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "6"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "FusRock S-PAHT @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PAHT"
+      ],
+      "filament_vendor": [
+        "FusRock"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "280"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "40"
+      ],
+      "fan_min_speed": [
+        "10"
+      ],
+      "slow_down_min_speed": [
+        "10"
+      ],
+      "slow_down_layer_time": [
+        "2"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "280"
+      ],
+      "temperature_vitrification": [
+        "108"
+      ],
+      "activate_air_filtration": [
+        "0"
+      ],
+      "supertack_plate_temp": [
+        "0"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "8",
+        "8",
+        "8",
+        "8",
+        "8",
+        "8"
+      ],
+      "nozzle_temperature_range_high": [
+        "280"
+      ],
+      "nozzle_temperature_range_low": [
+        "270"
+      ],
+      "required_nozzle_HRC": [
+        "40"
+      ],
+      "filament_id": "OFCn83wF",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_chamber_temp_control": [
+        "1"
+      ],
+      "chamber_temperature": [
+        "60"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_is_support": [
+        "1"
+      ],
+      "textured_cool_plate_temp": [
+        "0"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "0"
+      ]
+    }
+  },
+  {
+    "name": "Generic BVOH @FF C5P",
+    "type": "BVOH",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "60"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "60"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "60"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "69.99"
+      ],
+      "filament_density": [
+        "1.13"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "3.5"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic BVOH @FF C5P"
+      ],
+      "filament_soluble": [
+        "1"
+      ],
+      "filament_type": [
+        "BVOH"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "220"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "220"
+      ],
+      "temperature_vitrification": [
+        "45"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "filament_is_support": [
+        "1"
+      ],
+      "filament_multitool_ramming": [
+        "0"
+      ],
+      "filament_multitool_ramming_flow": [
+        "6"
+      ],
+      "filament_multitool_ramming_volume": [
+        "0.1"
+      ],
+      "nozzle_temperature_range_high": [
+        "240"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ],
+      "filament_id": "OFo2UF2C",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ]
+    }
+  },
+  {
+    "name": "Generic PLA @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "18"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic PLA @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "205"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "210"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_id": "OFDSrzZ8",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.025"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Generic PLA Silk @FF C5P",
+    "type": "PLA",
+    "config": {
+      "cool_plate_temp": [
+        "40"
+      ],
+      "eng_plate_temp": [
+        "55"
+      ],
+      "hot_plate_temp": [
+        "60"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "40"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "55"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "55"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "55"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "0.98"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "12"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "nil"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic PLA Silk @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "PLA"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "8"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "nozzle_temperature_range_low": [
+        "190"
+      ],
+      "nozzle_temperature_range_high": [
+        "210"
+      ],
+      "filament_multitool_ramming_flow": [
+        "10"
+      ],
+      "filament_id": "OFesA6rF",
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "supertack_plate_temp": [
+        "40"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "40"
+      ]
+    }
+  },
+  {
+    "name": "Generic TPU-64D @FF C5P",
+    "type": "TPU-64D",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "35"
+      ],
+      "hot_plate_temp": [
+        "35"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "35"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic TPU-64D @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-64D"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "10"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OF5c6nq3",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_multitool_ramming_flow": [
+        "3.2"
+      ],
+      "filament_multitool_ramming_volume": [
+        "5"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  },
+  {
+    "name": "Generic TPU-90A @FF C5P",
+    "type": "TPU-90A",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "35"
+      ],
+      "hot_plate_temp": [
+        "35"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "35"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "2.8"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic TPU-90A @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-90A"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "12"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OFJYpVAQ",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  },
+  {
+    "name": "Generic TPU-95A @FF C5P",
+    "type": "TPU-95A",
+    "config": {
+      "cool_plate_temp": [
+        "35"
+      ],
+      "eng_plate_temp": [
+        "35"
+      ],
+      "hot_plate_temp": [
+        "35"
+      ],
+      "textured_plate_temp": [
+        "60"
+      ],
+      "cool_plate_temp_initial_layer": [
+        "35"
+      ],
+      "eng_plate_temp_initial_layer": [
+        "35"
+      ],
+      "hot_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_plate_temp_initial_layer": [
+        "60"
+      ],
+      "overhang_fan_threshold": [
+        "50%"
+      ],
+      "overhang_fan_speed": [
+        "100"
+      ],
+      "slow_down_for_layer_cooling": [
+        "1"
+      ],
+      "close_fan_the_first_x_layers": [
+        "1"
+      ],
+      "filament_end_gcode": [
+        "; filament end gcode \n"
+      ],
+      "filament_flow_ratio": [
+        "1.02"
+      ],
+      "reduce_fan_stop_start_freq": [
+        "1"
+      ],
+      "fan_cooling_layer_time": [
+        "100"
+      ],
+      "filament_cost": [
+        "20"
+      ],
+      "filament_density": [
+        "1.24"
+      ],
+      "filament_deretraction_speed": [
+        "nil"
+      ],
+      "filament_diameter": [
+        "1.75"
+      ],
+      "filament_max_volumetric_speed": [
+        "15"
+      ],
+      "filament_minimal_purge_on_wipe_tower": [
+        "15"
+      ],
+      "filament_retraction_minimum_travel": [
+        "nil"
+      ],
+      "filament_retract_before_wipe": [
+        "nil"
+      ],
+      "filament_retract_when_changing_layer": [
+        "nil"
+      ],
+      "filament_retraction_length": [
+        "1.2"
+      ],
+      "filament_z_hop": [
+        "nil"
+      ],
+      "filament_z_hop_types": [
+        "nil"
+      ],
+      "filament_retract_restart_extra": [
+        "nil"
+      ],
+      "filament_retraction_speed": [
+        "nil"
+      ],
+      "filament_settings_id": [
+        "Generic TPU-95A @FF C5P"
+      ],
+      "filament_soluble": [
+        "0"
+      ],
+      "filament_type": [
+        "TPU-95A"
+      ],
+      "filament_vendor": [
+        "Generic"
+      ],
+      "filament_wipe": [
+        "nil"
+      ],
+      "filament_wipe_distance": [
+        "nil"
+      ],
+      "bed_type": [
+        "Textured PEI Plate"
+      ],
+      "nozzle_temperature_initial_layer": [
+        "230"
+      ],
+      "full_fan_speed_layer": [
+        "0"
+      ],
+      "fan_max_speed": [
+        "70"
+      ],
+      "fan_min_speed": [
+        "70"
+      ],
+      "slow_down_min_speed": [
+        "20"
+      ],
+      "slow_down_layer_time": [
+        "10"
+      ],
+      "filament_start_gcode": [
+        "; filament start gcode"
+      ],
+      "nozzle_temperature": [
+        "230"
+      ],
+      "temperature_vitrification": [
+        "60"
+      ],
+      "additional_cooling_fan_speed": [
+        "40"
+      ],
+      "nozzle_temperature_range_low": [
+        "200"
+      ],
+      "nozzle_temperature_range_high": [
+        "250"
+      ],
+      "filament_id": "OFy48TOp",
+      "compatible_printers": [
+        "Flashforge Creator 5 Pro 0.4 nozzle",
+        "Flashforge Creator 5 Pro 0.6 nozzle",
+        "Flashforge Creator 5 Pro 0.8 nozzle"
+      ],
+      "filament_extruder_variant": [
+        "Direct Drive Standard"
+      ],
+      "activate_air_filtration": [
+        "1"
+      ],
+      "complete_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "during_print_exhaust_fan_speed": [
+        "40"
+      ],
+      "enable_pressure_advance": [
+        "1"
+      ],
+      "filament_multitool_ramming_flow": [
+        "3.2"
+      ],
+      "filament_multitool_ramming_volume": [
+        "5"
+      ],
+      "pressure_advance": [
+        "0.0225"
+      ],
+      "supertack_plate_temp": [
+        "35"
+      ],
+      "supertack_plate_temp_initial_layer": [
+        "35"
+      ],
+      "textured_cool_plate_temp": [
+        "35"
+      ],
+      "textured_cool_plate_temp_initial_layer": [
+        "35"
+      ]
+    }
+  }
+]

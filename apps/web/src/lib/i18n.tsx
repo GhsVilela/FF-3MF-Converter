@@ -1,0 +1,366 @@
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+
+export type Language = 'en' | 'pt-BR';
+
+const en = {
+  'brand.name': 'Open3MF',
+  'brand.subtitle': 'FlashForge project converter',
+  'hero.eyebrow': 'Self-hosted · Local conversion',
+  'hero.title': 'Bring any 3MF project to your FlashForge.',
+  'hero.subtitle':
+    'Keep the model, its colours and the author’s print intent. Convert Bambu Studio, OrcaSlicer and other 3MF projects into a Flash Studio-ready project.',
+  'hero.privacy': 'Your file never leaves this instance.',
+  'upload.drop': 'Drop a .3mf project here',
+  'upload.browse': 'or choose a file',
+  'upload.hint':
+    'Projects from MakerWorld, Printables, Creality Cloud, Anycubic and Orca-based slicers are supported.',
+  'upload.format': '.3mf only · up to {size} MB',
+  'upload.selected': 'Selected file',
+  'steps.upload': 'Upload',
+  'steps.configure': 'Configure',
+  'steps.convert': 'Convert',
+  'steps.download': 'Download',
+  'landing.keptTitle': 'Kept from the author',
+  'landing.kept1': 'Layer height, walls, shells and infill',
+  'landing.kept2': 'Supports, seam, brim, ironing and adhesion',
+  'landing.kept3': 'Painted colours, supports and seams',
+  'landing.kept4': 'Plates, object overrides and temperatures',
+  'landing.replacedTitle': 'Replaced by the printer',
+  'landing.replaced1': 'Printer model, nozzle and build volume',
+  'landing.replaced2': 'Start/end G-code and machine limits',
+  'landing.replaced3': 'Process and filament presets',
+  'landing.replaced4': 'Flash Studio compatibility stamp',
+  'landing.droppedTitle': 'Dropped by design',
+  'landing.dropped1': 'Speeds and acceleration tuning',
+  'landing.dropped2': 'Pressure advance and retraction',
+  'landing.dropped3': 'Fan curves and chamber control',
+  'landing.dropped4': 'Source hardware and AMS metadata',
+  'landing.supported': 'Supported printers',
+  'analysis.title': 'File analysis',
+  'analysis.source': 'Source',
+  'analysis.app': 'Slicer',
+  'analysis.printer': 'Printer',
+  'analysis.process': 'Process',
+  'analysis.layerHeight': 'Layer height',
+  'analysis.nozzle': 'Nozzle',
+  'analysis.plates': 'Plates',
+  'analysis.objects': 'Objects',
+  'analysis.triangles': 'Triangles',
+  'analysis.colors': 'Colours',
+  'analysis.noSettings': 'No slicer settings found',
+  'analysis.noSettingsHelp':
+    'The geometry is valid, but the file has no embedded print profile. Target defaults will be used.',
+  'analysis.warnings': 'Warnings',
+  'analysis.noWarnings': 'No warnings.',
+  'configure.title': 'Choose the target',
+  'configure.subtitle':
+    'The printer profile defines the bed, nozzle and start/end G-code. The author’s quality settings travel with the model.',
+  'configure.printer': 'Printer',
+  'configure.nozzle': 'Nozzle',
+  'configure.process': 'Process preset',
+  'configure.processAuto': 'Auto · closest to the source layer height',
+  'configure.options': 'Conversion options',
+  'configure.preserveTemps': 'Keep the author’s temperatures',
+  'configure.preserveTempsHelp': 'Temperatures are clamped to the target printer’s safe range.',
+  'configure.layout': 'Layout',
+  'configure.layoutCenter': 'Center on the bed',
+  'configure.layoutKeep': 'Keep original positions',
+  'configure.layoutScale': 'Scale to fit (changes dimensions)',
+  'configure.layoutHelp': 'Models are never scaled unless you choose it explicitly.',
+  'configure.colors': 'Colour mapping',
+  'configure.colorsHelp':
+    'Map the source filaments to the target slots. Unused filaments are removed.',
+  'configure.sourceSlot': 'Source',
+  'configure.targetSlot': 'Target slot',
+  'configure.singleColor':
+    'This printer prints one colour. Every painted region will use the selected colour.',
+  'configure.mergeNote':
+    'The target has fewer slots than the source. Similar colours will be merged; review the mapping.',
+  'configure.maxColors': 'up to {count} colours',
+  'configure.oneColor': '1 colour',
+  'configure.convert': 'Convert for {printer}',
+  'configure.starting': 'Starting…',
+  'progress.title': 'Converting your project',
+  'progress.upload': 'File uploaded',
+  'progress.analyse': 'Analysing the 3MF',
+  'progress.config': 'Building the target profile',
+  'progress.package': 'Writing the Flash Studio project',
+  'progress.done': 'Done',
+  'result.title': 'Your Flash Studio project is ready',
+  'result.subtitle':
+    'Open it with File → Open Project in Flash Studio, check the preview, then slice.',
+  'result.download': 'Download .3mf',
+  'result.new': 'Convert another file',
+  'result.report': 'Conversion report',
+  'result.reportHelp':
+    'Every setting is listed with its decision. Download the JSON for your records.',
+  'result.downloadReport': 'Download report',
+  'result.targetPrinter': 'Target printer',
+  'result.targetProcess': 'Process',
+  'result.settingsKept': 'Kept',
+  'result.settingsChanged': 'Adjusted',
+  'result.settingsDropped': 'Dropped',
+  'result.duration': 'Conversion time',
+  'result.warnings': 'Warnings',
+  'tabs.settings': 'Settings',
+  'tabs.filaments': 'Filaments',
+  'tabs.plates': 'Plates',
+  'filter.all': 'All',
+  'filter.kept': 'Kept',
+  'filter.changed': 'Adjusted',
+  'filter.dropped': 'Dropped',
+  'table.key': 'Setting',
+  'table.decision': 'Decision',
+  'table.source': 'Source',
+  'table.target': 'Converted',
+  'table.reason': 'Reason',
+  'table.empty': 'No settings in this filter.',
+  'decision.kept': 'Kept',
+  'decision.translated': 'Translated',
+  'decision.clamped': 'Clamped',
+  'decision.replaced': 'Replaced',
+  'decision.dropped': 'Dropped',
+  'filaments.source': 'Source',
+  'filaments.target': 'Target',
+  'filaments.colour': 'Colour',
+  'filaments.material': 'Material',
+  'filaments.preset': 'Target preset',
+  'filaments.merged': 'Merged',
+  'plates.plate': 'Plate {number}',
+  'plates.objects': '{count} objects',
+  'plates.fits': 'Fits',
+  'plates.moved': 'Moved',
+  'plates.note': 'Note',
+  'flash.title': 'Open in Flash Studio',
+  'flash.step1': 'Open Flash Studio and select your printer.',
+  'flash.step2': 'Use File → Open Project. Do not drag the file onto the plate.',
+  'flash.step3': 'Check the process, filaments and colour preview.',
+  'flash.step4': 'Slice and send the job to your printer.',
+  'flash.note':
+    'If you drag the .3mf onto the plate, Flash Studio imports the geometry only and ignores the project settings.',
+  'auth.title': 'API token',
+  'auth.help': 'This instance requires a token. It is stored only in this browser tab.',
+  'auth.placeholder': 'Paste the token',
+  'auth.save': 'Unlock',
+  'auth.invalid': 'The token was rejected.',
+  'error.generic': 'Something went wrong.',
+  'error.upload': 'The file could not be uploaded.',
+  'error.convert': 'The conversion failed.',
+  'error.dismiss': 'Dismiss',
+  'common.back': 'Back',
+  'common.retry': 'Try again',
+  'common.loading': 'Loading…',
+  'common.optional': 'optional',
+  'common.size': '{size}',
+  'theme.toggle': 'Toggle theme',
+  'language.toggle': 'Português',
+  'footer.disclaimer':
+    'Not affiliated with FlashForge, Bambu Lab, Prusa Research or UltiMaker. Printer and slicer names are trademarks of their respective owners.',
+  'footer.license': 'AGPL-3.0 · Open source',
+  'footer.local': 'Runs locally · no telemetry',
+} as const;
+
+export type TranslationKey = keyof typeof en;
+
+const ptBR: Record<TranslationKey, string> = {
+  'brand.name': 'Open3MF',
+  'brand.subtitle': 'Conversor de projetos para FlashForge',
+  'hero.eyebrow': 'Auto-hospedado · Conversão local',
+  'hero.title': 'Leve qualquer projeto 3MF para sua FlashForge.',
+  'hero.subtitle':
+    'Mantenha o modelo, as cores e a intenção de impressão do autor. Converta projetos do Bambu Studio, OrcaSlicer e outros slicers em um projeto pronto para o Flash Studio.',
+  'hero.privacy': 'Seu arquivo nunca sai desta instância.',
+  'upload.drop': 'Solte um projeto .3mf aqui',
+  'upload.browse': 'ou escolha um arquivo',
+  'upload.hint':
+    'Projetos do MakerWorld, Printables, Creality Cloud, Anycubic e slicers baseados no Orca são suportados.',
+  'upload.format': 'Somente .3mf · até {size} MB',
+  'upload.selected': 'Arquivo selecionado',
+  'steps.upload': 'Enviar',
+  'steps.configure': 'Configurar',
+  'steps.convert': 'Converter',
+  'steps.download': 'Baixar',
+  'landing.keptTitle': 'Mantido do autor',
+  'landing.kept1': 'Altura de camada, paredes, cascas e preenchimento',
+  'landing.kept2': 'Suportes, costura, brim, ironing e adesão',
+  'landing.kept3': 'Cores, suportes e costuras pintadas',
+  'landing.kept4': 'Pratos, ajustes por objeto e temperaturas',
+  'landing.replacedTitle': 'Substituído pela impressora',
+  'landing.replaced1': 'Modelo, bico e volume de impressão',
+  'landing.replaced2': 'G-code inicial/final e limites da máquina',
+  'landing.replaced3': 'Perfis de processo e filamento',
+  'landing.replaced4': 'Selo de compatibilidade do Flash Studio',
+  'landing.droppedTitle': 'Descartado de propósito',
+  'landing.dropped1': 'Ajustes de velocidade e aceleração',
+  'landing.dropped2': 'Pressure advance e retração',
+  'landing.dropped3': 'Curvas de ventoinha e controle de câmara',
+  'landing.dropped4': 'Metadados de hardware e AMS da origem',
+  'landing.supported': 'Impressoras suportadas',
+  'analysis.title': 'Análise do arquivo',
+  'analysis.source': 'Origem',
+  'analysis.app': 'Slicer',
+  'analysis.printer': 'Impressora',
+  'analysis.process': 'Processo',
+  'analysis.layerHeight': 'Altura de camada',
+  'analysis.nozzle': 'Bico',
+  'analysis.plates': 'Pratos',
+  'analysis.objects': 'Objetos',
+  'analysis.triangles': 'Triângulos',
+  'analysis.colors': 'Cores',
+  'analysis.noSettings': 'Nenhuma configuração de slicer encontrada',
+  'analysis.noSettingsHelp':
+    'A geometria é válida, mas o arquivo não tem perfil de impressão embutido. Os padrões do destino serão usados.',
+  'analysis.warnings': 'Avisos',
+  'analysis.noWarnings': 'Nenhum aviso.',
+  'configure.title': 'Escolha o destino',
+  'configure.subtitle':
+    'O perfil da impressora define a mesa, o bico e o G-code inicial/final. As configurações de qualidade do autor viajam com o modelo.',
+  'configure.printer': 'Impressora',
+  'configure.nozzle': 'Bico',
+  'configure.process': 'Perfil de processo',
+  'configure.processAuto': 'Automático · mais próximo da altura de camada de origem',
+  'configure.options': 'Opções de conversão',
+  'configure.preserveTemps': 'Manter as temperaturas do autor',
+  'configure.preserveTempsHelp':
+    'As temperaturas são limitadas à faixa segura da impressora de destino.',
+  'configure.layout': 'Layout',
+  'configure.layoutCenter': 'Centralizar na mesa',
+  'configure.layoutKeep': 'Manter posições originais',
+  'configure.layoutScale': 'Ajustar para caber (altera dimensões)',
+  'configure.layoutHelp': 'Os modelos nunca são redimensionados sem sua escolha explícita.',
+  'configure.colors': 'Mapeamento de cores',
+  'configure.colorsHelp':
+    'Mapeie os filamentos de origem para os slots de destino. Filamentos não usados são removidos.',
+  'configure.sourceSlot': 'Origem',
+  'configure.targetSlot': 'Slot de destino',
+  'configure.singleColor':
+    'Esta impressora imprime uma cor. Todas as regiões pintadas usarão a cor selecionada.',
+  'configure.mergeNote':
+    'O destino tem menos slots que a origem. Cores parecidas serão mescladas; revise o mapeamento.',
+  'configure.maxColors': 'até {count} cores',
+  'configure.oneColor': '1 cor',
+  'configure.convert': 'Converter para {printer}',
+  'configure.starting': 'Iniciando…',
+  'progress.title': 'Convertendo seu projeto',
+  'progress.upload': 'Arquivo enviado',
+  'progress.analyse': 'Analisando o 3MF',
+  'progress.config': 'Montando o perfil de destino',
+  'progress.package': 'Escrevendo o projeto Flash Studio',
+  'progress.done': 'Concluído',
+  'result.title': 'Seu projeto Flash Studio está pronto',
+  'result.subtitle': 'Abra com Arquivo → Abrir Projeto no Flash Studio, confira a prévia e fatie.',
+  'result.download': 'Baixar .3mf',
+  'result.new': 'Converter outro arquivo',
+  'result.report': 'Relatório de conversão',
+  'result.reportHelp':
+    'Cada configuração transferida aparece com sua decisão. Baixe o JSON para guardar.',
+  'result.downloadReport': 'Baixar relatório',
+  'result.targetPrinter': 'Impressora de destino',
+  'result.targetProcess': 'Processo',
+  'result.settingsKept': 'Mantidas',
+  'result.settingsChanged': 'Ajustadas',
+  'result.settingsDropped': 'Descartadas',
+  'result.duration': 'Tempo de conversão',
+  'result.warnings': 'Avisos',
+  'tabs.settings': 'Configurações',
+  'tabs.filaments': 'Filamentos',
+  'tabs.plates': 'Pratos',
+  'filter.all': 'Todas',
+  'filter.kept': 'Mantidas',
+  'filter.changed': 'Ajustadas',
+  'filter.dropped': 'Descartadas',
+  'table.key': 'Configuração',
+  'table.decision': 'Decisão',
+  'table.source': 'Origem',
+  'table.target': 'Convertido',
+  'table.reason': 'Motivo',
+  'table.empty': 'Nenhuma configuração neste filtro.',
+  'decision.kept': 'Mantida',
+  'decision.translated': 'Traduzida',
+  'decision.clamped': 'Limitada',
+  'decision.replaced': 'Substituída',
+  'decision.dropped': 'Descartada',
+  'filaments.source': 'Origem',
+  'filaments.target': 'Destino',
+  'filaments.colour': 'Cor',
+  'filaments.material': 'Material',
+  'filaments.preset': 'Perfil de destino',
+  'filaments.merged': 'Mesclado',
+  'plates.plate': 'Prato {number}',
+  'plates.objects': '{count} objetos',
+  'plates.fits': 'Cabe',
+  'plates.moved': 'Movido',
+  'plates.note': 'Observação',
+  'flash.title': 'Abrir no Flash Studio',
+  'flash.step1': 'Abra o Flash Studio e selecione sua impressora.',
+  'flash.step2': 'Use Arquivo → Abrir Projeto. Não arraste o arquivo para a mesa.',
+  'flash.step3': 'Confira o processo, os filamentos e a prévia de cores.',
+  'flash.step4': 'Fatie e envie o trabalho para a impressora.',
+  'flash.note':
+    'Se você arrastar o .3mf para a mesa, o Flash Studio importa apenas a geometria e ignora as configurações do projeto.',
+  'auth.title': 'Token da API',
+  'auth.help': 'Esta instância exige um token. Ele fica salvo apenas nesta aba do navegador.',
+  'auth.placeholder': 'Cole o token',
+  'auth.save': 'Desbloquear',
+  'auth.invalid': 'O token foi rejeitado.',
+  'error.generic': 'Algo deu errado.',
+  'error.upload': 'Não foi possível enviar o arquivo.',
+  'error.convert': 'A conversão falhou.',
+  'error.dismiss': 'Fechar',
+  'common.back': 'Voltar',
+  'common.retry': 'Tentar novamente',
+  'common.loading': 'Carregando…',
+  'common.optional': 'opcional',
+  'common.size': '{size}',
+  'theme.toggle': 'Alternar tema',
+  'language.toggle': 'English',
+  'footer.disclaimer':
+    'Sem vínculo com FlashForge, Bambu Lab, Prusa Research ou UltiMaker. Nomes de impressoras e slicers são marcas de seus respectivos donos.',
+  'footer.license': 'AGPL-3.0 · Código aberto',
+  'footer.local': 'Roda localmente · sem telemetria',
+};
+
+const dictionaries = { en, 'pt-BR': ptBR };
+
+interface I18nContextValue {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  t: (key: TranslationKey, values?: Record<string, string | number>) => string;
+}
+
+const I18nContext = createContext<I18nContextValue | undefined>(undefined);
+
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguageState] = useState<Language>(() => {
+    const stored = localStorage.getItem('open3mf-language');
+    return stored === 'pt-BR' ? 'pt-BR' : 'en';
+  });
+
+  const value = useMemo<I18nContextValue>(() => {
+    const dictionary = dictionaries[language];
+    return {
+      language,
+      setLanguage: (next) => {
+        localStorage.setItem('open3mf-language', next);
+        setLanguageState(next);
+      },
+      t: (key, values) => {
+        let text: string = dictionary[key] ?? en[key] ?? key;
+        if (values) {
+          for (const [name, replacement] of Object.entries(values)) {
+            text = text.replaceAll(`{${name}}`, String(replacement));
+          }
+        }
+        return text;
+      },
+    };
+  }, [language]);
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+export function useI18n(): I18nContextValue {
+  const context = useContext(I18nContext);
+  if (!context) throw new Error('useI18n must be used inside I18nProvider');
+  return context;
+}

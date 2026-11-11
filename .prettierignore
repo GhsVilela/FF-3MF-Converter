@@ -1,0 +1,8 @@
+profiles/
+package-lock.json
+**/dist/
+coverage/
+LICENSE
+THIRD_PARTY_NOTICES.md
+
+.env.example

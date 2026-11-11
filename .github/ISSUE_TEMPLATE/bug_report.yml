@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a conversion, UI or deployment problem
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Remove private model data before attaching a 3MF.
+        A minimal synthetic reproducer or the conversion report is usually enough.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Conversion output
+        - UI
+        - API
+        - Docker / deployment
+        - Profiles / printer support
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Image tag or commit.
+      placeholder: v0.1.0 / ghcr.io/...:edge / commit
+    validations:
+      required: true
+  - type: dropdown
+    id: printer
+    attributes:
+      label: Target printer
+      options:
+        - FlashForge AD5X
+        - Adventurer 5M
+        - Adventurer 5M Pro
+        - Creator 5
+        - Creator 5 Pro
+        - Other / not printer-specific
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source slicer and version
+      placeholder: Bambu Studio 2.2 / OrcaSlicer 2.3 / PrusaSlicer / generic 3MF
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Upload ...
+        2. Select ...
+        3. Convert ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour and errors
+      description: Include the error code, report JSON and relevant logs.
+    validations:
+      required: true

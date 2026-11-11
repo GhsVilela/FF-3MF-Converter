@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/GhsVilela/Open3MFConverter/security/advisories/new
+    about: Report a vulnerability privately.
+  - name: Documentation
+    url: https://github.com/GhsVilela/Open3MFConverter/tree/main/docs
+    about: Architecture, conversion rules, deployment and troubleshooting.

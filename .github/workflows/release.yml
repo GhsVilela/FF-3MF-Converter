@@ -1,0 +1,188 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  verify:
+    name: Verify release commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build and test
+        run: |
+          npm run build
+          npm test
+          npm run profiles:verify
+
+  release:
+    name: Build and publish container
+    runs-on: ubuntu-latest
+    needs: [verify]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read repository metadata
+        id: repo
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Read release metadata
+        id: release
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" =~ -(alpha|beta|rc) ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ steps.release.outputs.prerelease == 'false' }}
+            type=semver,pattern={{major}},enable=${{ steps.release.outputs.prerelease == 'false' }}
+            type=raw,value=latest,enable=${{ steps.release.outputs.prerelease == 'false' }}
+          labels: |
+            org.opencontainers.image.title=Open3MF Converter
+            org.opencontainers.image.description=Self-hosted 3MF project converter for FlashForge printers
+            org.opencontainers.image.vendor=Open3MF
+            org.opencontainers.image.url=https://github.com/${{ github.repository }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
+            org.opencontainers.image.licenses=AGPL-3.0-or-later
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push to GHCR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.release.outputs.version }}
+            GIT_SHA=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          provenance: true
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Login to Docker Hub
+        if: vars.DOCKERHUB_ENABLED == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Hub metadata
+        if: vars.DOCKERHUB_ENABLED == 'true'
+        id: dockerhub
+        uses: docker/metadata-action@v5
+        with:
+          images: docker.io/${{ vars.DOCKERHUB_NAMESPACE || steps.repo.outputs.owner }}/open3mfconverter
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ steps.release.outputs.prerelease == 'false' }}
+            type=semver,pattern={{major}},enable=${{ steps.release.outputs.prerelease == 'false' }}
+            type=raw,value=latest,enable=${{ steps.release.outputs.prerelease == 'false' }}
+
+      - name: Build and push to Docker Hub
+        if: vars.DOCKERHUB_ENABLED == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.dockerhub.outputs.tags }}
+          labels: ${{ steps.dockerhub.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.release.outputs.version }}
+            GIT_SHA=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          provenance: true
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ steps.release.outputs.prerelease == 'true' }}
+          generate_release_notes: true
+          body: |
+            ## Container images
+
+            **GitHub Container Registry**
+            ```bash
+            docker pull ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:${{ steps.release.outputs.version }}
+            ```
+
+            ## Quick start
+
+            ```bash
+            docker run -d \
+              --name open3mf \
+              -p 8080:8080 \
+              -v open3mf_data:/data \
+              ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:${{ steps.release.outputs.version }}
+            ```
+
+            Open `http://localhost:8080`.
+
+            ## What it does
+
+            Converts 3MF projects from Bambu Studio, OrcaSlicer, Creality Print,
+            Anycubic Slicer Next and compatible slicers into Flash Studio-ready
+            projects for FlashForge AD5X, Adventurer 5M, Adventurer 5M Pro,
+            Creator 5 and Creator 5 Pro.
+
+            The converted `.3mf` keeps the model, plates, painted colours and the
+            author's print intent. Open it in Flash Studio with **File → Open
+            Project**, then slice. The conversion report lists every kept,
+            adapted and dropped setting.
+
+            See the [README](https://github.com/${{ github.repository }}#readme)
+            for deployment, TrueNAS and reverse-proxy instructions.

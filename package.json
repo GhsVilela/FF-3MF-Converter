@@ -1,0 +1,50 @@
+{
+  "name": "open3mf-converter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted 3MF project converter for FlashForge printers",
+  "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @open3mf/shared && npm run build -w @open3mf/profiles && npm run build -w @open3mf/core && npm run build -w @open3mf/api && npm run build -w @open3mf/cli && npm run build -w @open3mf/web",
+    "build:packages": "npm run build -w @open3mf/shared && npm run build -w @open3mf/profiles && npm run build -w @open3mf/core",
+    "dev": "npm run build:packages && npm run build -w @open3mf/api && concurrently -k -n api,web \"node apps/api/dist/server.js\" \"npm run dev -w @open3mf/web\"",
+    "start": "node apps/api/dist/server.js",
+    "test": "npm run build:packages && vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "npm run build:packages && npm run typecheck -w @open3mf/shared && npm run typecheck -w @open3mf/profiles && npm run typecheck -w @open3mf/core && npm run typecheck -w @open3mf/api && npm run typecheck -w @open3mf/cli && npm run typecheck -w @open3mf/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "cli": "node apps/cli/dist/index.js",
+    "profiles:verify": "node scripts/verify-profiles.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.57.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/yauzl": "^2.10.3",
+    "@types/yazl": "^2.4.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}
