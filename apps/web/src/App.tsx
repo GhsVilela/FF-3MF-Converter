@@ -2,15 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   ArrowLeft,
+  ArrowRight,
   Check,
   ChevronRight,
   Loader2,
   LockKeyhole,
-  ShieldCheck,
-  Sparkles,
   X,
 } from 'lucide-react';
-import type { ConversionOptions, PrinterSummary, SourceAnalysis } from '@open3mf/shared';
+import type { ConversionOptions, PrinterSummary, SourceAnalysis } from '@ff3mf/shared';
 import { Header } from './components/Header';
 import { Steps } from './components/Steps';
 import { Dropzone } from './components/Dropzone';
@@ -100,7 +99,7 @@ function closestProcessName(
 export default function App() {
   const { t } = useI18n();
   const [theme, setTheme] = useState<'dark' | 'light'>(() =>
-    localStorage.getItem('open3mf-theme') === 'light' ? 'light' : 'dark',
+    localStorage.getItem('ff3mf-theme') === 'dark' ? 'dark' : 'light',
   );
   const [printers, setPrinters] = useState<PrinterWithMaterials[]>([]);
   const [maxUploadMb, setMaxUploadMb] = useState(DEFAULT_MAX_UPLOAD_MB);
@@ -123,7 +122,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('open3mf-theme', theme);
+    localStorage.setItem('ff3mf-theme', theme);
   }, [theme]);
 
   const loadPrinters = async () => {
@@ -292,7 +291,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col">
       <Header theme={theme} onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 sm:px-8 sm:py-12">
+      <main className="mx-auto w-full max-w-[1240px] flex-1 px-5 py-8 sm:px-8 sm:py-10">
         {authRequired ? (
           <div className="py-12">
             <AuthGate error={authError} onSubmit={(token) => void handleAuth(token)} />
@@ -300,7 +299,7 @@ export default function App() {
         ) : (
           <>
             {error && (
-              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] p-4">
+              <div className="mb-5 flex items-start gap-3 rounded-sm border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] p-4">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[var(--danger)]" />
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium text-[var(--danger)]">{error.message}</div>
@@ -315,7 +314,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setError(undefined)}
-                  className="focus-ring rounded-lg p-1 text-[var(--muted)] hover:text-[var(--text)]"
+                  className="focus-ring rounded-sm p-1 text-[var(--muted)] hover:text-[var(--text)]"
                   aria-label={t('error.dismiss')}
                 >
                   <X className="size-4" />
@@ -325,27 +324,45 @@ export default function App() {
 
             {stage === 'upload' && (
               <div className="rise">
-                <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-y border-[var(--border)] py-2">
+                  <span className="mono-label text-[var(--accent)]">{t('hero.kicker')}</span>
+                  <span className="mono-label text-[var(--muted)]">REV 0.1.0 / LOCAL INSTANCE</span>
+                </div>
+
+                <div className="grid items-start gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-14">
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)]/60 px-3 py-1 text-[11px] font-medium text-[var(--muted)]">
-                      <ShieldCheck className="size-3.5 text-[var(--success)]" />
-                      {t('hero.eyebrow')}
+                    <div className="flex items-center gap-2">
+                      <span className="h-3 w-1 bg-[var(--orange)]" />
+                      <span className="mono-label text-[var(--muted)]">{t('hero.eyebrow')}</span>
                     </div>
-                    <h1 className="mt-5 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-                      {t('hero.title')}
+                    <h1 className="hero-title mt-5 text-[2.9rem] font-semibold sm:text-6xl">
+                      {t('hero.titleA')} <em>{t('hero.titleB')}</em>
                     </h1>
-                    <p className="mt-5 max-w-xl text-base leading-7 text-[var(--muted)]">
+                    <p className="mt-6 max-w-xl text-[15px] leading-7 text-[var(--muted)]">
                       {t('hero.subtitle')}
                     </p>
-                    <div className="mt-6 flex flex-wrap gap-2 text-[11px] text-[var(--muted)]">
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)]/50 px-3 py-1.5">
-                        <Check className="size-3 text-[var(--success)]" /> 5 printers
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)]/50 px-3 py-1.5">
-                        <Check className="size-3 text-[var(--success)]" /> 4-colour projects
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)]/50 px-3 py-1.5">
-                        <LockKeyhole className="size-3 text-[var(--success)]" /> {t('hero.privacy')}
+
+                    <div className="mt-7 grid max-w-xl grid-cols-2 border-l border-t border-[var(--border)]">
+                      {[
+                        [t('hero.specTargets'), t('hero.specTargetsValue')],
+                        [t('hero.specColors'), t('hero.specColorsValue')],
+                        [t('hero.specProfiles'), t('hero.specProfilesValue')],
+                        [t('hero.specPrivacy'), t('hero.specPrivacyValue')],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="border-b border-r border-[var(--border)] bg-[var(--surface)] px-4 py-3"
+                        >
+                          <div className="mono-label text-[var(--muted)]">{label}</div>
+                          <div className="mt-1.5 text-sm font-semibold">{value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-[var(--muted)]">
+                      <span className="inline-flex items-center gap-1.5">
+                        <LockKeyhole className="size-3.5 text-[var(--accent)]" />
+                        AGPL-3.0 · no telemetry
                       </span>
                     </div>
                   </div>
@@ -359,40 +376,10 @@ export default function App() {
                   />
                 </div>
 
-                <div className="mt-14 grid gap-3 sm:grid-cols-3">
-                  {[
-                    [
-                      '01',
-                      'Any 3MF project',
-                      'Bambu Studio, OrcaSlicer, Creality, Anycubic, Prusa and plain geometry.',
-                    ],
-                    [
-                      '02',
-                      'Author intent',
-                      'Layers, walls, infill, supports, temperatures, painted colours and plates.',
-                    ],
-                    [
-                      '03',
-                      'Flash Studio ready',
-                      'A transparent report explains every kept, adapted and dropped setting.',
-                    ],
-                  ].map(([number, title, copy]) => (
-                    <div
-                      key={number}
-                      className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/45 p-4"
-                    >
-                      <div className="text-[10px] font-semibold tracking-widest text-[var(--accent)]">
-                        {number}
-                      </div>
-                      <div className="mt-2 text-sm font-semibold">{title}</div>
-                      <p className="mt-1 text-xs leading-5 text-[var(--muted)]">{copy}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 grid gap-3 lg:grid-cols-3">
+                <div className="grid border border-[var(--border)] bg-[var(--surface)] lg:grid-cols-3">
                   {[
                     {
+                      mark: '+',
                       title: t('landing.keptTitle'),
                       items: [
                         t('landing.kept1'),
@@ -400,9 +387,10 @@ export default function App() {
                         t('landing.kept3'),
                         t('landing.kept4'),
                       ],
-                      dot: 'var(--success)',
+                      color: 'var(--success)',
                     },
                     {
+                      mark: '~',
                       title: t('landing.replacedTitle'),
                       items: [
                         t('landing.replaced1'),
@@ -410,9 +398,10 @@ export default function App() {
                         t('landing.replaced3'),
                         t('landing.replaced4'),
                       ],
-                      dot: 'var(--accent)',
+                      color: 'var(--accent)',
                     },
                     {
+                      mark: '−',
                       title: t('landing.droppedTitle'),
                       items: [
                         t('landing.dropped1'),
@@ -420,19 +409,21 @@ export default function App() {
                         t('landing.dropped3'),
                         t('landing.dropped4'),
                       ],
-                      dot: 'var(--danger)',
+                      color: 'var(--orange)',
                     },
                   ].map((group) => (
                     <div
                       key={group.title}
-                      className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/45 p-4"
+                      className="border-b border-[var(--border)] p-4 last:border-b-0 lg:border-b-0 lg:border-r lg:last:border-r-0"
                     >
-                      <div className="flex items-center gap-2 text-sm font-semibold">
+                      <div className="flex items-center gap-2">
                         <span
-                          className="size-2 rounded-full"
-                          style={{ backgroundColor: group.dot }}
-                        />
-                        {group.title}
+                          className="grid size-5 place-items-center border font-mono text-[11px]"
+                          style={{ color: group.color, borderColor: group.color }}
+                        >
+                          {group.mark}
+                        </span>
+                        <span className="text-xs font-semibold">{group.title}</span>
                       </div>
                       <ul className="mt-3 space-y-1.5">
                         {group.items.map((item) => (
@@ -440,7 +431,7 @@ export default function App() {
                             key={item}
                             className="flex gap-2 text-[11px] leading-5 text-[var(--muted)]"
                           >
-                            <span className="mt-2 size-1 shrink-0 rounded-full bg-[var(--border)]" />
+                            <span className="mt-2 size-1 shrink-0 bg-[var(--border-strong)]" />
                             {item}
                           </li>
                         ))}
@@ -449,20 +440,35 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)]/35 px-4 py-3">
-                  <span className="mr-1 text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
-                    {t('landing.supported')}
-                  </span>
-                  {['AD5X', 'Adventurer 5M', 'Adventurer 5M Pro', 'Creator 5', 'Creator 5 Pro'].map(
-                    (name) => (
+                <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_auto]">
+                  <div className="flex flex-wrap items-center gap-2 border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+                    <span className="mono-label mr-2 text-[var(--muted)]">
+                      {t('landing.supported')}
+                    </span>
+                    {(printers.length > 0
+                      ? printers.map((printer) => printer.name)
+                      : [
+                          'FlashForge AD5X',
+                          'Adventurer 5M',
+                          'Adventurer 5M Pro',
+                          'Creator 5',
+                          'Creator 5 Pro',
+                        ]
+                    ).map((name) => (
                       <span
                         key={name}
-                        className="rounded-full border border-[var(--border)] bg-[var(--surface-2)]/60 px-2.5 py-1 text-[10px] text-[var(--muted)]"
+                        className="border border-[var(--border)] bg-[var(--surface-2)] px-2 py-1 text-[10px] text-[var(--muted)]"
                       >
                         {name}
                       </span>
-                    ),
-                  )}
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3 border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+                    <span className="mono-label text-[var(--orange)]">WORKFLOW</span>
+                    <span className="font-mono text-[10px] text-[var(--muted)]">
+                      UPLOAD → MAP → CONVERT → OPEN IN FLASH STUDIO
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -475,16 +481,16 @@ export default function App() {
 
             {stage === 'configure' && analysis && selectedPrinter && (
               <div className="space-y-4 rise">
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
                   <button
                     type="button"
                     onClick={reset}
-                    className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-[var(--muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
+                    className="focus-ring inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--text)]"
                   >
                     <ArrowLeft className="size-3.5" />
                     {t('common.back')}
                   </button>
-                  <div className="text-xs text-[var(--muted)]">
+                  <div className="font-mono text-[10px] text-[var(--muted)]">
                     {fileName} · {analysis ? formatBytes(analysis.fileSize) : ''}
                   </div>
                 </div>
@@ -492,127 +498,162 @@ export default function App() {
                 <div className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
                   <AnalysisCard analysis={analysis} />
 
-                  <section className="surface rounded-3xl p-5 sm:p-6">
-                    <h2 className="text-base font-semibold">{t('configure.title')}</h2>
-                    <p className="mt-1 max-w-xl text-xs leading-5 text-[var(--muted)]">
-                      {t('configure.subtitle')}
-                    </p>
-
-                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                      <label className="block">
-                        <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
-                          {t('configure.nozzle')}
-                        </span>
-                        <select
-                          value={selectedNozzle}
-                          onChange={(event) => {
-                            setSelectedNozzle(event.target.value);
-                            setSelectedProcess('');
-                          }}
-                          className="focus-ring h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm"
-                        >
-                          {selectedPrinter.nozzles.map((entry) => (
-                            <option key={entry.diameter} value={entry.diameter}>
-                              {entry.diameter} mm
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <label className="block">
-                        <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
-                          {t('configure.process')}
-                        </span>
-                        <select
-                          value={selectedProcess}
-                          onChange={(event) => setSelectedProcess(event.target.value)}
-                          className="focus-ring h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm"
-                        >
-                          <option value="">{t('configure.processAuto')}</option>
-                          {selectedNozzleEntry?.processes.map((process) => (
-                            <option key={process.name} value={process.name}>
-                              {process.name}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="mt-1.5 text-[10px] text-[var(--muted)]">
-                          {selectedProcess || autoProcess || '—'}
+                  <section className="surface overflow-hidden">
+                    <div className="h-[2px] bg-[var(--accent)]" />
+                    <div className="p-5 sm:p-6">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="mono-label text-[var(--accent)]">TARGET / 02</div>
+                          <h2 className="mt-1.5 text-base font-semibold">{t('configure.title')}</h2>
                         </div>
-                      </label>
-                    </div>
+                        <div className="border border-[var(--border)] px-2 py-1 font-mono text-[10px] text-[var(--muted)]">
+                          {selectedPrinter.id}
+                        </div>
+                      </div>
+                      <p className="mt-2 max-w-xl text-xs leading-5 text-[var(--muted)]">
+                        {t('configure.subtitle')}
+                      </p>
 
-                    <div className="mt-5 space-y-3">
-                      <label className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/45 p-3">
-                        <input
-                          type="checkbox"
-                          checked={preserveTemperatures}
-                          onChange={(event) => setPreserveTemperatures(event.target.checked)}
-                          className="mt-0.5 size-4 accent-[var(--accent)]"
-                        />
-                        <span>
-                          <span className="block text-sm font-medium">
-                            {t('configure.preserveTemps')}
+                      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                        <label className="block">
+                          <span className="mono-label mb-1.5 block text-[var(--muted)]">
+                            {t('configure.nozzle')}
                           </span>
-                          <span className="mt-0.5 block text-[11px] leading-5 text-[var(--muted)]">
-                            {t('configure.preserveTempsHelp')}
+                          <select
+                            value={selectedNozzle}
+                            onChange={(event) => {
+                              setSelectedNozzle(event.target.value);
+                              setSelectedProcess('');
+                            }}
+                            className="focus-ring h-10 w-full rounded-sm border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm"
+                          >
+                            {selectedPrinter.nozzles.map((entry) => (
+                              <option key={entry.diameter} value={entry.diameter}>
+                                {entry.diameter} mm
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <label className="block">
+                          <span className="mono-label mb-1.5 block text-[var(--muted)]">
+                            {t('configure.process')}
                           </span>
-                        </span>
-                      </label>
+                          <select
+                            value={selectedProcess}
+                            onChange={(event) => setSelectedProcess(event.target.value)}
+                            className="focus-ring h-10 w-full rounded-sm border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm"
+                          >
+                            <option value="">{t('configure.processAuto')}</option>
+                            {selectedNozzleEntry?.processes.map((process) => (
+                              <option key={process.name} value={process.name}>
+                                {process.name}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="mt-1.5 text-[10px] text-[var(--muted)]">
+                            {selectedProcess || autoProcess || '—'}
+                          </div>
+                        </label>
+                      </div>
 
-                      <label className="block rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/45 p-3">
-                        <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
-                          {t('configure.layout')}
-                        </span>
-                        <select
-                          value={layout}
-                          onChange={(event) =>
-                            setLayout(
-                              event.target.value as NonNullable<ConversionOptions['layout']>,
-                            )
-                          }
-                          className="focus-ring h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 text-sm"
-                        >
-                          <option value="center">{t('configure.layoutCenter')}</option>
-                          <option value="keep">{t('configure.layoutKeep')}</option>
-                          <option value="scale">{t('configure.layoutScale')}</option>
-                        </select>
-                        <span className="mt-1.5 block text-[10px] leading-5 text-[var(--muted)]">
-                          {t('configure.layoutHelp')}
-                        </span>
-                      </label>
+                      <div className="mt-5 space-y-3">
+                        <label className="flex items-start gap-3 border border-[var(--border)] bg-[var(--surface-2)] p-3">
+                          <input
+                            type="checkbox"
+                            checked={preserveTemperatures}
+                            onChange={(event) => setPreserveTemperatures(event.target.checked)}
+                            className="mt-0.5 size-4 accent-[var(--accent)]"
+                          />
+                          <span>
+                            <span className="block text-sm font-medium">
+                              {t('configure.preserveTemps')}
+                            </span>
+                            <span className="mt-0.5 block text-[11px] leading-5 text-[var(--muted)]">
+                              {t('configure.preserveTempsHelp')}
+                            </span>
+                          </span>
+                        </label>
+
+                        <label className="block border border-[var(--border)] bg-[var(--surface-2)] p-3">
+                          <span className="mono-label mb-1.5 block text-[var(--muted)]">
+                            {t('configure.layout')}
+                          </span>
+                          <select
+                            value={layout}
+                            onChange={(event) =>
+                              setLayout(
+                                event.target.value as NonNullable<ConversionOptions['layout']>,
+                              )
+                            }
+                            className="focus-ring h-9 w-full rounded-sm border border-[var(--border)] bg-[var(--surface)] px-2.5 text-sm"
+                          >
+                            <option value="center">{t('configure.layoutCenter')}</option>
+                            <option value="keep">{t('configure.layoutKeep')}</option>
+                            <option value="scale">{t('configure.layoutScale')}</option>
+                          </select>
+                          <span className="mt-1.5 block text-[10px] leading-5 text-[var(--muted)]">
+                            {t('configure.layoutHelp')}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div className="mt-5 border-t border-[var(--border)] pt-3">
+                        <div className="flex items-center justify-between gap-2 font-mono text-[10px]">
+                          <span className="mono-label text-[var(--muted)]">
+                            {t('configure.output')}
+                          </span>
+                          <span>{t('configure.outputValue')}</span>
+                        </div>
+                        <div className="mt-1.5 flex items-center justify-between gap-2 font-mono text-[10px]">
+                          <span className="mono-label text-[var(--muted)]">
+                            {t('configure.profileSource')}
+                          </span>
+                          <span>{selectedPrinter.compatibility.templateSource}</span>
+                        </div>
+                        <div className="mt-1.5 flex items-center justify-between gap-2 font-mono text-[10px]">
+                          <span className="mono-label text-[var(--muted)]">
+                            {t('configure.reportIncluded')}
+                          </span>
+                          <span>{t('configure.reportIncludedValue')}</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void handleConvert()}
+                        disabled={!selectedNozzleEntry}
+                        className="focus-ring mt-4 inline-flex w-full items-center justify-center gap-2 bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <ArrowRight className="size-4" />
+                        {t('configure.convert', { printer: selectedPrinter.name })}
+                        <ChevronRight className="size-4" />
+                      </button>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => void handleConvert()}
-                      disabled={!selectedNozzleEntry}
-                      className="focus-ring mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <Sparkles className="size-4" />
-                      {t('configure.convert', { printer: selectedPrinter.name })}
-                      <ChevronRight className="size-4" />
-                    </button>
                   </section>
                 </div>
 
-                <section className="surface rounded-3xl p-5 sm:p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <h2 className="text-base font-semibold">{t('configure.printer')}</h2>
-                      <p className="mt-1 text-xs text-[var(--muted)]">
-                        {selectedPrinter.compatibility.flashStudio}
-                      </p>
+                <section className="surface overflow-hidden">
+                  <div className="h-[2px] bg-[var(--orange)]" />
+                  <div className="p-5 sm:p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <div className="mono-label text-[var(--orange)]">PRINTER / 03</div>
+                        <h2 className="mt-1.5 text-base font-semibold">{t('configure.printer')}</h2>
+                        <p className="mt-1 text-xs text-[var(--muted)]">
+                          {selectedPrinter.compatibility.flashStudio}
+                        </p>
+                      </div>
+                      <div className="border border-[var(--border)] px-2.5 py-1 font-mono text-[10px] text-[var(--muted)]">
+                        {selectedPrinter.compatibility.templateSource}
+                      </div>
                     </div>
-                    <div className="rounded-full border border-[var(--border)] px-2.5 py-1 text-[10px] text-[var(--muted)]">
-                      {selectedPrinter.compatibility.templateSource}
+                    <div className="mt-4">
+                      <PrinterPicker
+                        printers={printers}
+                        selectedId={selectedPrinterId}
+                        onSelect={selectPrinter}
+                      />
                     </div>
-                  </div>
-                  <div className="mt-4">
-                    <PrinterPicker
-                      printers={printers}
-                      selectedId={selectedPrinterId}
-                      onSelect={selectPrinter}
-                    />
                   </div>
                 </section>
 
@@ -626,64 +667,84 @@ export default function App() {
             )}
 
             {stage === 'converting' && (
-              <div className="mx-auto max-w-xl rise">
-                <section className="surface rounded-3xl p-6 sm:p-8">
-                  <div className="flex items-center gap-4">
-                    <div className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                      <Loader2 className="size-6 animate-spin" />
+              <div className="mx-auto max-w-2xl rise">
+                <section className="surface overflow-hidden">
+                  <div className="h-[2px] bg-[var(--accent)]" />
+                  <div className="p-6 sm:p-8">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="mono-label text-[var(--accent)]">EXECUTION / 03</div>
+                        <h2 className="mt-1.5 text-lg font-semibold">{t('progress.title')}</h2>
+                      </div>
+                      <div className="grid size-10 place-items-center border border-[var(--accent)]/35 bg-[var(--accent-soft)] text-[var(--accent)]">
+                        <Loader2 className="size-5 animate-spin" />
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="text-lg font-semibold">{t('progress.title')}</h2>
-                      <p className="mt-0.5 text-xs text-[var(--muted)]">
-                        {selectedPrinter?.name} · {selectedNozzle} mm
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="mt-6">
-                    <div className="progress-track h-2 overflow-hidden rounded-full">
-                      <div
-                        className="progress-bar h-full rounded-full"
-                        style={{ width: `${job?.progress ?? 5}%` }}
-                      />
+                    <div className="mt-5 grid grid-cols-2 border-t border-l border-[var(--border)] font-mono text-[10px]">
+                      <div className="border-b border-r border-[var(--border)] px-3 py-2">
+                        <div className="mono-label text-[var(--muted)]">TARGET</div>
+                        <div className="mt-1">{selectedPrinter?.name}</div>
+                      </div>
+                      <div className="border-b border-r border-[var(--border)] px-3 py-2">
+                        <div className="mono-label text-[var(--muted)]">NOZZLE</div>
+                        <div className="mt-1">{selectedNozzle} mm</div>
+                      </div>
+                      <div className="border-b border-r border-[var(--border)] px-3 py-2">
+                        <div className="mono-label text-[var(--muted)]">PLATES</div>
+                        <div className="mt-1">{analysis?.plates ?? 1}</div>
+                      </div>
+                      <div className="border-b border-r border-[var(--border)] px-3 py-2">
+                        <div className="mono-label text-[var(--muted)]">COLOURS</div>
+                        <div className="mt-1">{analysis?.usedColorCount ?? 1}</div>
+                      </div>
                     </div>
-                    <div className="mt-2 flex justify-between text-[11px] text-[var(--muted)]">
-                      <span>
-                        {job?.status === 'queued' ? t('progress.analyse') : t('progress.config')}
-                      </span>
-                      <span>{job?.progress ?? 0}%</span>
-                    </div>
-                  </div>
 
-                  <ul className="mt-6 space-y-2">
-                    {[
-                      t('progress.upload'),
-                      t('progress.analyse'),
-                      t('progress.config'),
-                      t('progress.package'),
-                    ].map((label, index) => {
-                      const progress = job?.progress ?? 0;
-                      const threshold = [5, 25, 60, 85][index] ?? 0;
-                      const done = progress >= threshold;
-                      return (
-                        <li key={label} className="flex items-center gap-2.5 text-xs">
-                          <span
-                            className={cn(
-                              'grid size-5 place-items-center rounded-full border',
-                              done
-                                ? 'border-[var(--success)]/40 bg-[color-mix(in_srgb,var(--success)_16%,transparent)] text-[var(--success)]'
-                                : 'border-[var(--border)] text-[var(--muted)]',
-                            )}
-                          >
-                            {done ? <Check className="size-3" /> : index + 1}
-                          </span>
-                          <span className={done ? 'text-[var(--text)]' : 'text-[var(--muted)]'}>
-                            {label}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                    <div className="mt-6">
+                      <div className="progress-track h-2 overflow-hidden">
+                        <div
+                          className="progress-bar h-full"
+                          style={{ width: `${job?.progress ?? 5}%` }}
+                        />
+                      </div>
+                      <div className="mt-2 flex justify-between font-mono text-[10px] text-[var(--muted)]">
+                        <span>
+                          {job?.status === 'queued' ? t('progress.analyse') : t('progress.config')}
+                        </span>
+                        <span>{job?.progress ?? 0}%</span>
+                      </div>
+                    </div>
+
+                    <ul className="mt-6 space-y-2">
+                      {[
+                        t('progress.upload'),
+                        t('progress.analyse'),
+                        t('progress.config'),
+                        t('progress.package'),
+                      ].map((label, index) => {
+                        const progress = job?.progress ?? 0;
+                        const threshold = [5, 25, 60, 85][index] ?? 0;
+                        const done = progress >= threshold;
+                        return (
+                          <li key={label} className="flex items-center gap-2.5 text-xs">
+                            <span
+                              className={cn(
+                                'grid size-5 place-items-center border font-mono text-[10px]',
+                                done
+                                  ? 'border-[var(--success)]/40 bg-[color-mix(in_srgb,var(--success)_12%,var(--surface))] text-[var(--success)]'
+                                  : 'border-[var(--border)] text-[var(--muted)]',
+                              )}
+                            >
+                              {done ? <Check className="size-3" /> : index + 1}
+                            </span>
+                            <span className={done ? 'text-[var(--text)]' : 'text-[var(--muted)]'}>
+                              {label}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 </section>
               </div>
             )}
@@ -696,7 +757,7 @@ export default function App() {
       </main>
 
       <footer className="border-t border-[var(--border)] py-6">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 text-[10px] leading-5 text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-2 px-5 font-mono text-[10px] leading-5 text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <p className="max-w-3xl">{t('footer.disclaimer')}</p>
           <div className="flex shrink-0 items-center gap-3">
             <span>{t('footer.license')}</span>

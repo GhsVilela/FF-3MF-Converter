@@ -159,7 +159,7 @@ function buildProductionApp() {
   // Replace workspace symlinks with real directories. Windows zip extraction
   // does not reliably preserve symlinks.
   for (const packageName of ['shared', 'profiles', 'core']) {
-    const target = path.join(appDir, 'node_modules', '@open3mf', packageName);
+    const target = path.join(appDir, 'node_modules', '@ff3mf', packageName);
     rmSync(target, { recursive: true, force: true });
     cpSync(path.join(root, 'packages', packageName), target, {
       recursive: true,
@@ -167,11 +167,13 @@ function buildProductionApp() {
     });
     rmSync(path.join(target, 'tsconfig.json'), { force: true });
   }
-  rmSync(path.join(appDir, 'node_modules', '@open3mf', 'web'), { recursive: true, force: true });
+  rmSync(path.join(appDir, 'node_modules', '@ff3mf', 'web'), { recursive: true, force: true });
 
   // The UI is prebuilt; these packages are not needed at runtime.
   for (const packageName of [
-    '@open3mf/web',
+    '@ff3mf/web',
+    '@fontsource',
+    '@fontsource-variable',
     '@playwright',
     '@tailwindcss',
     '@vitejs',
@@ -188,7 +190,7 @@ function buildProductionApp() {
 
   writeFileSync(
     path.join(appDir, 'PORTABLE-README.txt'),
-    `Open3MF Converter ${version}\n\n` +
+    `FF-3MF Converter ${version}\n\n` +
       `This folder contains the application, the bundled Node.js runtime and the\n` +
       `conversion profiles. The platform launcher is in the package root.\n\n` +
       `Data is stored in the user's data directory by default. Use --data-dir to\n` +
@@ -200,10 +202,10 @@ function buildProductionApp() {
 }
 
 function writeLauncherReadme(destination, platform) {
-  const runCommand = platform === 'win-x64' ? 'Open3MF.exe' : './open3mf';
+  const runCommand = platform === 'win-x64' ? 'FF-3MF.exe' : './ff3mf';
   writeFileSync(
     path.join(destination, 'README.txt'),
-    `Open3MF Converter ${version}\n` +
+    `FF-3MF Converter ${version}\n` +
       `===============================\n\n` +
       `Run:\n  ${runCommand}\n\n` +
       `The launcher starts the local web app and opens it in your browser.\n` +
@@ -216,8 +218,8 @@ function writeLauncherReadme(destination, platform) {
       `  ${runCommand} --version\n\n` +
       `Data location:\n` +
       (platform === 'win-x64'
-        ? `  %LOCALAPPDATA%\\Open3MF\\data\n`
-        : `  $XDG_DATA_HOME/open3mf or ~/.local/share/open3mf\n`) +
+        ? `  %LOCALAPPDATA%\\FF-3MF\\data\n`
+        : `  $XDG_DATA_HOME/ff3mf or ~/.local/share/ff3mf\n`) +
       `\nNo installation is required. The package includes Node.js ${nodeVersion}.\n` +
       `See LICENSE and THIRD_PARTY_NOTICES.md for licensing information.\n`,
   );
@@ -225,8 +227,8 @@ function writeLauncherReadme(destination, platform) {
 
 function buildLaunchers() {
   const launcherDir = path.join(root, 'packaging', 'launcher');
-  const linuxLauncher = path.join(buildDir, 'launchers', 'open3mf');
-  const windowsLauncher = path.join(buildDir, 'launchers', 'Open3MF.exe');
+  const linuxLauncher = path.join(buildDir, 'launchers', 'ff3mf');
+  const windowsLauncher = path.join(buildDir, 'launchers', 'FF-3MF.exe');
   mkdirSync(path.dirname(linuxLauncher), { recursive: true });
   for (const [goos, output] of [
     ['linux', linuxLauncher],
@@ -246,7 +248,7 @@ function buildLaunchers() {
 
 async function assemble(platform, launchers) {
   const node = await ensureNodeRuntime(platform);
-  const folderName = `Open3MF-${version}-${platform}`;
+  const folderName = `FF-3MF-Converter-${version}-${platform}`;
   const destination = path.join(stageRoot, folderName);
   rmSync(destination, { recursive: true, force: true });
   mkdirSync(destination, { recursive: true });
@@ -265,17 +267,17 @@ async function assemble(platform, launchers) {
   );
 
   if (platform === 'win-x64') {
-    copyFileSync(launchers.windowsLauncher, path.join(destination, 'Open3MF.exe'));
+    copyFileSync(launchers.windowsLauncher, path.join(destination, 'FF-3MF.exe'));
   } else {
-    copyFileSync(launchers.linuxLauncher, path.join(destination, 'open3mf'));
-    run('chmod', ['+x', path.join(destination, 'open3mf')]);
+    copyFileSync(launchers.linuxLauncher, path.join(destination, 'ff3mf'));
+    run('chmod', ['+x', path.join(destination, 'ff3mf')]);
   }
   writeLauncherReadme(destination, platform);
 
   mkdirSync(artifactDir, { recursive: true });
   const artifact = path.join(
     artifactDir,
-    `Open3MF-${version}-${platform}${platform === 'win-x64' ? '.zip' : '.tar.gz'}`,
+    `FF-3MF-Converter-${version}-${platform}${platform === 'win-x64' ? '.zip' : '.tar.gz'}`,
   );
   rmSync(artifact, { force: true });
   if (platform === 'win-x64') {
@@ -293,7 +295,7 @@ async function assemble(platform, launchers) {
 }
 
 async function main() {
-  console.log(`Building Open3MF portable executables ${version}`);
+  console.log(`Building FF-3MF portable executables ${version}`);
   rmSync(buildDir, { recursive: true, force: true });
   rmSync(artifactDir, { recursive: true, force: true });
   mkdirSync(buildDir, { recursive: true });

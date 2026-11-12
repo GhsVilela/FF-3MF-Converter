@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { FileBox, Loader2, UploadCloud } from 'lucide-react';
+import { FileUp, Loader2, LockKeyhole } from 'lucide-react';
 import { useI18n } from '../lib/i18n';
 import { cn } from '../lib/utils';
 
@@ -24,7 +24,7 @@ export function Dropzone({ maxMb, uploading, progress, fileName, onFile }: Dropz
   return (
     <div
       className={cn(
-        'dropzone surface relative overflow-hidden rounded-3xl border-2 border-dashed border-[var(--border)] p-8 text-center sm:p-12',
+        'dropzone relative overflow-hidden p-5 sm:p-7',
         uploading && 'pointer-events-none opacity-90',
       )}
       data-active={dragging}
@@ -47,50 +47,64 @@ export function Dropzone({ maxMb, uploading, progress, fileName, onFile }: Dropz
         onChange={(event) => choose(event.target.files?.[0])}
       />
 
-      <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+      <div className="mb-4 flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <span className="mono-label text-[var(--accent)]">INTAKE / .3MF</span>
+        <span className="mono-label text-[var(--muted)]">LOCAL ONLY</span>
+      </div>
+
+      <div
+        className={cn(
+          'relative flex min-h-[290px] flex-col items-center justify-center border border-dashed border-[var(--border-strong)] px-4 py-8 text-center transition sm:min-h-[320px]',
+          dragging && 'border-[var(--orange)] bg-[var(--orange-soft)]',
+        )}
+      >
+        <span className="corner-mark tl" />
+        <span className="corner-mark tr" />
+        <span className="corner-mark bl" />
+        <span className="corner-mark br" />
+
+        <div className="grid size-14 place-items-center border border-[var(--accent)]/35 bg-[var(--accent-soft)] text-[var(--accent)]">
+          {uploading ? <Loader2 className="size-6 animate-spin" /> : <FileUp className="size-6" />}
+        </div>
+
+        <h2 className="mt-5 max-w-[260px] text-xl font-semibold tracking-[-0.02em]">
+          {uploading ? t('progress.upload') : t('upload.drop')}
+        </h2>
+        <p className="mx-auto mt-2 max-w-[300px] text-xs leading-5 text-[var(--muted)]">
+          {uploading && fileName ? fileName : t('upload.hint')}
+        </p>
+
         {uploading ? (
-          <Loader2 className="size-7 animate-spin" />
+          <div className="mt-6 w-full max-w-[260px]">
+            <div className="progress-track h-2 overflow-hidden">
+              <div className="progress-bar h-full" style={{ width: `${progress}%` }} />
+            </div>
+            <div className="mono-label mt-2 text-[var(--muted)]">{Math.round(progress)}%</div>
+          </div>
         ) : (
-          <UploadCloud className="size-7" />
+          <>
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="focus-ring mt-6 inline-flex items-center gap-2 rounded-sm bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold tracking-wide text-white transition hover:bg-[var(--accent-strong)]"
+            >
+              <FileUp className="size-4" />
+              {t('upload.browse')}
+            </button>
+            <div className="mono-label mt-3 text-[var(--muted)]">
+              {t('upload.format', { size: maxMb })}
+            </div>
+          </>
         )}
       </div>
 
-      <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-        {uploading ? t('progress.upload') : t('upload.drop')}
-      </h2>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--muted)]">
-        {uploading && fileName ? fileName : t('upload.hint')}
-      </p>
-
-      {uploading ? (
-        <div className="mx-auto mt-6 max-w-sm">
-          <div className="progress-track h-2 overflow-hidden rounded-full">
-            <div className="progress-bar h-full rounded-full" style={{ width: `${progress}%` }} />
-          </div>
-          <div className="mt-2 text-xs text-[var(--muted)]">{Math.round(progress)}%</div>
-        </div>
-      ) : (
-        <>
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            className="focus-ring mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:brightness-110"
-          >
-            <FileBox className="size-4" />
-            {t('upload.browse')}
-          </button>
-          <div className="mt-4 text-xs text-[var(--muted)]">
-            {t('upload.format', { size: maxMb })}
-          </div>
-        </>
-      )}
-
-      {fileName && !uploading && (
-        <div className="mt-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-xs text-[var(--muted)]">
-          <FileBox className="size-3.5 shrink-0" />
-          <span className="truncate">{fileName}</span>
-        </div>
-      )}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-[var(--muted)]">
+          <LockKeyhole className="size-3 text-[var(--success)]" />
+          {t('hero.privacy')}
+        </span>
+        <span className="font-mono text-[10px] text-[var(--muted)]">MAX {maxMb} MB</span>
+      </div>
     </div>
   );
 }

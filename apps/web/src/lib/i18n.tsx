@@ -3,9 +3,12 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 export type Language = 'en' | 'pt-BR';
 
 const en = {
-  'brand.name': 'Open3MF',
+  'brand.name': 'FF-3MF',
   'brand.subtitle': 'FlashForge project converter',
   'hero.eyebrow': 'Self-hosted · Local conversion',
+  'hero.kicker': '3MF → FLASHFORGE / PROJECT TRANSLATOR',
+  'hero.titleA': 'Bring any 3MF project to your',
+  'hero.titleB': 'FlashForge.',
   'hero.title': 'Bring any 3MF project to your FlashForge.',
   'hero.subtitle':
     'Keep the model, its colours and the author’s print intent. Convert Bambu Studio, OrcaSlicer and other 3MF projects into a Flash Studio-ready project.',
@@ -20,6 +23,14 @@ const en = {
   'steps.configure': 'Configure',
   'steps.convert': 'Convert',
   'steps.download': 'Download',
+  'hero.specTargets': 'TARGETS',
+  'hero.specTargetsValue': '5 printers',
+  'hero.specColors': 'COLOUR',
+  'hero.specColorsValue': '1–4 slots',
+  'hero.specProfiles': 'PROFILES',
+  'hero.specProfilesValue': '19 nozzle variants',
+  'hero.specPrivacy': 'PRIVACY',
+  'hero.specPrivacyValue': 'Local only',
   'landing.keptTitle': 'Kept from the author',
   'landing.kept1': 'Layer height, walls, shells and infill',
   'landing.kept2': 'Supports, seam, brim, ironing and adhesion',
@@ -58,7 +69,7 @@ const en = {
   'configure.printer': 'Printer',
   'configure.nozzle': 'Nozzle',
   'configure.process': 'Process preset',
-  'configure.processAuto': 'Auto · closest to the source layer height',
+  'configure.processAuto': 'Auto · match source layer height',
   'configure.options': 'Conversion options',
   'configure.preserveTemps': 'Keep the author’s temperatures',
   'configure.preserveTempsHelp': 'Temperatures are clamped to the target printer’s safe range.',
@@ -78,6 +89,11 @@ const en = {
     'The target has fewer slots than the source. Similar colours will be merged; review the mapping.',
   'configure.maxColors': 'up to {count} colours',
   'configure.oneColor': '1 colour',
+  'configure.output': 'OUTPUT',
+  'configure.outputValue': 'Flash Studio .3mf',
+  'configure.profileSource': 'PROFILE SOURCE',
+  'configure.reportIncluded': 'REPORT',
+  'configure.reportIncludedValue': 'Included',
   'configure.convert': 'Convert for {printer}',
   'configure.starting': 'Starting…',
   'progress.title': 'Converting your project',
@@ -163,9 +179,12 @@ const en = {
 export type TranslationKey = keyof typeof en;
 
 const ptBR: Record<TranslationKey, string> = {
-  'brand.name': 'Open3MF',
+  'brand.name': 'FF-3MF',
   'brand.subtitle': 'Conversor de projetos para FlashForge',
   'hero.eyebrow': 'Auto-hospedado · Conversão local',
+  'hero.kicker': '3MF → FLASHFORGE / TRADUTOR DE PROJETOS',
+  'hero.titleA': 'Leve qualquer projeto 3MF para sua',
+  'hero.titleB': 'FlashForge.',
   'hero.title': 'Leve qualquer projeto 3MF para sua FlashForge.',
   'hero.subtitle':
     'Mantenha o modelo, as cores e a intenção de impressão do autor. Converta projetos do Bambu Studio, OrcaSlicer e outros slicers em um projeto pronto para o Flash Studio.',
@@ -180,6 +199,14 @@ const ptBR: Record<TranslationKey, string> = {
   'steps.configure': 'Configurar',
   'steps.convert': 'Converter',
   'steps.download': 'Baixar',
+  'hero.specTargets': 'IMPRESSORAS',
+  'hero.specTargetsValue': '5 modelos',
+  'hero.specColors': 'CORES',
+  'hero.specColorsValue': '1–4 slots',
+  'hero.specProfiles': 'PERFIS',
+  'hero.specProfilesValue': '19 variantes de bico',
+  'hero.specPrivacy': 'PRIVACIDADE',
+  'hero.specPrivacyValue': 'Somente local',
   'landing.keptTitle': 'Mantido do autor',
   'landing.kept1': 'Altura de camada, paredes, cascas e preenchimento',
   'landing.kept2': 'Suportes, costura, brim, ironing e adesão',
@@ -218,7 +245,7 @@ const ptBR: Record<TranslationKey, string> = {
   'configure.printer': 'Impressora',
   'configure.nozzle': 'Bico',
   'configure.process': 'Perfil de processo',
-  'configure.processAuto': 'Automático · mais próximo da altura de camada de origem',
+  'configure.processAuto': 'Automático · igualar altura da camada de origem',
   'configure.options': 'Opções de conversão',
   'configure.preserveTemps': 'Manter as temperaturas do autor',
   'configure.preserveTempsHelp':
@@ -239,6 +266,11 @@ const ptBR: Record<TranslationKey, string> = {
     'O destino tem menos slots que a origem. Cores parecidas serão mescladas; revise o mapeamento.',
   'configure.maxColors': 'até {count} cores',
   'configure.oneColor': '1 cor',
+  'configure.output': 'SAÍDA',
+  'configure.outputValue': 'Flash Studio .3mf',
+  'configure.profileSource': 'ORIGEM DO PERFIL',
+  'configure.reportIncluded': 'RELATÓRIO',
+  'configure.reportIncludedValue': 'Incluído',
   'configure.convert': 'Converter para {printer}',
   'configure.starting': 'Iniciando…',
   'progress.title': 'Convertendo seu projeto',
@@ -332,7 +364,7 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const stored = localStorage.getItem('open3mf-language');
+    const stored = localStorage.getItem('ff3mf-language');
     return stored === 'pt-BR' ? 'pt-BR' : 'en';
   });
 
@@ -341,7 +373,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return {
       language,
       setLanguage: (next) => {
-        localStorage.setItem('open3mf-language', next);
+        localStorage.setItem('ff3mf-language', next);
         setLanguageState(next);
       },
       t: (key, values) => {

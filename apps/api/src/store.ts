@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { ConversionOptions, ConversionReport, SourceAnalysis } from '@open3mf/shared';
+import type { ConversionOptions, ConversionReport, SourceAnalysis } from '@ff3mf/shared';
 import { config } from './config.js';
 
 export type JobStatus = 'queued' | 'converting' | 'completed' | 'failed';

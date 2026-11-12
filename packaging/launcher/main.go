@@ -27,14 +27,14 @@ func main() {
 		showVer   = flag.Bool("version", false, "print the version and exit")
 	)
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Open3MF Converter %s\n\n", version)
+		fmt.Fprintf(flag.CommandLine.Output(), "FF-3MF Converter %s\n\n", version)
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [options]\n\n", filepath.Base(os.Args[0]))
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 
 	if *showVer {
-		fmt.Printf("Open3MF Converter %s\n", version)
+		fmt.Printf("FF-3MF Converter %s\n", version)
 		return
 	}
 
@@ -81,7 +81,7 @@ func main() {
 	}
 	url := fmt.Sprintf("http://%s:%d", urlHost, selectedPort)
 
-	fmt.Printf("Open3MF Converter %s\n", version)
+	fmt.Printf("FF-3MF Converter %s\n", version)
 	fmt.Printf("Data:    %s\n", resolvedDataDir)
 	fmt.Printf("Open:    %s\n", url)
 	fmt.Println("Press Ctrl+C to stop.")
@@ -139,7 +139,7 @@ func main() {
 }
 
 func fatal(format string, args ...any) {
-	fmt.Fprintf(os.Stderr, "Open3MF: "+format+"\n", args...)
+	fmt.Fprintf(os.Stderr, "FF-3MF: "+format+"\n", args...)
 	os.Exit(1)
 }
 
@@ -164,17 +164,17 @@ func setEnv(base []string, values map[string]string) []string {
 func defaultDataDir() string {
 	if runtime.GOOS == "windows" {
 		if base := os.Getenv("LOCALAPPDATA"); base != "" {
-			return filepath.Join(base, "Open3MF", "data")
+			return filepath.Join(base, "FF-3MF", "data")
 		}
 		if base := os.Getenv("APPDATA"); base != "" {
-			return filepath.Join(base, "Open3MF", "data")
+			return filepath.Join(base, "FF-3MF", "data")
 		}
 	} else {
 		if base := os.Getenv("XDG_DATA_HOME"); base != "" {
-			return filepath.Join(base, "open3mf")
+			return filepath.Join(base, "ff3mf")
 		}
 		if home, err := os.UserHomeDir(); err == nil {
-			return filepath.Join(home, ".local", "share", "open3mf")
+			return filepath.Join(home, ".local", "share", "ff3mf")
 		}
 	}
 	exe, err := os.Executable()

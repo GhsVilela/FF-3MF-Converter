@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve Open3MF Converter. Contributions of code, tests,
+Thanks for helping improve FF-3MF Converter. Contributions of code, tests,
 documentation, printer profiles and bug reports are welcome.
 
 ## Before you start
@@ -17,7 +17,7 @@ Requirements: Node.js 22+, npm and Docker (for container checks).
 ```bash
 npm ci
 npm run build:packages
-npm run build -w @open3mf/api
+npm run build -w @ff3mf/api
 npm run dev
 ```
 
@@ -40,8 +40,8 @@ npm run build
 For UI or container changes, also build and run the image:
 
 ```bash
-docker build -t open3mf:local .
-docker run --rm -p 8080:8080 -v open3mf_data:/data open3mf:local
+docker build -t ff3mf:local .
+docker run --rm -p 8080:8080 -v ff3mf_data:/data ff3mf:local
 ```
 
 ## Tests and fixtures

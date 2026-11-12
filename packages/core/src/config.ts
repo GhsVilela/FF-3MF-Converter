@@ -1,4 +1,4 @@
-import type { ChangeEntry, ConversionOptions, FilamentMapping, PlateInfo } from '@open3mf/shared';
+import type { ChangeEntry, ConversionOptions, FilamentMapping, PlateInfo } from '@ff3mf/shared';
 import { ConversionError } from './errors.js';
 import type { LoadedSource } from './source.js';
 import { normalizeColor } from './source.js';

@@ -1,8 +1,8 @@
 services:
-  open3mf:
-    image: ghcr.io/ghsvilela/open3mfconverter:latest
-    container_name: open3mf
-    hostname: open3mf
+  ff3mf:
+    image: ghcr.io/ghsvilela/ff-3mf-converter:latest
+    container_name: ff3mf
+    hostname: ff3mf
     ports:
       - '8080:8080'
     environment:
@@ -14,7 +14,7 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-info}
       TRUST_PROXY: ${TRUST_PROXY:-false}
     volumes:
-      - open3mf_data:/data
+      - ff3mf_data:/data
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -37,5 +37,5 @@ services:
       start_period: 20s
 
 volumes:
-  open3mf_data:
+  ff3mf_data:
     driver: local

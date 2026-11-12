@@ -2,7 +2,10 @@
 
 ## 0.1.0
 
-Initial release.
+Initial release under the **FF-3MF Converter** name.
+
+- FlashForge-inspired light/industrial UI with a dark theme, IBM Plex typography
+  and responsive conversion workflow.
 
 - Convert Bambu Studio, OrcaSlicer and compatible 3MF projects into Flash
   Studio-ready projects for FlashForge AD5X, Adventurer 5M, Adventurer 5M Pro,
@@ -16,8 +19,8 @@ Initial release.
 - Generate a per-setting conversion report.
 - Fastify API with upload/analyse/convert/download job flow.
 - React + Vite UI with English and Portuguese (Brazil).
-- `open3mf` CLI.
+- `ff3mf` CLI.
 - Multi-arch Docker image, Compose file, TrueNAS and reverse-proxy guidance.
 - Portable Windows x64 and Linux x64 executables with a bundled Node.js runtime,
-  native launcher and SHA-256 checksums.
+  native launcher (`FF-3MF.exe` / `ff3mf`) and SHA-256 checksums.
 - CI, release, nightly, CodeQL and dependency-review workflows.

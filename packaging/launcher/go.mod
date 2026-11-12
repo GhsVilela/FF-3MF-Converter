@@ -1,3 +1,3 @@
-module open3mf/launcher
+module ff3mf/launcher
 
 go 1.22

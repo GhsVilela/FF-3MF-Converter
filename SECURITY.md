@@ -13,7 +13,7 @@ Security fixes are applied to the latest release line.
 
 Please use GitHub's private vulnerability reporting:
 
-<https://github.com/GhsVilela/Open3MFConverter/security/advisories/new>
+<https://github.com/GhsVilela/FF-3MF-Converter/security/advisories/new>
 
 Do not open a public issue for a suspected vulnerability. Include:
 
@@ -27,7 +27,7 @@ time for a fix and coordinated disclosure before publishing details.
 
 ## Threat model
 
-Open3MF treats every uploaded file as hostile. The main risks are:
+FF-3MF treats every uploaded file as hostile. The main risks are:
 
 - ZIP bombs and excessive decompression.
 - Path traversal and unsafe archive names.

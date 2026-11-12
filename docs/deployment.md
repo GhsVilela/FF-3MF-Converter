@@ -5,8 +5,8 @@
 The release page includes self-contained archives for users who do not want
 Docker:
 
-- Windows x64: extract `Open3MF-<version>-win-x64.zip` and run `Open3MF.exe`.
-- Linux x64: extract `Open3MF-<version>-linux-x64.tar.gz` and run `./open3mf`.
+- Windows x64: extract `FF-3MF-Converter-<version>-win-x64.zip` and run `FF-3MF.exe`.
+- Linux x64: extract `FF-3MF-Converter-<version>-linux-x64.tar.gz` and run `./ff3mf`.
 
 The launcher starts the app on `127.0.0.1:8080`, opens the browser and stores
 data in the user data directory. The archive includes the Node.js runtime and
@@ -17,11 +17,11 @@ choose another port and `--data-dir` to control storage.
 
 ```bash
 docker run -d \
-  --name open3mf \
+  --name ff3mf \
   --restart unless-stopped \
   -p 8080:8080 \
-  -v open3mf_data:/data \
-  ghcr.io/ghsvilela/open3mfconverter:latest
+  -v ff3mf_data:/data \
+  ghcr.io/ghsvilela/ff-3mf-converter:latest
 ```
 
 The image is available for `linux/amd64` and `linux/arm64`.
@@ -41,7 +41,7 @@ health check. Copy `.env.example` to `.env` to set optional values.
 
 1. Add a dataset or host path for application data.
 2. Create a **Custom App** with image
-   `ghcr.io/ghsvilela/open3mfconverter:latest`.
+   `ghcr.io/ghsvilela/ff-3mf-converter:latest`.
 3. Map container port `8080` to a free host port.
 4. Mount the dataset at `/data`.
 5. Optionally set `AUTH_TOKEN`, `MAX_UPLOAD_MB`, `MAX_CONCURRENT_JOBS` and
@@ -60,7 +60,7 @@ Terminate TLS at your proxy. The app serves the UI and API on one HTTP port.
 ```nginx
 server {
   listen 443 ssl http2;
-  server_name open3mf.example.com;
+  server_name ff3mf.example.com;
 
   client_max_body_size 100m;
   proxy_read_timeout 180s;
@@ -78,7 +78,7 @@ server {
 ### Caddy
 
 ```caddyfile
-open3mf.example.com {
+ff3mf.example.com {
   encode zstd gzip
   reverse_proxy 127.0.0.1:8080
 }
@@ -87,11 +87,11 @@ open3mf.example.com {
 ### Subpath
 
 The UI uses relative asset and API URLs, so it can be served under a subpath
-such as `/open3mf/`. Configure the proxy to strip the prefix before forwarding:
+such as `/ff3mf/`. Configure the proxy to strip the prefix before forwarding:
 
 ```nginx
-location /open3mf/ {
-  rewrite ^/open3mf/(.*)$ /$1 break;
+location /ff3mf/ {
+  rewrite ^/ff3mf/(.*)$ /$1 break;
   proxy_pass http://127.0.0.1:8080;
 }
 ```

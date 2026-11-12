@@ -2,7 +2,7 @@
 
 ## Our pledge
 
-We want Open3MF Converter to be a welcoming project for everyone, regardless of
+We want FF-3MF Converter to be a welcoming project for everyone, regardless of
 experience, background, identity or preferred slicer.
 
 ## Expected behaviour

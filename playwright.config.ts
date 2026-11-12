@@ -21,7 +21,7 @@ export default defineConfig({
     timeout: 60_000,
     env: {
       PORT: '8090',
-      DATA_DIR: '/tmp/open3mf-e2e',
+      DATA_DIR: '/tmp/ff3mf-e2e',
       LOG_LEVEL: 'warn',
       AUTH_TOKEN: '',
       MAX_UPLOAD_MB: '100',

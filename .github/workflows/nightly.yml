@@ -46,7 +46,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:edge
+          tags: ghcr.io/${{ steps.repo.outputs.owner }}/ff-3mf-converter:edge
           build-args: |
             VERSION=edge
             GIT_SHA=${{ github.sha }}

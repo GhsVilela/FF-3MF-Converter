@@ -5,7 +5,7 @@ import type {
   ConversionReport,
   ConversionResult,
   SourceAnalysis,
-} from '@open3mf/shared';
+} from '@ff3mf/shared';
 import { buildTargetConfig, summarizeSettings, type TargetProfileInput } from './config.js';
 import { ConversionError } from './errors.js';
 import { patchModelSettingsXml } from './model-settings.js';

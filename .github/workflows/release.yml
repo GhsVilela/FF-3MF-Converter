@@ -115,16 +115,16 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter
+          images: ghcr.io/${{ steps.repo.outputs.owner }}/ff-3mf-converter
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}},enable=${{ steps.release.outputs.prerelease == 'false' }}
             type=semver,pattern={{major}},enable=${{ steps.release.outputs.prerelease == 'false' }}
             type=raw,value=latest,enable=${{ steps.release.outputs.prerelease == 'false' }}
           labels: |
-            org.opencontainers.image.title=Open3MF Converter
+            org.opencontainers.image.title=FF-3MF Converter
             org.opencontainers.image.description=Self-hosted 3MF project converter for FlashForge printers
-            org.opencontainers.image.vendor=Open3MF
+            org.opencontainers.image.vendor=FF-3MF
             org.opencontainers.image.url=https://github.com/${{ github.repository }}
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
@@ -166,7 +166,7 @@ jobs:
         id: dockerhub
         uses: docker/metadata-action@v5
         with:
-          images: docker.io/${{ vars.DOCKERHUB_NAMESPACE || steps.repo.outputs.owner }}/open3mfconverter
+          images: docker.io/${{ vars.DOCKERHUB_NAMESPACE || steps.repo.outputs.owner }}/ff-3mf-converter
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}},enable=${{ steps.release.outputs.prerelease == 'false' }}
@@ -202,7 +202,7 @@ jobs:
 
             **GitHub Container Registry**
             ```bash
-            docker pull ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:${{ steps.release.outputs.version }}
+            docker pull ghcr.io/${{ steps.repo.outputs.owner }}/ff-3mf-converter:${{ steps.release.outputs.version }}
             ```
 
             ## Portable executables
@@ -213,15 +213,15 @@ jobs:
 
             **Windows x64**
             ```text
-            Open3MF-${{ steps.release.outputs.version }}-win-x64.zip
+            FF-3MF-Converter-${{ steps.release.outputs.version }}-win-x64.zip
             ```
-            Extract and run `Open3MF.exe`.
+            Extract and run `FF-3MF.exe`.
 
             **Linux x64**
             ```text
-            Open3MF-${{ steps.release.outputs.version }}-linux-x64.tar.gz
+            FF-3MF-Converter-${{ steps.release.outputs.version }}-linux-x64.tar.gz
             ```
-            Extract and run `./open3mf`.
+            Extract and run `./ff3mf`.
 
             The launcher opens the local app in your browser. If port 8080 is
             busy, the next free port is used. Use `--no-browser`, `--port` and
@@ -232,10 +232,10 @@ jobs:
 
             ```bash
             docker run -d \
-              --name open3mf \
+              --name ff3mf \
               -p 8080:8080 \
-              -v open3mf_data:/data \
-              ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:${{ steps.release.outputs.version }}
+              -v ff3mf_data:/data \
+              ghcr.io/${{ steps.repo.outputs.owner }}/ff-3mf-converter:${{ steps.release.outputs.version }}
             ```
 
             Open `http://localhost:8080`.

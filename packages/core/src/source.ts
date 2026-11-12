@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs';
 import { XMLParser } from 'fast-xml-parser';
-import type { SourceAnalysis, SourceFilament } from '@open3mf/shared';
+import type { SourceAnalysis, SourceFilament } from '@ff3mf/shared';
 import { ConversionError } from './errors.js';
 import { DEFAULT_LIMITS, type ConversionLimits } from './limits.js';
 import { readZip, type ZipContents } from './zip.js';

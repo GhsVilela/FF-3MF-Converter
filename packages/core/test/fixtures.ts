@@ -157,7 +157,7 @@ function modelSettings() {
 }
 
 export async function createFixtureAsync(options: FixtureOptions = {}) {
-  const directory = mkdtempSync(path.join(tmpdir(), 'open3mf-test-'));
+  const directory = mkdtempSync(path.join(tmpdir(), 'ff3mf-test-'));
   const file = path.join(directory, 'source.3mf');
   const entries = [
     { name: '[Content_Types].xml', data: contentTypes },

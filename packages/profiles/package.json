@@ -1,5 +1,5 @@
 {
-  "name": "@open3mf/profiles",
+  "name": "@ff3mf/profiles",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -17,6 +17,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@open3mf/shared": "0.1.0"
+    "@ff3mf/shared": "0.1.0"
   }
 }

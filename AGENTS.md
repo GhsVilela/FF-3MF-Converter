@@ -1,11 +1,11 @@
-# AGENTS.md — Open3MF Converter Development Guide
+# AGENTS.md — FF-3MF Converter Development Guide
 
 This file is the primary source of truth for AI agents and contributors working
-on Open3MF Converter. Read it before changing code, profiles or documentation.
+on FF-3MF Converter. Read it before changing code, profiles or documentation.
 
 ## Project overview
 
-Open3MF Converter is a self-hosted web application that converts 3MF projects
+FF-3MF Converter is a self-hosted web application that converts 3MF projects
 from Orca-family slicers and generic 3MF files into Flash Studio-ready projects
 for FlashForge printers.
 
@@ -28,7 +28,7 @@ The application is:
 apps/
   api/        Fastify server, job queue, static file serving
   web/        React UI
-  cli/        open3mf command-line interface
+  cli/        ff3mf command-line interface
 packages/
   core/       3MF ZIP/XML handling, paint codec, conversion engine, validation
   profiles/   target profile loader, catalog types
@@ -61,7 +61,7 @@ profiles/
 ```bash
 npm ci
 npm run build:packages
-npm run build -w @open3mf/api
+npm run build -w @ff3mf/api
 npm run dev
 
 npm run lint
@@ -79,8 +79,8 @@ proxies `/api` to the API.
 ### Docker
 
 ```bash
-docker build -t open3mf:local .
-docker run --rm -p 8080:8080 -v open3mf_data:/data open3mf:local
+docker build -t ff3mf:local .
+docker run --rm -p 8080:8080 -v ff3mf_data:/data ff3mf:local
 ```
 
 ### Portable executables
@@ -98,7 +98,7 @@ The launcher source lives in `packaging/launcher`. The output is written to
 ### CLI
 
 ```bash
-npm run build -w @open3mf/cli
+npm run build -w @ff3mf/cli
 node apps/cli/dist/index.js printers
 node apps/cli/dist/index.js convert model.3mf -p ad5x -o out.3mf
 ```
@@ -206,6 +206,16 @@ Tests must not commit third-party models. Use synthetic fixtures in
 - Do not commit secrets, generated data volumes, uploaded models or converted
   files.
 - Keep changes focused and leave the working tree ready for review.
+
+## UI design direction
+
+- Light-first, industrial interface inspired by the FlashForge palette:
+  blue `#0077B6`, orange `#E96114`, ink, paper and teal.
+- IBM Plex Sans for UI text and IBM Plex Mono for labels, metadata and tables.
+- Use thin rules, square panels, technical labels and a subtle blueprint grid.
+- Avoid glassmorphism, oversized gradient blobs, purple palettes and generic
+  rounded SaaS cards. Keep the interface deliberate and readable.
+- Dark mode is a first-class theme but not the default.
 
 ## Documentation rules
 

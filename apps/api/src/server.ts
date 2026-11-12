@@ -10,14 +10,14 @@ import fastifyHelmet from '@fastify/helmet';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyCors from '@fastify/cors';
 import fastifyCompress from '@fastify/compress';
-import { createConversionSchema } from '@open3mf/shared';
-import { analyze3mf, ConversionError, asConversionError } from '@open3mf/core';
+import { createConversionSchema } from '@ff3mf/shared';
+import { analyze3mf, ConversionError, asConversionError } from '@ff3mf/core';
 import {
   availableMaterials,
   getCatalog,
   loadTargetProfile,
   profileManifest,
-} from '@open3mf/profiles';
+} from '@ff3mf/profiles';
 import { config, MAX_UPLOAD_BYTES } from './config.js';
 import {
   cleanupExpired,
@@ -332,7 +332,7 @@ async function start() {
   await app.listen({ port: config.port, host: config.host });
   app.log.info(
     { port: config.port, dataDir: config.dataDir, profiles: profileManifest().sources },
-    'Open3MF Converter ready',
+    'FF-3MF Converter ready',
   );
 }
 

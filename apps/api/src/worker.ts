@@ -1,7 +1,7 @@
 import { parentPort } from 'node:worker_threads';
-import type { ConversionOptions } from '@open3mf/shared';
-import { asConversionError, convert3mf } from '@open3mf/core';
-import { loadTargetProfile } from '@open3mf/profiles';
+import type { ConversionOptions } from '@ff3mf/shared';
+import { asConversionError, convert3mf } from '@ff3mf/core';
+import { loadTargetProfile } from '@ff3mf/profiles';
 
 interface WorkerRequest {
   inputPath: string;

@@ -6,7 +6,7 @@ import type {
   PrinterSummary,
   ProcessSummary,
   ProfileCatalog,
-} from '@open3mf/shared';
+} from '@ff3mf/shared';
 
 export interface ProcessPreset extends ProcessSummary {
   config: Record<string, unknown>;
@@ -43,7 +43,7 @@ export interface TargetProfile {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const profileCandidates = [
   path.resolve(here, '../../../profiles'), // workspace: packages/profiles/dist
-  path.resolve(here, '../../../../profiles'), // node_modules/@open3mf/profiles/dist (portable)
+  path.resolve(here, '../../../../profiles'), // node_modules/@ff3mf/profiles/dist (portable)
   path.resolve(process.cwd(), 'profiles'), // Docker, portable launcher, repo root
 ];
 

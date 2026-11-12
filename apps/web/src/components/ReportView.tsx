@@ -8,9 +8,9 @@ import {
   Palette,
   RotateCcw,
   Settings2,
-  Sparkles,
+  ExternalLink,
 } from 'lucide-react';
-import type { ChangeEntry, ConversionReport } from '@open3mf/shared';
+import type { ChangeEntry, ConversionReport } from '@ff3mf/shared';
 import { formatBytes, formatDuration, downloadUrl, type JobResponse } from '../lib/api';
 import { useI18n } from '../lib/i18n';
 import { cn } from '../lib/utils';
@@ -43,7 +43,7 @@ function DecisionBadge({ entry }: { entry: ChangeEntry }) {
   return (
     <span
       className={cn(
-        'inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold',
+        'inline-flex border px-2 py-0.5 font-mono text-[10px] font-semibold',
         className,
       )}
     >
@@ -64,13 +64,11 @@ function SummaryCard({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]/55 px-4 py-3',
-        accent && 'border-[var(--accent)]/30 bg-[var(--accent-soft)]',
+        'border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3',
+        accent && 'border-[var(--accent)]/35 bg-[var(--accent-soft)]',
       )}
     >
-      <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
-        {label}
-      </div>
+      <div className="mono-label text-[var(--muted)]">{label}</div>
       <div
         className={cn(
           'mt-1 text-xl font-semibold tracking-tight',
@@ -86,18 +84,18 @@ function SummaryCard({
 function FlashStudioGuide() {
   const { t } = useI18n();
   return (
-    <section className="surface rounded-3xl p-5 sm:p-6">
+    <section className="surface rounded p-5 sm:p-6">
       <div className="flex items-center gap-2">
-        <Sparkles className="size-4 text-[var(--accent)]" />
+        <ExternalLink className="size-4 text-[var(--accent)]" />
         <h2 className="text-base font-semibold">{t('flash.title')}</h2>
       </div>
       <ol className="mt-4 grid gap-2.5 sm:grid-cols-2">
         {[1, 2, 3, 4].map((step) => (
           <li
             key={step}
-            className="flex gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]/45 p-3"
+            className="flex gap-3 border border-[var(--border)] bg-[var(--surface-2)] p-3"
           >
-            <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[11px] font-semibold text-[var(--accent)]">
+            <span className="grid size-6 shrink-0 place-items-center border border-[var(--accent)]/35 bg-[var(--accent-soft)] font-mono text-[10px] font-semibold text-[var(--accent)]">
               {step}
             </span>
             <span className="text-xs leading-5 text-[var(--muted)]">
@@ -106,7 +104,7 @@ function FlashStudioGuide() {
           </li>
         ))}
       </ol>
-      <p className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-[var(--warning)]">
+      <p className="mt-4 rounded-sm border border-[var(--orange)]/30 bg-[var(--orange-soft)] px-3 py-2 text-xs leading-5 text-[var(--warning)]">
         {t('flash.note')}
       </p>
     </section>
@@ -163,15 +161,16 @@ export function ReportView({
 
   return (
     <div className="space-y-4 rise">
-      <section className="surface overflow-hidden rounded-3xl">
-        <div className="border-b border-[var(--border)] bg-[linear-gradient(120deg,var(--accent-soft),transparent_60%)] p-6 sm:p-8">
+      <section className="surface overflow-hidden rounded">
+        <div className="border-b-2 border-l-4 border-b-[var(--border)] border-l-[var(--accent)] bg-[var(--surface)] p-6 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-5">
             <div className="flex gap-4">
-              <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[color-mix(in_srgb,var(--success)_16%,transparent)] text-[var(--success)]">
+              <div className="grid size-12 shrink-0 place-items-center border border-[var(--success)]/35 bg-[color-mix(in_srgb,var(--success)_10%,var(--surface))] text-[var(--success)]">
                 <CheckCircle2 className="size-6" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+                <div className="mono-label text-[var(--success)]">OUTPUT / READY</div>
+                <h2 className="mt-1.5 text-xl font-semibold tracking-tight sm:text-2xl">
                   {t('result.title')}
                 </h2>
                 <p className="mt-1 max-w-xl text-sm leading-6 text-[var(--muted)]">
@@ -182,7 +181,7 @@ export function ReportView({
             <div className="flex flex-wrap gap-2">
               <a
                 href={downloadUrl(job.id)}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:brightness-110"
+                className="focus-ring inline-flex items-center gap-2 bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
               >
                 <Download className="size-4" />
                 {t('result.download')}
@@ -190,7 +189,7 @@ export function ReportView({
               <button
                 type="button"
                 onClick={onNew}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2.5 text-sm font-medium transition hover:border-[var(--accent)]/40"
+                className="focus-ring inline-flex items-center gap-2 border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm font-medium transition hover:border-[var(--accent)]"
               >
                 <RotateCcw className="size-4" />
                 {t('result.new')}
@@ -225,7 +224,7 @@ export function ReportView({
               {report.warnings.map((warning) => (
                 <li
                   key={warning}
-                  className="rounded-xl border border-amber-500/20 bg-amber-500/8 px-3 py-2 text-xs leading-5 text-[var(--warning)]"
+                  className="rounded-sm border border-[var(--orange)]/25 bg-[var(--orange-soft)] px-3 py-2 text-xs leading-5 text-[var(--warning)]"
                 >
                   {warning}
                 </li>
@@ -242,7 +241,7 @@ export function ReportView({
           <button
             type="button"
             onClick={downloadReport}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--muted)] transition hover:text-[var(--text)]"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-sm border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--muted)] transition hover:text-[var(--text)]"
           >
             <FileJson2 className="size-3.5" />
             {t('result.downloadReport')}
@@ -250,7 +249,7 @@ export function ReportView({
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-5 sm:px-6">
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto">
             {tabs.map((entry) => {
               const Icon = entry.icon;
               return (
@@ -259,7 +258,7 @@ export function ReportView({
                   type="button"
                   onClick={() => setTab(entry.id)}
                   className={cn(
-                    'focus-ring inline-flex items-center gap-2 rounded-t-lg border-b-2 px-3 py-2.5 text-xs font-medium transition',
+                    'focus-ring inline-flex items-center gap-2 border-b-2 px-3 py-2.5 font-mono text-[10px] font-medium uppercase tracking-wider transition',
                     tab === entry.id
                       ? 'border-[var(--accent)] text-[var(--text)]'
                       : 'border-transparent text-[var(--muted)] hover:text-[var(--text)]',
@@ -283,7 +282,7 @@ export function ReportView({
                     type="button"
                     onClick={() => setFilter(entry.id)}
                     className={cn(
-                      'focus-ring rounded-full border px-2.5 py-1 text-[10px] font-medium transition',
+                      'focus-ring border px-2.5 py-1 font-mono text-[10px] font-medium transition',
                       filter === entry.id
                         ? 'border-[var(--accent)]/40 bg-[var(--accent-soft)] text-[var(--accent)]'
                         : 'border-[var(--border)] text-[var(--muted)] hover:text-[var(--text)]',
@@ -296,9 +295,9 @@ export function ReportView({
                   {filtered.length} / {report.settings.length}
                 </span>
               </div>
-              <div className="max-h-[520px] overflow-auto rounded-2xl border border-[var(--border)] scroll-thin">
+              <div className="max-h-[520px] overflow-auto rounded-sm border border-[var(--border)] scroll-thin">
                 <table className="w-full min-w-[760px] border-collapse text-left text-xs">
-                  <thead className="sticky top-0 z-10 bg-[var(--surface-2)] text-[10px] uppercase tracking-wider text-[var(--muted)]">
+                  <thead className="sticky top-0 z-10 bg-[var(--surface-2)] font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">
                     <tr>
                       <th className="px-3 py-2.5 font-medium">{t('table.key')}</th>
                       <th className="px-3 py-2.5 font-medium">{t('table.decision')}</th>
@@ -311,7 +310,7 @@ export function ReportView({
                     {filtered.map((entry, index) => (
                       <tr
                         key={`${entry.key}-${index}`}
-                        className="border-t border-[var(--border)] align-top hover:bg-[var(--surface-2)]/45"
+                        className="border-t border-[var(--border)] align-top hover:bg-[var(--surface-2)]"
                       >
                         <td
                           className="max-w-[180px] truncate px-3 py-2 font-mono text-[11px]"
@@ -351,9 +350,9 @@ export function ReportView({
           )}
 
           {tab === 'filaments' && (
-            <div className="overflow-auto rounded-2xl border border-[var(--border)] scroll-thin">
+            <div className="overflow-auto rounded-sm border border-[var(--border)] scroll-thin">
               <table className="w-full min-w-[700px] text-left text-xs">
-                <thead className="bg-[var(--surface-2)] text-[10px] uppercase tracking-wider text-[var(--muted)]">
+                <thead className="bg-[var(--surface-2)] font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">
                   <tr>
                     <th className="px-3 py-2.5 font-medium">{t('filaments.source')}</th>
                     <th className="px-3 py-2.5 font-medium">{t('filaments.colour')}</th>
@@ -381,7 +380,7 @@ export function ReportView({
                         <div className="flex items-center gap-2">
                           <span className="font-medium">Slot {filament.targetSlot}</span>
                           {filament.merged && (
-                            <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-medium text-[var(--warning)]">
+                            <span className="border border-[var(--orange)]/35 bg-[var(--orange-soft)] px-1.5 py-0.5 font-mono text-[9px] font-medium text-[var(--warning)]">
                               {t('filaments.merged')}
                             </span>
                           )}
@@ -407,7 +406,7 @@ export function ReportView({
               {report.plates.map((plate) => (
                 <div
                   key={plate.plate}
-                  className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]/50 p-4"
+                  className="rounded-sm border border-[var(--border)] bg-[var(--surface-2)] p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm font-semibold">
@@ -416,7 +415,7 @@ export function ReportView({
                     </div>
                     <span
                       className={cn(
-                        'rounded-full border px-2 py-0.5 text-[10px] font-medium',
+                        'border px-2 py-0.5 font-mono text-[10px] font-medium',
                         plate.fits ? 'badge-kept' : 'badge-dropped',
                       )}
                     >

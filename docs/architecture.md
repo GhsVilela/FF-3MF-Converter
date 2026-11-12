@@ -1,6 +1,6 @@
 # Architecture
 
-Open3MF Converter is a stateless web application with a pure TypeScript
+FF-3MF Converter is a stateless web application with a pure TypeScript
 conversion core, a Fastify API and a React UI.
 
 ```
@@ -64,7 +64,7 @@ resolved relative to the package, with `PROFILES_DIR` as an override.
 
 ### `apps/cli`
 
-`open3mf` wraps the core for local and automated use. It supports printer
+`ff3mf` wraps the core for local and automated use. It supports printer
 listing, analysis and conversion with JSON reports.
 
 ## Data flow and trust boundaries

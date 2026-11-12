@@ -61,7 +61,7 @@ jobs:
 
   e2e:
     name: Browser end-to-end
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [quality]
     steps:
       - name: Checkout
@@ -115,25 +115,25 @@ jobs:
           VERSION="$(node -p "require('./package.json').version")"
           cd build/artifacts
           sha256sum -c SHA256SUMS.txt
-          python3 -c "import zipfile; z=zipfile.ZipFile('Open3MF-${VERSION}-win-x64.zip'); assert z.testzip() is None; assert z.read('Open3MF-${VERSION}-win-x64/Open3MF.exe')[:2] == b'MZ'; print('Windows zip and PE launcher OK')"
-          file "Open3MF-${VERSION}-win-x64.zip"
-          tar -tzf "Open3MF-${VERSION}-linux-x64.tar.gz" >/dev/null
+          python3 -c "import zipfile; z=zipfile.ZipFile('FF-3MF-Converter-${VERSION}-win-x64.zip'); assert z.testzip() is None; assert z.read('FF-3MF-Converter-${VERSION}-win-x64/FF-3MF.exe')[:2] == b'MZ'; print('Windows zip and PE launcher OK')"
+          file "FF-3MF-Converter-${VERSION}-win-x64.zip"
+          tar -tzf "FF-3MF-Converter-${VERSION}-linux-x64.tar.gz" >/dev/null
 
       - name: Smoke-test Linux executable
         run: |
           VERSION="$(node -p "require('./package.json').version")"
-          mkdir -p /tmp/open3mf-portable /tmp/open3mf-data
-          tar -xzf "build/artifacts/Open3MF-${VERSION}-linux-x64.tar.gz" -C /tmp/open3mf-portable
-          cd "/tmp/open3mf-portable/Open3MF-${VERSION}-linux-x64"
-          ./open3mf --no-browser --port 8098 --data-dir /tmp/open3mf-data >/tmp/open3mf-portable.log 2>&1 &
-          echo $! >/tmp/open3mf-portable.pid
+          mkdir -p /tmp/ff3mf-portable /tmp/ff3mf-data
+          tar -xzf "build/artifacts/FF-3MF-Converter-${VERSION}-linux-x64.tar.gz" -C /tmp/ff3mf-portable
+          cd "/tmp/ff3mf-portable/FF-3MF-Converter-${VERSION}-linux-x64"
+          ./ff3mf --no-browser --port 8098 --data-dir /tmp/ff3mf-data >/tmp/ff3mf-portable.log 2>&1 &
+          echo $! >/tmp/ff3mf-portable.pid
           for i in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:8098/api/health >/dev/null; then break; fi
             sleep 1
           done
           curl -fsS http://127.0.0.1:8098/api/health
           curl -fsS -o /dev/null http://127.0.0.1:8098/
-          kill "$(cat /tmp/open3mf-portable.pid)"
+          kill "$(cat /tmp/ff3mf-portable.pid)"
 
   docker:
     name: Docker build test
@@ -151,7 +151,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: open3mf-converter:test
+          tags: ff-3mf-converter:test
           build-args: |
             VERSION=ci
             GIT_SHA=${{ github.sha }}

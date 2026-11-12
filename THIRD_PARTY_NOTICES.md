@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-Open3MF Converter is licensed under the GNU Affero General Public License,
+FF-3MF Converter is licensed under the GNU Affero General Public License,
 version 3 or later (AGPL-3.0-or-later). This file records the third-party
 components and data that are distributed with the project.
 
@@ -65,4 +65,4 @@ summary, not a replacement for the license files shipped with each dependency.
 FlashForge, Adventurer, Creator and Guider are trademarks of their respective
 owners. Bambu Lab, Bambu Studio, MakerWorld, PrusaSlicer, Prusa Research, Cura,
 UltiMaker, Creality, Anycubic and Snapmaker are trademarks of their respective
-owners. Open3MF Converter is not affiliated with or endorsed by any of them.
+owners. FF-3MF Converter is not affiliated with or endorsed by any of them.

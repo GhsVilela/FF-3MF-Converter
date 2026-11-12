@@ -4,7 +4,7 @@ import { readZip } from '../src/zip.js';
 import { convert3mf } from '../src/convert.js';
 import { ConversionError } from '../src/errors.js';
 import { createFixtureAsync } from './fixtures.js';
-import { loadTargetProfile } from '@open3mf/profiles';
+import { loadTargetProfile } from '@ff3mf/profiles';
 
 const cleanups: Array<() => void> = [];
 

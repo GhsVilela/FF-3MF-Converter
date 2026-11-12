@@ -1,10 +1,10 @@
 {
-  "name": "@open3mf/cli",
+  "name": "@ff3mf/cli",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "bin": {
-    "open3mf": "./dist/index.js"
+    "ff3mf": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "scripts": {
@@ -13,9 +13,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@open3mf/core": "0.1.0",
-    "@open3mf/profiles": "0.1.0",
-    "@open3mf/shared": "0.1.0",
+    "@ff3mf/core": "0.1.0",
+    "@ff3mf/profiles": "0.1.0",
+    "@ff3mf/shared": "0.1.0",
     "commander": "^13.1.0"
   }
 }

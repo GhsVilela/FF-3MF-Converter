@@ -2,14 +2,14 @@
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { Command } from 'commander';
-import { analyze3mf, convert3mf, ConversionError } from '@open3mf/core';
-import { getCatalog, loadTargetProfile } from '@open3mf/profiles';
-import type { ConversionOptions } from '@open3mf/shared';
+import { analyze3mf, convert3mf, ConversionError } from '@ff3mf/core';
+import { getCatalog, loadTargetProfile } from '@ff3mf/profiles';
+import type { ConversionOptions } from '@ff3mf/shared';
 
 const program = new Command();
 
 program
-  .name('open3mf')
+  .name('ff3mf')
   .description('Convert 3MF projects into FlashForge Flash Studio projects')
   .version('0.1.0');
 
@@ -42,7 +42,7 @@ program
 program
   .command('convert')
   .argument('<input>', 'input .3mf file')
-  .requiredOption('-p, --printer <id>', 'target printer id (see "open3mf printers")')
+  .requiredOption('-p, --printer <id>', 'target printer id (see "ff3mf printers")')
   .option('-n, --nozzle <mm>', 'target nozzle diameter', '0.4')
   .option('--process <name>', 'target process preset name')
   .option('-o, --out <file>', 'output .3mf path')

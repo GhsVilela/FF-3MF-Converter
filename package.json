@@ -1,5 +1,5 @@
 {
-  "name": "open3mf-converter",
+  "name": "ff-3mf-converter",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,15 +13,15 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w @open3mf/shared && npm run build -w @open3mf/profiles && npm run build -w @open3mf/core && npm run build -w @open3mf/api && npm run build -w @open3mf/cli && npm run build -w @open3mf/web",
-    "build:packages": "npm run build -w @open3mf/shared && npm run build -w @open3mf/profiles && npm run build -w @open3mf/core",
+    "build": "npm run build -w @ff3mf/shared && npm run build -w @ff3mf/profiles && npm run build -w @ff3mf/core && npm run build -w @ff3mf/api && npm run build -w @ff3mf/cli && npm run build -w @ff3mf/web",
+    "build:packages": "npm run build -w @ff3mf/shared && npm run build -w @ff3mf/profiles && npm run build -w @ff3mf/core",
     "build:portable": "node scripts/build-portable.mjs",
-    "dev": "npm run build:packages && npm run build -w @open3mf/api && concurrently -k -n api,web \"node apps/api/dist/server.js\" \"npm run dev -w @open3mf/web\"",
+    "dev": "npm run build:packages && npm run build -w @ff3mf/api && concurrently -k -n api,web \"node apps/api/dist/server.js\" \"npm run dev -w @ff3mf/web\"",
     "start": "node apps/api/dist/server.js",
     "test": "npm run build:packages && vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "typecheck": "npm run build:packages && npm run typecheck -w @open3mf/shared && npm run typecheck -w @open3mf/profiles && npm run typecheck -w @open3mf/core && npm run typecheck -w @open3mf/api && npm run typecheck -w @open3mf/cli && npm run typecheck -w @open3mf/web",
+    "typecheck": "npm run build:packages && npm run typecheck -w @ff3mf/shared && npm run typecheck -w @ff3mf/profiles && npm run typecheck -w @ff3mf/core && npm run typecheck -w @ff3mf/api && npm run typecheck -w @ff3mf/cli && npm run typecheck -w @ff3mf/web",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

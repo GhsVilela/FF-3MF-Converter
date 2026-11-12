@@ -1,8 +1,8 @@
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-import type { ConversionOptions, ConversionReport } from '@open3mf/shared';
-import { ConversionError } from '@open3mf/core';
-import { loadTargetProfile } from '@open3mf/profiles';
+import type { ConversionOptions, ConversionReport } from '@ff3mf/shared';
+import { ConversionError } from '@ff3mf/core';
+import { loadTargetProfile } from '@ff3mf/profiles';
 import { config } from './config.js';
 import {
   conversionDir,

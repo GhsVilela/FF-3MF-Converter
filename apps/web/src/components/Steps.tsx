@@ -7,40 +7,41 @@ const stepKeys = ['steps.upload', 'steps.configure', 'steps.convert', 'steps.dow
 export function Steps({ current }: { current: number }) {
   const { t } = useI18n();
   return (
-    <ol className="flex items-center gap-2 sm:gap-3" aria-label="Conversion progress">
+    <ol className="grid grid-cols-4 overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
       {stepKeys.map((key, index) => {
         const done = index < current;
         const active = index === current;
         return (
-          <li key={key} className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-            <div
+          <li
+            key={key}
+            className={cn(
+              'relative flex min-w-0 items-center gap-2 border-r border-[var(--border)] px-2.5 py-2.5 last:border-r-0 sm:gap-3 sm:px-4 sm:py-3',
+              active && 'bg-[var(--accent-soft)]',
+            )}
+            aria-current={active ? 'step' : undefined}
+          >
+            {active && <span className="absolute inset-x-0 top-0 h-[2px] bg-[var(--accent)]" />}
+            <span
               className={cn(
-                'step-dot grid size-7 shrink-0 place-items-center rounded-full text-[11px] font-semibold',
+                'step-dot grid size-6 shrink-0 place-items-center rounded-sm font-mono text-[10px] font-medium',
                 active && 'step-dot-active',
                 done && 'step-dot-done',
               )}
-              aria-current={active ? 'step' : undefined}
             >
-              {done ? <Check className="size-3.5" strokeWidth={3} /> : index + 1}
-            </div>
+              {done ? (
+                <Check className="size-3" strokeWidth={3} />
+              ) : (
+                String(index + 1).padStart(2, '0')
+              )}
+            </span>
             <span
               className={cn(
-                'hidden truncate text-xs font-medium text-[var(--muted)] sm:block',
-                active && 'text-[var(--text)]',
+                'mono-label truncate text-[9px] text-[var(--muted)] sm:text-[10px]',
+                (active || done) && 'text-[var(--text)]',
               )}
             >
               {t(key)}
             </span>
-            {index < stepKeys.length - 1 && (
-              <div
-                className={cn(
-                  'h-px min-w-2 flex-1',
-                  done
-                    ? 'bg-[color-mix(in_srgb,var(--success)_45%,transparent)]'
-                    : 'bg-[var(--border)]',
-                )}
-              />
-            )}
           </li>
         );
       })}

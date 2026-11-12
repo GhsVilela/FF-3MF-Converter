@@ -1,6 +1,6 @@
 # How conversion works
 
-Open3MF does not slice. It rewrites the project layer of a 3MF so Flash Studio
+FF-3MF does not slice. It rewrites the project layer of a 3MF so Flash Studio
 opens it with a FlashForge printer, process and filament profile, while keeping
 the author's model and print intent.
 
@@ -124,7 +124,7 @@ overrides rather than system defaults. Its layout is:
 [N+1] printer overrides
 ```
 
-Open3MF recomputes it by comparing the final configuration with the target
+FF-3MF recomputes it by comparing the final configuration with the target
 process, filament and machine baselines. Without this step, settings can be
 silently reset when the project is opened or sliced.
 

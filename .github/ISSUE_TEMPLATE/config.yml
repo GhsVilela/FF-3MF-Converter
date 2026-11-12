@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security report
-    url: https://github.com/GhsVilela/Open3MFConverter/security/advisories/new
+    url: https://github.com/GhsVilela/FF-3MF-Converter/security/advisories/new
     about: Report a vulnerability privately.
   - name: Documentation
-    url: https://github.com/GhsVilela/Open3MFConverter/tree/main/docs
+    url: https://github.com/GhsVilela/FF-3MF-Converter/tree/main/docs
     about: Architecture, conversion rules, deployment and troubleshooting.

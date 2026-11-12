@@ -71,7 +71,9 @@ COPY --from=build /app/apps/web/dist apps/web/dist
 COPY profiles profiles
 # The UI is static at runtime; its build-only packages are not needed in the image.
 RUN rm -rf \
-  node_modules/@open3mf/web \
+  node_modules/@ff3mf/web \
+  node_modules/@fontsource \
+  node_modules/@fontsource-variable \
   node_modules/@playwright \
   node_modules/@tailwindcss \
   node_modules/@vitejs \
@@ -83,7 +85,7 @@ RUN rm -rf \
   node_modules/clsx \
   node_modules/vite \
   && chmod +x apps/cli/dist/index.js \
-  && ln -s /app/apps/cli/dist/index.js /usr/local/bin/open3mf
+  && ln -s /app/apps/cli/dist/index.js /usr/local/bin/ff3mf
 
 RUN mkdir -p /data && chown -R node:node /data
 USER node
@@ -97,12 +99,12 @@ ENV APP_VERSION=${VERSION} \
     GIT_SHA=${GIT_SHA} \
     BUILD_DATE=${BUILD_DATE}
 
-LABEL org.opencontainers.image.title="Open3MF Converter" \
+LABEL org.opencontainers.image.title="FF-3MF Converter" \
       org.opencontainers.image.description="Self-hosted 3MF project converter for FlashForge printers" \
-      org.opencontainers.image.vendor="Open3MF" \
-      org.opencontainers.image.url="https://github.com/GhsVilela/Open3MFConverter" \
-      org.opencontainers.image.source="https://github.com/GhsVilela/Open3MFConverter" \
-      org.opencontainers.image.documentation="https://github.com/GhsVilela/Open3MFConverter/blob/main/README.md" \
+      org.opencontainers.image.vendor="FF-3MF" \
+      org.opencontainers.image.url="https://github.com/GhsVilela/FF-3MF-Converter" \
+      org.opencontainers.image.source="https://github.com/GhsVilela/FF-3MF-Converter" \
+      org.opencontainers.image.documentation="https://github.com/GhsVilela/FF-3MF-Converter/blob/main/README.md" \
       org.opencontainers.image.licenses="AGPL-3.0-or-later" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \

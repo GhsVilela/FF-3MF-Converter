@@ -4,7 +4,7 @@ import type {
   PrinterSummary,
   ProfileSource,
   SourceAnalysis,
-} from '@open3mf/shared';
+} from '@ff3mf/shared';
 
 export interface PrinterWithMaterials extends PrinterSummary {
   materials: string[];
@@ -54,12 +54,12 @@ export function apiBase(): string {
 }
 
 export function getToken(): string {
-  return sessionStorage.getItem('open3mf-token') ?? '';
+  return sessionStorage.getItem('ff3mf-token') ?? '';
 }
 
 export function setToken(token: string): void {
-  if (token) sessionStorage.setItem('open3mf-token', token);
-  else sessionStorage.removeItem('open3mf-token');
+  if (token) sessionStorage.setItem('ff3mf-token', token);
+  else sessionStorage.removeItem('ff3mf-token');
 }
 
 function authHeaders(): Record<string, string> {

@@ -5,7 +5,7 @@
 The API is running but the Vite build is missing. Run:
 
 ```bash
-npm run build -w @open3mf/web
+npm run build -w @ff3mf/web
 ```
 
 In Docker this is handled by the image build. Check that `WEB_DIR` points to the
@@ -29,7 +29,7 @@ Drag-and-drop can import only the geometry and ignore the project settings.
 
 If it still loads geometry only:
 
-- Confirm the file was produced by Open3MF, not the original source.
+- Confirm the file was produced by FF-3MF, not the original source.
 - Check the conversion report for warnings.
 - Try a newer Flash Studio build, especially for Creator 5.
 - Open an issue with the source file type, printer and the report JSON.
@@ -74,7 +74,7 @@ use a reverse proxy, make sure it forwards the `Authorization` header.
 Check:
 
 ```bash
-docker logs open3mf
+docker logs ff3mf
 curl http://localhost:8080/api/health
 ```
 
@@ -84,7 +84,7 @@ health check or use the image's default `PORT=8080`.
 ## Portable executable will not start
 
 - On Linux, make sure the extracted launcher is executable:
-  `chmod +x open3mf`.
+  `chmod +x ff3mf`.
 - If the browser does not open, use `--no-browser` and open the printed URL
   manually.
 - If port 8080 is busy, the launcher selects the next free port. Pass `--port`
@@ -94,8 +94,8 @@ health check or use the image's default `PORT=8080`.
 
 ## Portable data location
 
-- Windows: `%LOCALAPPDATA%\Open3MF\data`
-- Linux: `$XDG_DATA_HOME/open3mf` or `~/.local/share/open3mf`
+- Windows: `%LOCALAPPDATA%\FF-3MF\data`
+- Linux: `$XDG_DATA_HOME/ff3mf` or `~/.local/share/ff3mf`
 
 Use `--data-dir` to choose another folder. Uploaded files and converted outputs
 expire according to `JOB_TTL_MINUTES`.
