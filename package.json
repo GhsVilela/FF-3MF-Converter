@@ -29,7 +29,7 @@
     "profiles:verify": "node scripts/verify-profiles.mjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.0",
     "@tailwindcss/vite": "^4.1.0",
     "@types/node": "^26.6.6",
@@ -39,7 +39,7 @@
     "@types/yazl": "^2.4.4",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^10.0.7",
-    "eslint": "^9.17.0",
+    "eslint": "^10.14.0",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.19.2",

@@ -91,12 +91,9 @@ function computeWorldBounds(
     for (const component of object.components) {
       if (!component.objectId) continue;
       const path = component.path?.replace(/^\/+/, '');
-      let child: Bounds | null = null;
-      if (path) {
-        child = modelBoundsByPath.get(path)?.get(component.objectId) ?? null;
-      } else {
-        child = resolveRootObject(component.objectId, seen);
-      }
+      const child = path
+        ? (modelBoundsByPath.get(path)?.get(component.objectId) ?? null)
+        : resolveRootObject(component.objectId, seen);
       if (child) {
         const shifted = shiftBounds(child, transformTranslation(component.transform));
         combined = mergeBounds(combined, shifted);
