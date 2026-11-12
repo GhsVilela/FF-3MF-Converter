@@ -85,6 +85,7 @@ export interface ConversionOptions {
   processName?: string;
   colorMapping?: Record<string, number>;
   preserveTemperatures?: boolean;
+  keepAllColors?: boolean;
   layout?: LayoutMode;
 }
 
@@ -167,8 +168,9 @@ export const conversionOptionsSchema = z.object({
   printerId: z.string().min(1),
   nozzle: z.string().regex(/^\d+(\.\d+)?$/, 'Nozzle must be a decimal diameter such as 0.4'),
   processName: z.string().min(1).optional(),
-  colorMapping: z.record(z.string(), z.number().int().min(1).max(16)).optional(),
+  colorMapping: z.record(z.string(), z.number().int().min(1)).optional(),
   preserveTemperatures: z.boolean().optional(),
+  keepAllColors: z.boolean().optional(),
   layout: z.enum(['center', 'keep', 'scale']).optional(),
 });
 

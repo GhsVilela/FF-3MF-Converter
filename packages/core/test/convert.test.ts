@@ -3,6 +3,7 @@ import path from 'node:path';
 import { readZip } from '../src/zip.js';
 import { convert3mf } from '../src/convert.js';
 import { ConversionError } from '../src/errors.js';
+import { encodePaintState } from '../src/paint.js';
 import { createFixtureAsync } from './fixtures.js';
 import { loadTargetProfile } from '@ff3mf/profiles';
 
@@ -125,6 +126,39 @@ describe('3MF conversion', () => {
     expect(config.filament_colour).toHaveLength(4);
     expect(config.different_settings_to_system).toHaveLength(6);
     expect(config.filament_map_mode).toBe('Auto For Flush');
+  });
+
+  it('keeps all source colours when requested for a four-toolhead printer', async () => {
+    const states = [1, 2, 3, 4, 5, 6];
+    const fixture = await createFixtureAsync({
+      paintStates: states.map((state) => encodePaintState(state)),
+    });
+    cleanups.push(fixture.cleanup);
+    const output = path.join(fixture.directory, 'out.3mf');
+    const profile = loadTargetProfile('creator-5', '0.4');
+    const result = await convert3mf(fixture.file, output, profile, {
+      printerId: 'creator-5',
+      nozzle: '0.4',
+      preserveTemperatures: true,
+      keepAllColors: true,
+      layout: 'center',
+    });
+
+    expect(result.report.filaments).toHaveLength(6);
+    expect(result.report.warnings.join(' ')).toContain('Keeping all 6 source colours');
+
+    const contents = await readZip(output);
+    const config = JSON.parse(
+      contents.files.get('Metadata/project_settings.config')!.toString('utf8'),
+    );
+    expect(config.filament_colour).toHaveLength(6);
+    expect(config.filament_settings_id).toHaveLength(6);
+    expect(config.different_settings_to_system).toHaveLength(8);
+
+    const part = contents.files.get('3D/Objects/part.model')!.toString('utf8');
+    expect(new Set(paintValues(part))).toEqual(
+      new Set(states.map((state) => encodePaintState(state))),
+    );
   });
 
   it('generates model settings for a bare geometry 3MF', async () => {

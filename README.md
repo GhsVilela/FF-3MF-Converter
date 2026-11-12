@@ -52,6 +52,9 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
 - **Multicolour aware.** Painted triangles, per-object extruders and filament
   slots are remapped for the AD5X IFS and the Creator 5 toolheads. Single-colour
   printers get an explicit merge/select flow.
+- **Optional colour preservation.** Projects with more colours than the target
+  slots can keep one filament slot per source colour instead of merging, for
+  manual mapping in Flash Studio.
 - **Multi-plate projects.** Plates are preserved. Single-plate projects can be
   centred on the target bed; models are never scaled automatically.
 - **Transparent report.** Every transferred setting is listed as kept, translated,
@@ -300,6 +303,8 @@ ff3mf convert model.3mf -p ad5m -o model_ad5m.3mf --report report.json
 ```
 
 Run `ff3mf convert --help` for layout, colour mapping and temperature options.
+Use `--keep-all-colors` to keep one filament slot per used source colour even
+when the printer exposes fewer colour slots; verify the mapping in Flash Studio.
 
 ## API
 

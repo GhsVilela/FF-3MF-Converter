@@ -71,12 +71,14 @@ function defaultNozzle(printer: PrinterWithMaterials, analysis?: SourceAnalysis)
 function defaultMapping(
   analysis: SourceAnalysis | undefined,
   printer: PrinterWithMaterials | undefined,
+  keepAllColors = false,
 ): Record<string, number> {
   if (!analysis || !printer) return {};
   const used = analysis.colors.filter((color) => color.used);
   const result: Record<string, number> = {};
   used.forEach((color, index) => {
-    result[String(color.slot)] = printer.maxColors === 1 ? 1 : (index % printer.maxColors) + 1;
+    result[String(color.slot)] =
+      printer.maxColors === 1 ? 1 : keepAllColors ? index + 1 : (index % printer.maxColors) + 1;
   });
   return result;
 }
@@ -113,6 +115,7 @@ export default function App() {
   const [selectedNozzle, setSelectedNozzle] = useState('0.4');
   const [selectedProcess, setSelectedProcess] = useState('');
   const [colorMapping, setColorMapping] = useState<Record<string, number>>({});
+  const [keepAllColors, setKeepAllColors] = useState(false);
   const [preserveTemperatures, setPreserveTemperatures] = useState(true);
   const [layout, setLayout] = useState<NonNullable<ConversionOptions['layout']>>('center');
   const [job, setJob] = useState<JobResponse>();
@@ -159,10 +162,12 @@ export default function App() {
     const full = printers.find((entry) => entry.id === printer.id);
     if (!full) return;
     const nozzle = defaultNozzle(full, analysis);
+    const keepAll = keepAllColors && full.maxColors > 1;
     setSelectedPrinterId(full.id);
     setSelectedNozzle(nozzle);
     setSelectedProcess('');
-    setColorMapping(defaultMapping(analysis, full));
+    setKeepAllColors(keepAll);
+    setColorMapping(defaultMapping(analysis, full, keepAll));
   };
 
   const handleFile = async (file: File) => {
@@ -191,6 +196,7 @@ export default function App() {
       const response = await uploadFile(file, setUploadProgress);
       setUploadId(response.uploadId);
       setAnalysis(response.analysis);
+      setKeepAllColors(false);
       const printer = defaultPrinter(response.analysis, availablePrinters);
       if (printer) {
         const nozzle = defaultNozzle(printer, response.analysis);
@@ -226,6 +232,7 @@ export default function App() {
         processName: selectedProcess || undefined,
         colorMapping,
         preserveTemperatures,
+        keepAllColors,
         layout,
       });
       setJob(current);
@@ -265,6 +272,12 @@ export default function App() {
     setError(undefined);
     setSelectedProcess('');
     setColorMapping({});
+    setKeepAllColors(false);
+  };
+
+  const handleKeepAllColors = (enabled: boolean) => {
+    setKeepAllColors(enabled);
+    setColorMapping(defaultMapping(analysis, selectedPrinter, enabled));
   };
 
   const handleAuth = async (token: string) => {
@@ -661,6 +674,8 @@ export default function App() {
                   printer={selectedPrinter}
                   analysis={analysis}
                   mapping={colorMapping}
+                  keepAllColors={keepAllColors}
+                  onKeepAllColorsChange={handleKeepAllColors}
                   onChange={setColorMapping}
                 />
               </div>

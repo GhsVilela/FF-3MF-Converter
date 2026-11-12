@@ -82,12 +82,17 @@ Content-Type: application/json
   "processName": "0.20mm Standard @FF AD5X",
   "colorMapping": { "1": 1, "2": 2, "3": 3, "4": 4 },
   "preserveTemperatures": true,
+  "keepAllColors": false,
   "layout": "center"
 }
 ```
 
 `processName` is optional; without it the API picks the process closest to the
-source layer height. `layout` is `center`, `keep` or `scale`.
+source layer height. `layout` is `center`, `keep` or `scale`. Set
+`keepAllColors` to `true` to write one filament slot per used source colour
+instead of merging into the printer's available colour slots. The output may
+then contain more filament slots than the printer has toolheads; verify the
+mapping in Flash Studio before slicing.
 
 Response `202`:
 

@@ -81,6 +81,11 @@ const en = {
   'configure.colors': 'Colour mapping',
   'configure.colorsHelp':
     'Map the source filaments to the target slots. Unused filaments are removed.',
+  'configure.keepAllColors': 'Keep all source colours',
+  'configure.keepAllColorsHelp':
+    'Create one filament slot per source colour instead of merging into the printer’s {max} target slots.',
+  'configure.keepAllColorsWarning':
+    '{printer} exposes {max} target slots. Keeping all {count} source colours may create more filament slots than the printer can use. Verify the tool and filament mapping in Flash Studio before slicing.',
   'configure.sourceSlot': 'Source',
   'configure.targetSlot': 'Target slot',
   'configure.singleColor':
@@ -258,6 +263,11 @@ const ptBR: Record<TranslationKey, string> = {
   'configure.colors': 'Mapeamento de cores',
   'configure.colorsHelp':
     'Mapeie os filamentos de origem para os slots de destino. Filamentos não usados são removidos.',
+  'configure.keepAllColors': 'Manter todas as cores de origem',
+  'configure.keepAllColorsHelp':
+    'Crie um slot de filamento por cor de origem em vez de mesclar nos {max} slots de destino da impressora.',
+  'configure.keepAllColorsWarning':
+    '{printer} expõe {max} slots de destino. Manter todas as {count} cores de origem pode criar mais slots de filamento do que a impressora consegue usar. Verifique o mapeamento de ferramentas e filamentos no Flash Studio antes de fatiar.',
   'configure.sourceSlot': 'Origem',
   'configure.targetSlot': 'Slot de destino',
   'configure.singleColor':

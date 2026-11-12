@@ -48,6 +48,10 @@ program
   .option('-o, --out <file>', 'output .3mf path')
   .option('--layout <mode>', 'center, keep or scale', 'center')
   .option('--no-preserve-temps', 'use target filament temperatures instead of the author values')
+  .option(
+    '--keep-all-colors',
+    'keep every source colour slot instead of merging into the printer colour slots',
+  )
   .option('--mapping <pairs>', 'source:target slot mapping, e.g. 1:2,2:1')
   .option('--report <file>', 'write the JSON conversion report')
   .option('--json', 'print the full JSON report')
@@ -106,6 +110,7 @@ program
         processName: profile.process.name,
         colorMapping: mapping,
         preserveTemperatures: options.preserveTemps !== false,
+        keepAllColors: options.keepAllColors === true,
         layout: layout as ConversionOptions['layout'],
       };
 

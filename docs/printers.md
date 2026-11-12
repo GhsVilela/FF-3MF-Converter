@@ -60,6 +60,10 @@ report.
 
 If a project uses more colours than the target supports, the UI shows the
 mapping and the report records every merge. Review the result before slicing.
+The **Keep all source colours** option writes one filament slot per used source
+colour instead of merging into the printer's slots. The target printer may then
+have fewer toolhead slots than the project has filaments; verify the mapping in
+Flash Studio before slicing.
 
 ## Manual validation
 

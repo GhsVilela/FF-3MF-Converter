@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Added an optional `keepAllColors` conversion mode. When a source project uses
+  more colours than the target printer exposes, it keeps one filament slot per
+  used source colour instead of merging into the printer slots. Available in the
+  UI, the API and the CLI (`--keep-all-colors`).
+
 ## 0.1.0
 
 Initial release under the **FF-3MF Converter** name.

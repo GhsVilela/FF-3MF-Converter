@@ -104,7 +104,10 @@ renamed to the Orca attribute names and copied unchanged.
 
 For a single-colour printer, all painted states collapse to slot 1. For a
 four-colour printer, up to four used source slots are preserved in order; extra
-slots are merged by the selected mapping.
+slots are merged by the selected mapping. If `keepAllColors` is enabled, the
+converter keeps one filament slot per used source colour instead. This can
+produce more filament slots than the target printer has toolheads, so the report
+adds a warning and the mapping must be verified in Flash Studio before slicing.
 
 ### 6. Plates and layout
 

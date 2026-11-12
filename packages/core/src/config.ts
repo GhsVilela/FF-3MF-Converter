@@ -377,10 +377,13 @@ function buildFilamentMapping(
   source: LoadedSource,
   maxColors: number,
   requested: Record<string, number> | undefined,
+  keepAllColors: boolean,
   settings: ChangeEntry[],
   warnings: string[],
 ): { mapping: FilamentMapping[]; paintMap: Map<number, number>; targetSlotCount: number } {
   const sourceSlots = source.usedSlots.length > 0 ? source.usedSlots : [1];
+  const keepAllSlots = keepAllColors && maxColors > 1 && sourceSlots.length > maxColors;
+  const targetSlotLimit = keepAllSlots ? Math.max(maxColors, sourceSlots.length) : maxColors;
   const colorOf = (slot: number) =>
     source.sourceFilaments.find((filament) => filament.slot === slot)?.color ?? '#F2754E';
   const typeOf = (slot: number) =>
@@ -398,12 +401,12 @@ function buildFilamentMapping(
       targetSlot = requested[String(sourceSlot)] ?? 1;
     } else if (maxColors === 1) {
       targetSlot = 1;
-    } else if (sourceSlots.length <= maxColors) {
+    } else if (keepAllSlots || sourceSlots.length <= maxColors) {
       targetSlot = index + 1;
     } else {
       targetSlot = (index % maxColors) + 1;
     }
-    targetSlot = clamp(Math.trunc(targetSlot), 1, maxColors);
+    targetSlot = clamp(Math.trunc(targetSlot), 1, targetSlotLimit);
     paintMap.set(sourceSlot, targetSlot);
     mapping.push({
       sourceSlot,
@@ -432,7 +435,9 @@ function buildFilamentMapping(
         `filament_slot_${sourceSlot}`,
         'filament',
         'translated',
-        `The target supports ${maxColors} colour${maxColors === 1 ? '' : 's'}; similar colours may be merged.`,
+        keepAllSlots
+          ? `Keeping all ${sourceSlots.length} source colours; the printer exposes ${maxColors} target slot${maxColors === 1 ? '' : 's'}. Verify the mapping in Flash Studio.`
+          : `The target supports ${maxColors} colour${maxColors === 1 ? '' : 's'}; similar colours may be merged.`,
         sourceSlot,
         targetSlot,
       );
@@ -458,10 +463,21 @@ function buildFilamentMapping(
   }
 
   const highestTargetSlot = Math.max(1, ...mapping.map((entry) => entry.targetSlot));
+  const mappedSlotCount = Math.max(1, Math.max(byTarget.size, highestTargetSlot));
+  if (keepAllSlots) {
+    warnings.push(
+      `Keeping all ${sourceSlots.length} source colours; the converted project has ${mappedSlotCount} filament slot${mappedSlotCount === 1 ? '' : 's'}, while the printer exposes ${maxColors} target slot${maxColors === 1 ? '' : 's'}. Verify the filament mapping in Flash Studio before slicing.`,
+    );
+  } else if (keepAllColors && maxColors === 1) {
+    warnings.push(
+      'This printer prints one colour; keeping all colours is not available and the source colours will be merged.',
+    );
+  }
+
   return {
     mapping,
     paintMap,
-    targetSlotCount: Math.max(1, Math.min(maxColors, Math.max(byTarget.size, highestTargetSlot))),
+    targetSlotCount: keepAllSlots ? mappedSlotCount : Math.min(maxColors, mappedSlotCount),
   };
 }
 
@@ -1008,14 +1024,19 @@ export function buildTargetConfig(
   deepMerge(config, profile.machine);
   deepMerge(config, profile.process.config);
 
+  const keepAllSlots =
+    Boolean(options.keepAllColors) &&
+    profile.printer.maxColors > 1 &&
+    source.usedSlots.length > profile.printer.maxColors;
   const { mapping, paintMap, targetSlotCount } = buildFilamentMapping(
     source,
     profile.printer.maxColors,
     options.colorMapping,
+    Boolean(options.keepAllColors),
     settings,
     warnings,
   );
-  if (source.usedSlots.length > profile.printer.maxColors) {
+  if (source.usedSlots.length > profile.printer.maxColors && !keepAllSlots) {
     warnings.push(
       `This project uses ${source.usedSlots.length} colours; ${profile.printer.name} supports ${profile.printer.maxColors}. Review the filament mapping before printing.`,
     );

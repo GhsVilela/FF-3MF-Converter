@@ -7,13 +7,25 @@ interface ColorMappingProps {
   printer: PrinterWithMaterials;
   analysis: SourceAnalysis;
   mapping: Record<string, number>;
+  keepAllColors: boolean;
+  onKeepAllColorsChange: (enabled: boolean) => void;
   onChange: (mapping: Record<string, number>) => void;
 }
 
-export function ColorMapping({ printer, analysis, mapping, onChange }: ColorMappingProps) {
+export function ColorMapping({
+  printer,
+  analysis,
+  mapping,
+  keepAllColors,
+  onKeepAllColorsChange,
+  onChange,
+}: ColorMappingProps) {
   const { t } = useI18n();
   const used = analysis.colors.filter((color) => color.used);
-  const slots = Array.from({ length: printer.maxColors }, (_, index) => index + 1);
+  const keepAllAvailable = printer.maxColors > 1 && used.length > printer.maxColors;
+  const keepAll = keepAllColors && keepAllAvailable;
+  const targetSlotCount = keepAll ? Math.max(printer.maxColors, used.length) : printer.maxColors;
+  const slots = Array.from({ length: targetSlotCount }, (_, index) => index + 1);
 
   if (used.length === 0) return null;
 
@@ -27,6 +39,36 @@ export function ColorMapping({ printer, analysis, mapping, onChange }: ColorMapp
           <span className="mono-label ml-auto text-[var(--muted)]">SLOT MAPPING</span>
         </div>
         <p className="mt-1 text-xs leading-5 text-[var(--muted)]">{t('configure.colorsHelp')}</p>
+
+        {keepAllAvailable && (
+          <label className="mt-4 flex items-start gap-3 border border-[var(--border)] bg-[var(--surface-2)] p-3">
+            <input
+              type="checkbox"
+              checked={keepAllColors}
+              onChange={(event) => onKeepAllColorsChange(event.target.checked)}
+              className="mt-0.5 size-4 accent-[var(--accent)]"
+            />
+            <span>
+              <span className="block text-sm font-medium">{t('configure.keepAllColors')}</span>
+              <span className="mt-0.5 block text-[11px] leading-5 text-[var(--muted)]">
+                {t('configure.keepAllColorsHelp', {
+                  count: used.length,
+                  max: printer.maxColors,
+                })}
+              </span>
+            </span>
+          </label>
+        )}
+
+        {keepAll && (
+          <div className="mt-3 rounded-sm border border-[var(--orange)]/30 bg-[var(--orange-soft)] px-3 py-2 text-xs leading-5 text-[var(--warning)]">
+            {t('configure.keepAllColorsWarning', {
+              count: used.length,
+              max: printer.maxColors,
+              printer: printer.name,
+            })}
+          </div>
+        )}
 
         {printer.maxColors === 1 ? (
           <div className="mt-4 border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm">
@@ -95,7 +137,7 @@ export function ColorMapping({ printer, analysis, mapping, onChange }: ColorMapp
                 </div>
               );
             })}
-            {used.length > printer.maxColors && (
+            {!keepAll && used.length > printer.maxColors && (
               <div className="rounded-sm border border-[var(--orange)]/30 bg-[var(--orange-soft)] px-3 py-2 text-xs leading-5 text-[var(--warning)]">
                 {t('configure.mergeNote')}
               </div>
