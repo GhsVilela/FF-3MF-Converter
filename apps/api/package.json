@@ -16,7 +16,7 @@
     "@fastify/helmet": "^13.0.1",
     "@fastify/multipart": "^10.1.8",
     "@fastify/rate-limit": "^10.2.2",
-    "@fastify/static": "^8.0.4",
+    "@fastify/static": "^10.1.10",
     "@ff3mf/core": "0.1.0",
     "@ff3mf/profiles": "0.1.0",
     "@ff3mf/shared": "0.1.0",
