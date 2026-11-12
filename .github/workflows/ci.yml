@@ -145,6 +145,14 @@ jobs:
           curl -fsS -o /dev/null http://127.0.0.1:8098/
           kill "$(cat /tmp/ff3mf-portable.pid)"
 
+      - name: Upload portable artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable-artifacts
+          path: build/artifacts/
+          if-no-files-found: error
+          retention-days: 7
+
   macos:
     name: macOS executable smoke test
     runs-on: macos-latest

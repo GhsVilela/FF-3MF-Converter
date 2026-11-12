@@ -73,6 +73,7 @@ jobs:
         with:
           name: portable-artifacts
           path: build/artifacts/
+          if-no-files-found: error
           retention-days: 7
 
   release:
