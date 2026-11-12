@@ -34,6 +34,7 @@ import {
 import { enqueueJob, runnerStatus, safeBaseName } from './runner.js';
 
 const startedAt = Date.now();
+const defaultRateLimit = { max: config.rateLimitMax, timeWindow: config.rateLimitWindow };
 const app = Fastify({
   logger: {
     level: config.logLevel,
@@ -136,7 +137,7 @@ app.addHook('onRequest', async (request, reply) => {
   }
 });
 
-app.get('/api/health', async () => ({
+app.get('/api/health', { config: { rateLimit: defaultRateLimit } }, async () => ({
   status: 'ok',
   version: config.version,
   uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
@@ -150,7 +151,7 @@ app.get('/api/version', async () => ({
   buildDate: config.buildDate,
 }));
 
-app.get('/api/printers', async () => {
+app.get('/api/printers', { config: { rateLimit: defaultRateLimit } }, async () => {
   const catalog = getCatalog();
   return {
     generatedAt: catalog.generatedAt,
@@ -259,23 +260,27 @@ app.get('/api/conversions/:id', async (request, reply) => {
   return jobPayload(job);
 });
 
-app.get('/api/conversions/:id/download', async (request, reply) => {
-  const id = (request.params as { id: string }).id;
-  const job = getJob(id);
-  if (!job)
-    return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'Job not found.' } });
-  if (job.status !== 'completed' || !job.outputPath || !existsSync(job.outputPath)) {
-    return reply.code(409).send({
-      error: { code: 'NOT_READY', message: 'The conversion is not ready for download.' },
-    });
-  }
-  const filename = job.filename ?? 'converted.3mf';
-  return reply
-    .header('Content-Type', 'application/octet-stream')
-    .header('Content-Disposition', `attachment; filename="${filename.replaceAll('"', '')}"`)
-    .header('Content-Length', statSync(job.outputPath).size)
-    .send(createReadStream(job.outputPath));
-});
+app.get(
+  '/api/conversions/:id/download',
+  { config: { rateLimit: defaultRateLimit } },
+  async (request, reply) => {
+    const id = (request.params as { id: string }).id;
+    const job = getJob(id);
+    if (!job)
+      return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'Job not found.' } });
+    if (job.status !== 'completed' || !job.outputPath || !existsSync(job.outputPath)) {
+      return reply.code(409).send({
+        error: { code: 'NOT_READY', message: 'The conversion is not ready for download.' },
+      });
+    }
+    const filename = job.filename ?? 'converted.3mf';
+    return reply
+      .header('Content-Type', 'application/octet-stream')
+      .header('Content-Disposition', `attachment; filename="${filename.replaceAll('"', '')}"`)
+      .header('Content-Length', statSync(job.outputPath).size)
+      .send(createReadStream(job.outputPath));
+  },
+);
 
 app.delete('/api/conversions/:id', async (request, reply) => {
   const id = (request.params as { id: string }).id;
