@@ -18,4 +18,6 @@ Initial release.
 - React + Vite UI with English and Portuguese (Brazil).
 - `open3mf` CLI.
 - Multi-arch Docker image, Compose file, TrueNAS and reverse-proxy guidance.
+- Portable Windows x64 and Linux x64 executables with a bundled Node.js runtime,
+  native launcher and SHA-256 checksums.
 - CI, release, nightly, CodeQL and dependency-review workflows.

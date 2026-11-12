@@ -85,6 +85,56 @@ jobs:
       - name: Run browser tests
         run: npm run test:e2e
 
+  portable:
+    name: Portable executable build
+    runs-on: ubuntu-latest
+    needs: [quality]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build portable archives
+        run: npm run build:portable
+
+      - name: Verify archives
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          cd build/artifacts
+          sha256sum -c SHA256SUMS.txt
+          python3 -c "import zipfile; z=zipfile.ZipFile('Open3MF-${VERSION}-win-x64.zip'); assert z.testzip() is None; assert z.read('Open3MF-${VERSION}-win-x64/Open3MF.exe')[:2] == b'MZ'; print('Windows zip and PE launcher OK')"
+          file "Open3MF-${VERSION}-win-x64.zip"
+          tar -tzf "Open3MF-${VERSION}-linux-x64.tar.gz" >/dev/null
+
+      - name: Smoke-test Linux executable
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          mkdir -p /tmp/open3mf-portable /tmp/open3mf-data
+          tar -xzf "build/artifacts/Open3MF-${VERSION}-linux-x64.tar.gz" -C /tmp/open3mf-portable
+          cd "/tmp/open3mf-portable/Open3MF-${VERSION}-linux-x64"
+          ./open3mf --no-browser --port 8098 --data-dir /tmp/open3mf-data >/tmp/open3mf-portable.log 2>&1 &
+          echo $! >/tmp/open3mf-portable.pid
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8098/api/health >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8098/api/health
+          curl -fsS -o /dev/null http://127.0.0.1:8098/
+          kill "$(cat /tmp/open3mf-portable.pid)"
+
   docker:
     name: Docker build test
     runs-on: ubuntu-latest
@@ -112,12 +162,12 @@ jobs:
   status:
     name: Build Status
     runs-on: ubuntu-latest
-    needs: [quality, e2e, docker]
+    needs: [quality, e2e, portable, docker]
     if: always()
     steps:
       - name: Check status
         run: |
-          if [ "${{ needs.quality.result }}" != "success" ] || [ "${{ needs.e2e.result }}" != "success" ] || [ "${{ needs.docker.result }}" != "success" ]; then
+          if [ "${{ needs.quality.result }}" != "success" ] || [ "${{ needs.e2e.result }}" != "success" ] || [ "${{ needs.portable.result }}" != "success" ] || [ "${{ needs.docker.result }}" != "success" ]; then
             echo "Build or tests failed"
             exit 1
           fi

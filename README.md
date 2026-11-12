@@ -52,12 +52,14 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   open-source OrcaSlicer profiles and validated with the OrcaSlicer CLI.
 - **Modern UI.** Drag and drop, printer cards, colour mapping, progress and a
   responsive report view. English and Portuguese (Brazil).
+- **Runs without Docker.** Windows and Linux portable archives include a native
+  launcher, the Node.js runtime and the printer profiles.
 
 ## Supported printers
 
 | Printer           | Build volume       | Colours     | Nozzles                   |
 | ----------------- | ------------------ | ----------- | ------------------------- |
-| FlashForge AD5X   | 220 × 220 × 220 mm | 4 (IFS)     | 0.25 / 0.4 / 0.6 / 0.8 mm |
+| FlashForge AD5X   | 220 × 220 × 220 mm | 4 (IFS)     | 0.4 / 0.6 / 0.8 mm        |
 | Adventurer 5M     | 220 × 220 × 220 mm | 1           | 0.25 / 0.4 / 0.6 / 0.8 mm |
 | Adventurer 5M Pro | 220 × 220 × 220 mm | 1           | 0.25 / 0.4 / 0.6 / 0.8 mm |
 | Creator 5         | 256 × 256 × 256 mm | 4 toolheads | 0.25 / 0.4 / 0.6 / 0.8 mm |
@@ -102,6 +104,23 @@ docker compose up -d
 The included `docker-compose.yml` uses a named volume, a read-only root
 filesystem, a `tmpfs` for temporary runtime files, and a health check. See
 [.env.example](.env.example) for optional settings.
+
+### Windows and Linux executables
+
+The release page includes portable archives that do not need Docker:
+
+- **Windows x64:** `Open3MF-<version>-win-x64.zip` — extract and run `Open3MF.exe`.
+- **Linux x64:** `Open3MF-<version>-linux-x64.tar.gz` — extract and run
+  `./open3mf`.
+
+The launcher starts the local server, opens the browser and stores data in the
+user profile:
+
+- Windows: `%LOCALAPPDATA%\Open3MF\data`
+- Linux: `$XDG_DATA_HOME/open3mf` or `~/.local/share/open3mf`
+
+Use `--no-browser`, `--port`, `--host` and `--data-dir` for custom setups.
+SHA-256 checksums are attached as `SHA256SUMS.txt`.
 
 ### TrueNAS SCALE
 
@@ -293,16 +312,20 @@ to verify that the embedded configuration is accepted. See
 [docs/compatibility.md](docs/compatibility.md) for the manual Flash Studio
 checklist.
 
-## Release images
+## Release artifacts
 
-Tags matching `v*.*.*` publish multi-arch images to:
+Tags matching `v*.*.*` publish:
 
-- `ghcr.io/ghsvilela/open3mfconverter`
-- `ghsvilela/open3mfconverter` on Docker Hub when `DOCKERHUB_ENABLED=true` is set
-  as a repository variable and `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN` secrets
-  are configured.
+- Multi-arch container images:
+  - `ghcr.io/ghsvilela/open3mfconverter`
+  - `ghsvilela/open3mfconverter` on Docker Hub when `DOCKERHUB_ENABLED=true` is
+    set as a repository variable and `DOCKERHUB_USERNAME` /
+    `DOCKERHUB_TOKEN` secrets are configured.
+- Portable Windows x64 and Linux x64 archives with the native launcher,
+  bundled Node.js runtime and profiles.
+- `SHA256SUMS.txt` for the portable archives.
 
-The `main` branch also publishes an `edge` tag. Images are built for
+The `main` branch also publishes an `edge` tag. Container images are built for
 `linux/amd64` and `linux/arm64` with SBOM and provenance attestations.
 
 ## Security and privacy

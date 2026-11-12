@@ -26,45 +26,6 @@
       },
       "nozzles": [
         {
-          "diameter": "0.25",
-          "machineProfile": "FlashForge AD5X 0.25 nozzle",
-          "template": "templates/ad5x.json",
-          "defaultProcess": "fdm_process_common",
-          "defaultFilament": "Flashforge Generic PLA",
-          "build": {
-            "area": [
-              "0x0",
-              "220x0",
-              "220x220",
-              "0x220"
-            ],
-            "height": 220.0,
-            "extruders": 1
-          },
-          "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            }
-          ]
-        },
-        {
           "diameter": "0.4",
           "machineProfile": "Flashforge AD5X 0.4 nozzle",
           "template": "templates/ad5x.json",
@@ -81,26 +42,6 @@
             "extruders": 1
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.16mm Standard @FF AD5X",
               "layerHeight": "0.16"
@@ -133,26 +74,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.18mm Fine @FF AD5X 0.6 nozzle",
               "layerHeight": "0.18"
             },
@@ -183,26 +104,6 @@
             "extruders": 1
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.24mm Fine @FF AD5X 0.8 nozzle",
               "layerHeight": "0.24"
@@ -247,26 +148,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.12mm Standard @Flashforge AD5M 0.25 Nozzle",
               "layerHeight": "0.12"
             },
@@ -306,26 +187,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.20mm Standard @Flashforge AD5M 0.4 Nozzle",
               "layerHeight": "0.2"
             },
@@ -357,26 +218,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.30mm Standard @Flashforge AD5M 0.6 Nozzle",
               "layerHeight": "0.3"
             },
@@ -407,26 +248,6 @@
             "extruders": 1
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.40mm Standard @Flashforge AD5M 0.8 Nozzle",
               "layerHeight": "0.4"
@@ -471,26 +292,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.12mm Standard @Flashforge AD5M Pro 0.25 Nozzle",
               "layerHeight": "0.12"
             },
@@ -530,26 +331,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.20mm Standard @Flashforge AD5M Pro 0.4 Nozzle",
               "layerHeight": "0.2"
             },
@@ -581,26 +362,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.30mm Standard @Flashforge AD5M Pro 0.6 Nozzle",
               "layerHeight": "0.3"
             },
@@ -631,26 +392,6 @@
             "extruders": 1
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.40mm Standard @Flashforge AD5M Pro 0.8 Nozzle",
               "layerHeight": "0.4"
@@ -695,26 +436,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.08mm Standard @FF C5 0.25 nozzle",
               "layerHeight": "0.08"
             },
@@ -750,26 +471,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.12mm Standard @FF C5",
               "layerHeight": "0.12"
             },
@@ -801,26 +502,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.18mm Standard @FF C5 0.6 nozzle",
               "layerHeight": "0.18"
             },
@@ -851,26 +532,6 @@
             "extruders": 4
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.32mm Standard @FF C5 0.8 nozzle",
               "layerHeight": "0.32"
@@ -915,26 +576,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.08mm Standard @FF C5 0.25 nozzle",
               "layerHeight": "0.08"
             },
@@ -970,26 +611,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.12mm Standard @FF C5",
               "layerHeight": "0.12"
             },
@@ -1021,26 +642,6 @@
           },
           "processes": [
             {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
-            {
               "name": "0.18mm Standard @FF C5 0.6 nozzle",
               "layerHeight": "0.18"
             },
@@ -1071,26 +672,6 @@
             "extruders": 4
           },
           "processes": [
-            {
-              "name": "fdm_process_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_common",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.20",
-              "layerHeight": "0.2"
-            },
-            {
-              "name": "fdm_process_flashforge_0.30",
-              "layerHeight": "0.3"
-            },
-            {
-              "name": "fdm_process_flashforge_0.40",
-              "layerHeight": "0.4"
-            },
             {
               "name": "0.32mm Standard @FF C5 0.8 nozzle",
               "layerHeight": "0.32"

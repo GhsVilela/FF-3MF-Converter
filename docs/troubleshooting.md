@@ -80,3 +80,22 @@ curl http://localhost:8080/api/health
 
 The health check uses `fetch` from Node. If you changed the port, update the
 health check or use the image's default `PORT=8080`.
+
+## Portable executable will not start
+
+- On Linux, make sure the extracted launcher is executable:
+  `chmod +x open3mf`.
+- If the browser does not open, use `--no-browser` and open the printed URL
+  manually.
+- If port 8080 is busy, the launcher selects the next free port. Pass `--port`
+  to choose one explicitly.
+- Windows SmartScreen may warn about an unsigned executable. The archives are
+  built from the tagged source and checksums are published with each release.
+
+## Portable data location
+
+- Windows: `%LOCALAPPDATA%\Open3MF\data`
+- Linux: `$XDG_DATA_HOME/open3mf` or `~/.local/share/open3mf`
+
+Use `--data-dir` to choose another folder. Uploaded files and converted outputs
+expire according to `JOB_TTL_MINUTES`.

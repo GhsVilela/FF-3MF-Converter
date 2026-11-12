@@ -83,6 +83,18 @@ docker build -t open3mf:local .
 docker run --rm -p 8080:8080 -v open3mf_data:/data open3mf:local
 ```
 
+### Portable executables
+
+`scripts/build-portable.mjs` assembles the Windows and Linux archives. It
+requires Go 1.22+, Python 3 and network access for the pinned Node.js runtime.
+
+```bash
+npm run build:portable
+```
+
+The launcher source lives in `packaging/launcher`. The output is written to
+`build/artifacts/` and is intentionally not committed.
+
 ### CLI
 
 ```bash

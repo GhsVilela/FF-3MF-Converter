@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type {
@@ -41,7 +41,15 @@ export interface TargetProfile {
 }
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const defaultProfilesDir = path.resolve(here, '../../../profiles');
+const profileCandidates = [
+  path.resolve(here, '../../../profiles'), // workspace: packages/profiles/dist
+  path.resolve(here, '../../../../profiles'), // node_modules/@open3mf/profiles/dist (portable)
+  path.resolve(process.cwd(), 'profiles'), // Docker, portable launcher, repo root
+];
+
+const defaultProfilesDir =
+  profileCandidates.find((candidate) => existsSync(path.join(candidate, 'catalog.json'))) ??
+  profileCandidates[0]!;
 
 export function profilesDir(): string {
   return process.env.PROFILES_DIR
@@ -91,7 +99,9 @@ export function loadTargetProfile(
   const machine = readJson<Record<string, unknown>>(
     `machines/${printerId}/${nozzleDiameter}.json`,
   );
-  const processes = readJson<ProcessPreset[]>(`processes/${printerId}/${nozzleDiameter}.json`);
+  const processes = readJson<ProcessPreset[]>(
+    `processes/${printerId}/${nozzleDiameter}.json`,
+  ).filter((preset) => !preset.name.startsWith('fdm_'));
   const filaments = readJson<FilamentPreset[]>(`filaments/${printerId}.json`);
   const template = readJson<TemplateData>(nozzle.template);
 

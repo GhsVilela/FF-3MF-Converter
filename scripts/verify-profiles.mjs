@@ -43,8 +43,16 @@ for (const printer of catalog.printers) {
     const processes = readJson(`processes/${printer.id}/${nozzle.diameter}.json`);
     const template = readJson(`templates/${printer.id}.json`);
     if (!machine) errors.push(`${printer.id} ${nozzle.diameter}: missing machine`);
-    if (!Array.isArray(processes) || processes.length === 0) {
-      errors.push(`${printer.id} ${nozzle.diameter}: no process presets`);
+    const processNames = new Set(
+      (Array.isArray(processes) ? processes : [])
+        .filter((preset) => !preset.name.startsWith('fdm_'))
+        .map((preset) => preset.name),
+    );
+    if (processNames.size === 0) {
+      errors.push(`${printer.id} ${nozzle.diameter}: no real process presets`);
+    }
+    if (!processNames.has(nozzle.defaultProcess)) {
+      errors.push(`${printer.id} ${nozzle.diameter}: default process is missing`);
     }
     if (!template?.config || Object.keys(template.config).length < 400) {
       errors.push(`${printer.id}: template is incomplete`);

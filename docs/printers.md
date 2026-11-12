@@ -4,7 +4,7 @@
 
 | ID              | Printer           | Build volume       | Colours     | Nozzles                   |
 | --------------- | ----------------- | ------------------ | ----------- | ------------------------- |
-| `ad5x`          | FlashForge AD5X   | 220 × 220 × 220 mm | 4 (IFS)     | 0.25 / 0.4 / 0.6 / 0.8 mm |
+| `ad5x`          | FlashForge AD5X   | 220 × 220 × 220 mm | 4 (IFS)     | 0.4 / 0.6 / 0.8 mm        |
 | `ad5m`          | Adventurer 5M     | 220 × 220 × 220 mm | 1           | 0.25 / 0.4 / 0.6 / 0.8 mm |
 | `ad5m-pro`      | Adventurer 5M Pro | 220 × 220 × 220 mm | 1           | 0.25 / 0.4 / 0.6 / 0.8 mm |
 | `creator-5`     | Creator 5         | 256 × 256 × 256 mm | 4 toolheads | 0.25 / 0.4 / 0.6 / 0.8 mm |

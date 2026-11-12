@@ -1,5 +1,18 @@
 # Deployment
 
+## Portable executables
+
+The release page includes self-contained archives for users who do not want
+Docker:
+
+- Windows x64: extract `Open3MF-<version>-win-x64.zip` and run `Open3MF.exe`.
+- Linux x64: extract `Open3MF-<version>-linux-x64.tar.gz` and run `./open3mf`.
+
+The launcher starts the app on `127.0.0.1:8080`, opens the browser and stores
+data in the user data directory. The archive includes the Node.js runtime and
+the FlashForge profiles. Use `--no-browser` on a headless machine, `--port` to
+choose another port and `--data-dir` to control storage.
+
 ## Docker
 
 ```bash

@@ -37,13 +37,57 @@ jobs:
           npm test
           npm run profiles:verify
 
-  release:
-    name: Build and publish container
+  portable:
+    name: Build portable executables
     runs-on: ubuntu-latest
     needs: [verify]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Read release version
+        id: release
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build portable archives
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: node scripts/build-portable.mjs
+
+      - name: Upload portable artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable-artifacts
+          path: build/artifacts/
+          retention-days: 7
+
+  release:
+    name: Build and publish container
+    runs-on: ubuntu-latest
+    needs: [verify, portable]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download portable artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: portable-artifacts
+          path: build/artifacts
 
       - name: Read repository metadata
         id: repo
@@ -152,6 +196,7 @@ jobs:
         with:
           prerelease: ${{ steps.release.outputs.prerelease == 'true' }}
           generate_release_notes: true
+          files: build/artifacts/*
           body: |
             ## Container images
 
@@ -160,7 +205,30 @@ jobs:
             docker pull ghcr.io/${{ steps.repo.outputs.owner }}/open3mfconverter:${{ steps.release.outputs.version }}
             ```
 
-            ## Quick start
+            ## Portable executables
+
+            No Docker required. Download the archive for your platform, extract it
+            and run the launcher. The package contains the application, the
+            bundled Node.js runtime and the FlashForge profiles.
+
+            **Windows x64**
+            ```text
+            Open3MF-${{ steps.release.outputs.version }}-win-x64.zip
+            ```
+            Extract and run `Open3MF.exe`.
+
+            **Linux x64**
+            ```text
+            Open3MF-${{ steps.release.outputs.version }}-linux-x64.tar.gz
+            ```
+            Extract and run `./open3mf`.
+
+            The launcher opens the local app in your browser. If port 8080 is
+            busy, the next free port is used. Use `--no-browser`, `--port` and
+            `--data-dir` for headless or custom setups. SHA-256 checksums are
+            provided in `SHA256SUMS.txt`.
+
+            ## Docker quick start
 
             ```bash
             docker run -d \
