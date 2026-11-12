@@ -116,6 +116,8 @@ jobs:
           cd build/artifacts
           sha256sum -c SHA256SUMS.txt
           python3 -c "import zipfile; z=zipfile.ZipFile('FF-3MF-Converter-${VERSION}-win-x64.zip'); assert z.testzip() is None; assert z.read('FF-3MF-Converter-${VERSION}-win-x64/FF-3MF.exe')[:2] == b'MZ'; print('Windows zip and PE launcher OK')"
+          python3 -c "import zipfile; z=zipfile.ZipFile('FF-3MF-Converter-${VERSION}-win-x64.zip'); z.extract('FF-3MF-Converter-${VERSION}-win-x64/FF-3MF.exe', '/tmp/ff3mf-win')"
+          objdump -h "/tmp/ff3mf-win/FF-3MF-Converter-${VERSION}-win-x64/FF-3MF.exe" | grep -q '\.rsrc'
           file "FF-3MF-Converter-${VERSION}-win-x64.zip"
           tar -tzf "FF-3MF-Converter-${VERSION}-linux-x64.tar.gz" >/dev/null
 

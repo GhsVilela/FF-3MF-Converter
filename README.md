@@ -120,8 +120,9 @@ The release page includes portable archives that do not need Docker:
 - **Linux x64:** `FF-3MF-Converter-<version>-linux-x64.tar.gz` — extract and run
   `./ff3mf`.
 
-The launcher starts the local server, opens the browser and stores data in the
-user profile:
+The Windows launcher embeds the multi-resolution FF-3MF icon in the `.exe`;
+`FF-3MF.ico` is also included for shortcuts. The launcher starts the local
+server, opens the browser and stores data in the user profile:
 
 - Windows: `%LOCALAPPDATA%\FF-3MF\data`
 - Linux: `$XDG_DATA_HOME/ff3mf` or `~/.local/share/ff3mf`

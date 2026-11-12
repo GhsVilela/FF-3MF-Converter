@@ -22,5 +22,6 @@ Initial release under the **FF-3MF Converter** name.
 - `ff3mf` CLI.
 - Multi-arch Docker image, Compose file, TrueNAS and reverse-proxy guidance.
 - Portable Windows x64 and Linux x64 executables with a bundled Node.js runtime,
-  native launcher (`FF-3MF.exe` / `ff3mf`) and SHA-256 checksums.
+  native launcher (`FF-3MF.exe` / `ff3mf`), embedded Windows icon and SHA-256
+  checksums.
 - CI, release, nightly, CodeQL and dependency-review workflows.

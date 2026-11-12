@@ -229,7 +229,17 @@ function buildLaunchers() {
   const launcherDir = path.join(root, 'packaging', 'launcher');
   const linuxLauncher = path.join(buildDir, 'launchers', 'ff3mf');
   const windowsLauncher = path.join(buildDir, 'launchers', 'FF-3MF.exe');
+  const iconResource = path.join(launcherDir, 'rsrc_windows_amd64.syso');
   mkdirSync(path.dirname(linuxLauncher), { recursive: true });
+  if (!existsSync(iconResource)) {
+    run(
+      'go',
+      ['run', 'github.com/akavel/rsrc@v0.10.2', '-ico', 'app.ico', '-o', 'rsrc_windows_amd64.syso'],
+      {
+        cwd: launcherDir,
+      },
+    );
+  }
   for (const [goos, output] of [
     ['linux', linuxLauncher],
     ['windows', windowsLauncher],
@@ -268,6 +278,10 @@ async function assemble(platform, launchers) {
 
   if (platform === 'win-x64') {
     copyFileSync(launchers.windowsLauncher, path.join(destination, 'FF-3MF.exe'));
+    copyFileSync(
+      path.join(root, 'packaging', 'launcher', 'app.ico'),
+      path.join(destination, 'FF-3MF.ico'),
+    );
   } else {
     copyFileSync(launchers.linuxLauncher, path.join(destination, 'ff3mf'));
     run('chmod', ['+x', path.join(destination, 'ff3mf')]);

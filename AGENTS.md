@@ -92,8 +92,10 @@ requires Go 1.22+, Python 3 and network access for the pinned Node.js runtime.
 npm run build:portable
 ```
 
-The launcher source lives in `packaging/launcher`. The output is written to
-`build/artifacts/` and is intentionally not committed.
+The launcher source lives in `packaging/launcher`. The Windows icon is generated
+by `packaging/icon` and embedded through `rsrc_windows_amd64.syso`. See
+`packaging/README.md`. The output is written to `build/artifacts/` and is
+intentionally not committed.
 
 ### CLI
 
