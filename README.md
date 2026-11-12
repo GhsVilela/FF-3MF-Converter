@@ -91,6 +91,8 @@ generation; the Creator 5 templates use the newer OrcaSlicer profile set. See
 
 ### Docker
 
+GitHub Container Registry:
+
 ```bash
 docker run -d \
   --name ff3mf \
@@ -100,17 +102,50 @@ docker run -d \
   ghcr.io/ghsvilela/ff-3mf-converter:latest
 ```
 
+Docker Hub:
+
+```bash
+docker run -d \
+  --name ff3mf \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v ff3mf_data:/data \
+  docker.io/ghsvilela/ff-3mf-converter:latest
+```
+
 Open <http://localhost:8080>.
 
 ### Docker Compose
 
-```bash
-docker compose up -d
+The equivalent stack:
+
+```yaml
+services:
+  ff3mf:
+    image: ${FF3MF_IMAGE:-ghcr.io/ghsvilela/ff-3mf-converter:latest}
+    container_name: ff3mf
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    volumes:
+      - ff3mf_data:/data
+
+volumes:
+  ff3mf_data:
 ```
 
-The included `docker-compose.yml` uses a named volume, a read-only root
-filesystem, a `tmpfs` for temporary runtime files, and a health check. See
-[.env.example](.env.example) for optional settings.
+```bash
+# GitHub Container Registry (default)
+docker compose up -d
+
+# Docker Hub
+FF3MF_IMAGE=docker.io/ghsvilela/ff-3mf-converter:latest docker compose up -d
+```
+
+The included `docker-compose.yml` is a hardened version of the same stack with a
+read-only root filesystem, a `tmpfs` for temporary runtime files, dropped
+capabilities and a health check. Set `FF3MF_IMAGE` in `.env` or the environment
+to switch registries. See [.env.example](.env.example) for optional settings.
 
 ### Windows, Linux and macOS executables
 

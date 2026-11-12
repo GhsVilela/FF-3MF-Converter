@@ -1,6 +1,7 @@
 services:
   ff3mf:
-    image: ghcr.io/ghsvilela/ff-3mf-converter:latest
+    # docker.io/ghsvilela/ff-3mf-converter:latest pulls the same release from Docker Hub.
+    image: ${FF3MF_IMAGE:-ghcr.io/ghsvilela/ff-3mf-converter:latest}
     container_name: ff3mf
     hostname: ff3mf
     ports:

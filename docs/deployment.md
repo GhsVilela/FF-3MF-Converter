@@ -30,6 +30,8 @@ avoids the quarantine flag.
 
 ## Docker
 
+GitHub Container Registry:
+
 ```bash
 docker run -d \
   --name ff3mf \
@@ -39,6 +41,17 @@ docker run -d \
   ghcr.io/ghsvilela/ff-3mf-converter:latest
 ```
 
+Docker Hub:
+
+```bash
+docker run -d \
+  --name ff3mf \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v ff3mf_data:/data \
+  docker.io/ghsvilela/ff-3mf-converter:latest
+```
+
 The image is available for `linux/amd64` and `linux/arm64`.
 
 ## Docker Compose
@@ -46,11 +59,16 @@ The image is available for `linux/amd64` and `linux/arm64`.
 The repository includes a hardened Compose file:
 
 ```bash
+# GitHub Container Registry (default)
 docker compose up -d
+
+# Docker Hub
+FF3MF_IMAGE=docker.io/ghsvilela/ff-3mf-converter:latest docker compose up -d
 ```
 
 It uses a named volume, a read-only root filesystem, a `tmpfs` for `/tmp`, and a
-health check. Copy `.env.example` to `.env` to set optional values.
+health check. Set `FF3MF_IMAGE` in `.env` or the environment to switch
+registries. Copy `.env.example` to `.env` to set optional values.
 
 ## TrueNAS SCALE
 
