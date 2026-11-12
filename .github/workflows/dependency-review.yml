@@ -11,6 +11,10 @@ permissions:
 jobs:
   review:
     name: Review dependency changes
+    # Dependency review requires a public repository or GitHub Advanced Security.
+    # Set the DEPENDENCY_REVIEW_ENABLED repository variable to "true" after
+    # enabling it for a private repository.
+    if: github.event.repository.private == false || vars.DEPENDENCY_REVIEW_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
