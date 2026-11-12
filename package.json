@@ -38,7 +38,7 @@
     "@types/yauzl": "^2.10.3",
     "@types/yazl": "^2.4.4",
     "@vitejs/plugin-react": "^4.3.4",
-    "concurrently": "^9.1.2",
+    "concurrently": "^10.0.7",
     "eslint": "^9.17.0",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.0",
