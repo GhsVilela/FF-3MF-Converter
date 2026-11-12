@@ -223,6 +223,30 @@ jobs:
             ```
             Extract and run `./ff3mf`.
 
+            **macOS Apple Silicon**
+            ```text
+            FF-3MF-Converter-${{ steps.release.outputs.version }}-macos-arm64.tar.gz
+            ```
+            Extract and run `./ff3mf`.
+
+            **macOS Intel**
+            ```text
+            FF-3MF-Converter-${{ steps.release.outputs.version }}-macos-x64.tar.gz
+            ```
+            Extract and run `./ff3mf`.
+
+            The macOS builds are not signed with an Apple Developer ID and are
+            not notarized. If macOS blocks the first launch, remove the
+            quarantine flag from the extracted folder once (`macos-arm64` shown;
+            use `macos-x64` on Intel):
+
+            ```bash
+            xattr -dr com.apple.quarantine FF-3MF-Converter-${{ steps.release.outputs.version }}-macos-arm64
+            ```
+
+            Downloading the archive with `curl -L` instead of a browser avoids the
+            quarantine flag.
+
             The launcher opens the local app in your browser. If port 8080 is
             busy, the next free port is used. Use `--no-browser`, `--port` and
             `--data-dir` for headless or custom setups. SHA-256 checksums are

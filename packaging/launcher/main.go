@@ -169,6 +169,10 @@ func defaultDataDir() string {
 		if base := os.Getenv("APPDATA"); base != "" {
 			return filepath.Join(base, "FF-3MF", "data")
 		}
+	} else if runtime.GOOS == "darwin" {
+		if home, err := os.UserHomeDir(); err == nil {
+			return filepath.Join(home, "Library", "Application Support", "ff3mf")
+		}
 	} else {
 		if base := os.Getenv("XDG_DATA_HOME"); base != "" {
 			return filepath.Join(base, "ff3mf")

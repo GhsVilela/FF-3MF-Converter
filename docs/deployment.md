@@ -7,11 +7,26 @@ Docker:
 
 - Windows x64: extract `FF-3MF-Converter-<version>-win-x64.zip` and run `FF-3MF.exe`.
 - Linux x64: extract `FF-3MF-Converter-<version>-linux-x64.tar.gz` and run `./ff3mf`.
+- macOS Apple Silicon: extract
+  `FF-3MF-Converter-<version>-macos-arm64.tar.gz` and run `./ff3mf`.
+- macOS Intel: extract `FF-3MF-Converter-<version>-macos-x64.tar.gz` and run
+  `./ff3mf`.
 
 The launcher starts the app on `127.0.0.1:8080`, opens the browser and stores
 data in the user data directory. The archive includes the Node.js runtime and
 the FlashForge profiles. Use `--no-browser` on a headless machine, `--port` to
 choose another port and `--data-dir` to control storage.
+
+The macOS archives are not signed with an Apple Developer ID and are not
+notarized. If Gatekeeper blocks the first launch, remove the quarantine flag
+from the extracted folder:
+
+```bash
+xattr -dr com.apple.quarantine FF-3MF-Converter-<version>-macos-arm64
+```
+
+Use `macos-x64` on Intel Macs. Downloading with `curl -L` instead of a browser
+avoids the quarantine flag.
 
 ## Docker
 

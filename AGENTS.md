@@ -85,12 +85,18 @@ docker run --rm -p 8080:8080 -v ff3mf_data:/data ff3mf:local
 
 ### Portable executables
 
-`scripts/build-portable.mjs` assembles the Windows and Linux archives. It
+`scripts/build-portable.mjs` assembles the Windows, Linux and macOS archives. It
 requires Go 1.22+, Python 3 and network access for the pinned Node.js runtime.
 
 ```bash
 npm run build:portable
 ```
+
+macOS archives are produced for Apple Silicon (`arm64`) and Intel (`x64`).
+They are not signed with an Apple Developer ID and are not notarized, so
+Gatekeeper requires a documented quarantine-removal step on first launch. Do not
+add signing or notarization requirements to the build without an Apple Developer
+account.
 
 The launcher source lives in `packaging/launcher`. The Windows icon is generated
 by `packaging/icon` and embedded through `rsrc_windows_amd64.syso`. See

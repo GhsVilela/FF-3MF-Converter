@@ -35,6 +35,16 @@ const nodeDownloads = {
     url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-win-x64.zip`,
     sha256: 'bb819d6eb8f5bfda294bbc83a7e4ec6539da67c4233d54b0d655b9248b15e29d',
   },
+  'macos-arm64': {
+    archive: `node-v${nodeVersion}-darwin-arm64.tar.gz`,
+    url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-darwin-arm64.tar.gz`,
+    sha256: 'cc04a76a09f79290194c0646f48fec40354d88969bec467789a5d55dd097f949',
+  },
+  'macos-x64': {
+    archive: `node-v${nodeVersion}-darwin-x64.tar.gz`,
+    url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-darwin-x64.tar.gz`,
+    sha256: '00df9c5df3e4ec6848c26b70fb47bf96492f342f4bed6b17f12d99b3a45eeecc',
+  },
 };
 
 function run(command, args, options = {}) {
@@ -72,18 +82,18 @@ async function ensureNodeRuntime(platform) {
   const extractDir = path.join(cacheDir, `node-${platform}`);
   if (!existsSync(extractDir)) {
     mkdirSync(extractDir, { recursive: true });
-    if (platform === 'linux-x64') {
+    if (entry.archive.endsWith('.zip')) {
+      run('python3', ['-m', 'zipfile', '-e', archivePath, extractDir]);
+    } else if (entry.archive.endsWith('.tar.xz')) {
       run('tar', ['-xJf', archivePath, '-C', extractDir]);
     } else {
-      run('python3', ['-m', 'zipfile', '-e', archivePath, extractDir]);
+      run('tar', ['-xzf', archivePath, '-C', extractDir]);
     }
   }
 
-  const base = path.join(
-    extractDir,
-    platform === 'linux-x64' ? `node-v${nodeVersion}-linux-x64` : `node-v${nodeVersion}-win-x64`,
-  );
-  const nodeBinary = path.join(base, platform === 'linux-x64' ? 'bin/node' : 'node.exe');
+  const folderName = entry.archive.replace(/\.(?:tar\.xz|tar\.gz|zip)$/, '');
+  const base = path.join(extractDir, folderName);
+  const nodeBinary = path.join(base, platform === 'win-x64' ? 'node.exe' : 'bin/node');
   if (!existsSync(nodeBinary)) throw new Error(`Node runtime not found: ${nodeBinary}`);
   return { nodeBinary, base };
 }
@@ -203,6 +213,22 @@ function buildProductionApp() {
 
 function writeLauncherReadme(destination, platform) {
   const runCommand = platform === 'win-x64' ? 'FF-3MF.exe' : './ff3mf';
+  const isMacOS = platform.startsWith('macos-');
+  const dataLocation =
+    platform === 'win-x64'
+      ? `  %LOCALAPPDATA%\\FF-3MF\\data\n`
+      : isMacOS
+        ? `  ~/Library/Application Support/ff3mf\n`
+        : `  $XDG_DATA_HOME/ff3mf or ~/.local/share/ff3mf\n`;
+  const macOSNote = isMacOS
+    ? `\nFirst launch:\n` +
+      `  This build is not signed with an Apple Developer ID and is not notarized.\n` +
+      `  If macOS blocks it after downloading, remove the quarantine flag from\n` +
+      `  the extracted folder once:\n\n` +
+      `    xattr -dr com.apple.quarantine "$(pwd)"\n\n` +
+      `  Or allow it under System Settings > Privacy & Security > Open Anyway.\n` +
+      `  Downloading with curl instead of a browser avoids the quarantine flag.\n`
+    : '';
   writeFileSync(
     path.join(destination, 'README.txt'),
     `FF-3MF Converter ${version}\n` +
@@ -217,9 +243,8 @@ function writeLauncherReadme(destination, platform) {
       `  ${runCommand} --data-dir /path/to/data\n` +
       `  ${runCommand} --version\n\n` +
       `Data location:\n` +
-      (platform === 'win-x64'
-        ? `  %LOCALAPPDATA%\\FF-3MF\\data\n`
-        : `  $XDG_DATA_HOME/ff3mf or ~/.local/share/ff3mf\n`) +
+      dataLocation +
+      macOSNote +
       `\nNo installation is required. The package includes Node.js ${nodeVersion}.\n` +
       `See LICENSE and THIRD_PARTY_NOTICES.md for licensing information.\n`,
   );
@@ -227,10 +252,14 @@ function writeLauncherReadme(destination, platform) {
 
 function buildLaunchers() {
   const launcherDir = path.join(root, 'packaging', 'launcher');
-  const linuxLauncher = path.join(buildDir, 'launchers', 'ff3mf');
-  const windowsLauncher = path.join(buildDir, 'launchers', 'FF-3MF.exe');
+  const launchers = {
+    'linux-x64': path.join(buildDir, 'launchers', 'ff3mf-linux-amd64'),
+    'win-x64': path.join(buildDir, 'launchers', 'FF-3MF.exe'),
+    'macos-arm64': path.join(buildDir, 'launchers', 'ff3mf-darwin-arm64'),
+    'macos-x64': path.join(buildDir, 'launchers', 'ff3mf-darwin-amd64'),
+  };
   const iconResource = path.join(launcherDir, 'rsrc_windows_amd64.syso');
-  mkdirSync(path.dirname(linuxLauncher), { recursive: true });
+  mkdirSync(path.join(buildDir, 'launchers'), { recursive: true });
   if (!existsSync(iconResource)) {
     run(
       'go',
@@ -240,20 +269,22 @@ function buildLaunchers() {
       },
     );
   }
-  for (const [goos, output] of [
-    ['linux', linuxLauncher],
-    ['windows', windowsLauncher],
+  for (const [goos, goarch, output] of [
+    ['linux', 'amd64', launchers['linux-x64']],
+    ['windows', 'amd64', launchers['win-x64']],
+    ['darwin', 'arm64', launchers['macos-arm64']],
+    ['darwin', 'amd64', launchers['macos-x64']],
   ]) {
     run(
       'go',
       ['build', '-trimpath', '-ldflags', `-s -w -X main.version=${version}`, '-o', output, '.'],
       {
         cwd: launcherDir,
-        env: { GOOS: goos, GOARCH: 'amd64', CGO_ENABLED: '0' },
+        env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: '0' },
       },
     );
   }
-  return { linuxLauncher, windowsLauncher };
+  return launchers;
 }
 
 async function assemble(platform, launchers) {
@@ -277,13 +308,13 @@ async function assemble(platform, launchers) {
   );
 
   if (platform === 'win-x64') {
-    copyFileSync(launchers.windowsLauncher, path.join(destination, 'FF-3MF.exe'));
+    copyFileSync(launchers[platform], path.join(destination, 'FF-3MF.exe'));
     copyFileSync(
       path.join(root, 'packaging', 'launcher', 'app.ico'),
       path.join(destination, 'FF-3MF.ico'),
     );
   } else {
-    copyFileSync(launchers.linuxLauncher, path.join(destination, 'ff3mf'));
+    copyFileSync(launchers[platform], path.join(destination, 'ff3mf'));
     run('chmod', ['+x', path.join(destination, 'ff3mf')]);
   }
   writeLauncherReadme(destination, platform);
@@ -316,7 +347,10 @@ async function main() {
 
   buildProductionApp();
   const launchers = buildLaunchers();
-  const artifacts = [await assemble('win-x64', launchers), await assemble('linux-x64', launchers)];
+  const artifacts = [];
+  for (const platform of ['win-x64', 'linux-x64', 'macos-arm64', 'macos-x64']) {
+    artifacts.push(await assemble(platform, launchers));
+  }
 
   const checksums = artifacts
     .map((artifact) => `${sha256(artifact)}  ${path.basename(artifact)}`)

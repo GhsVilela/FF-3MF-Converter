@@ -26,6 +26,17 @@ files whenever the brand mark changes.
 npm run build:portable
 ```
 
-This produces the Windows and Linux archives in `build/artifacts/`. The
+This produces the Windows, Linux and macOS archives in `build/artifacts/`. The
 Windows archive contains `FF-3MF.exe` with the embedded icon, the bundled
-`runtime/node.exe`, the app and the FlashForge profiles.
+`runtime/node.exe`, the app and the FlashForge profiles. The macOS archives are
+built for Apple Silicon (`macos-arm64`) and Intel (`macos-x64`).
+
+The macOS launchers are not signed with an Apple Developer ID and are not
+notarized. If Gatekeeper blocks the first launch after a browser download,
+remove the quarantine flag from the extracted folder:
+
+```bash
+xattr -dr com.apple.quarantine FF-3MF-Converter-<version>-macos-arm64
+```
+
+No Apple Developer account is required for the build or for this workaround.

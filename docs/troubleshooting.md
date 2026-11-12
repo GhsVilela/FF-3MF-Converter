@@ -91,11 +91,16 @@ health check or use the image's default `PORT=8080`.
   to choose one explicitly.
 - Windows SmartScreen may warn about an unsigned executable. The archives are
   built from the tagged source and checksums are published with each release.
+- macOS Gatekeeper may block the launcher because the build is not signed with
+  an Apple Developer ID. Remove the quarantine flag from the extracted folder:
+  `xattr -dr com.apple.quarantine FF-3MF-Converter-<version>-macos-arm64`
+  (use `macos-x64` on Intel). Downloading with `curl -L` avoids the flag.
 
 ## Portable data location
 
 - Windows: `%LOCALAPPDATA%\FF-3MF\data`
 - Linux: `$XDG_DATA_HOME/ff3mf` or `~/.local/share/ff3mf`
+- macOS: `~/Library/Application Support/ff3mf`
 
 Use `--data-dir` to choose another folder. Uploaded files and converted outputs
 expire according to `JOB_TTL_MINUTES`.

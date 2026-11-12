@@ -59,8 +59,8 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   open-source OrcaSlicer profiles and validated with the OrcaSlicer CLI.
 - **Modern UI.** Drag and drop, printer cards, colour mapping, progress and a
   responsive report view. English and Portuguese (Brazil).
-- **Runs without Docker.** Windows and Linux portable archives include a native
-  launcher, the Node.js runtime and the printer profiles.
+- **Runs without Docker.** Windows, Linux and macOS portable archives include a
+  native launcher, the Node.js runtime and the printer profiles.
 
 ## Supported printers
 
@@ -112,13 +112,17 @@ The included `docker-compose.yml` uses a named volume, a read-only root
 filesystem, a `tmpfs` for temporary runtime files, and a health check. See
 [.env.example](.env.example) for optional settings.
 
-### Windows and Linux executables
+### Windows, Linux and macOS executables
 
 The release page includes portable archives that do not need Docker:
 
 - **Windows x64:** `FF-3MF-Converter-<version>-win-x64.zip` — extract and run `FF-3MF.exe`.
 - **Linux x64:** `FF-3MF-Converter-<version>-linux-x64.tar.gz` — extract and run
   `./ff3mf`.
+- **macOS Apple Silicon:** `FF-3MF-Converter-<version>-macos-arm64.tar.gz` —
+  extract and run `./ff3mf`.
+- **macOS Intel:** `FF-3MF-Converter-<version>-macos-x64.tar.gz` — extract and
+  run `./ff3mf`.
 
 The Windows launcher embeds the multi-resolution FF-3MF icon in the `.exe`;
 `FF-3MF.ico` is also included for shortcuts. The launcher starts the local
@@ -126,6 +130,20 @@ server, opens the browser and stores data in the user profile:
 
 - Windows: `%LOCALAPPDATA%\FF-3MF\data`
 - Linux: `$XDG_DATA_HOME/ff3mf` or `~/.local/share/ff3mf`
+- macOS: `~/Library/Application Support/ff3mf`
+
+The macOS builds are not signed with an Apple Developer ID and are not
+notarized, so they can be built and distributed without an Apple Developer
+account. If Gatekeeper blocks the first launch, remove the quarantine flag from
+the extracted folder once:
+
+```bash
+xattr -dr com.apple.quarantine FF-3MF-Converter-<version>-macos-arm64
+```
+
+Use `macos-x64` on Intel Macs. You can also allow the launcher under **System
+Settings → Privacy & Security → Open Anyway**, or download the archive with
+`curl -L` instead of a browser, which does not set the quarantine flag.
 
 Use `--no-browser`, `--port`, `--host` and `--data-dir` for custom setups.
 SHA-256 checksums are attached as `SHA256SUMS.txt`.
@@ -260,7 +278,8 @@ download. See [docs/api.md](docs/api.md) for request and response examples.
 
 ## Development
 
-Requirements: Node.js 22+, npm, Docker (for the container build).
+Requirements: Node.js 22+ and npm; Go 1.22+ and Python 3 for portable builds;
+Docker for the container build.
 
 ```bash
 npm ci
@@ -331,8 +350,8 @@ Tags matching `v*.*.*` publish:
   - `ghsvilela/ff-3mf-converter` on Docker Hub when `DOCKERHUB_ENABLED=true` is
     set as a repository variable and `DOCKERHUB_USERNAME` /
     `DOCKERHUB_TOKEN` secrets are configured.
-- Portable Windows x64 and Linux x64 archives with the native launcher,
-  bundled Node.js runtime and profiles.
+- Portable Windows x64, Linux x64, macOS arm64 and macOS x64 archives with the
+  native launcher, bundled Node.js runtime and profiles.
 - `SHA256SUMS.txt` for the portable archives.
 
 The `main` branch also publishes an `edge` tag. Container images are built for

@@ -21,7 +21,9 @@ Initial release under the **FF-3MF Converter** name.
 - React + Vite UI with English and Portuguese (Brazil).
 - `ff3mf` CLI.
 - Multi-arch Docker image, Compose file, TrueNAS and reverse-proxy guidance.
-- Portable Windows x64 and Linux x64 executables with a bundled Node.js runtime,
-  native launcher (`FF-3MF.exe` / `ff3mf`), embedded Windows icon and SHA-256
-  checksums.
+- Portable Windows x64, Linux x64, macOS arm64 and macOS x64 executables with a
+  bundled Node.js runtime, native launcher (`FF-3MF.exe` / `ff3mf`), embedded
+  Windows icon and SHA-256 checksums. The macOS builds are not signed with an
+  Apple Developer ID and are not notarized; the documentation covers the
+  Gatekeeper workaround.
 - CI, release, nightly, CodeQL and dependency-review workflows.

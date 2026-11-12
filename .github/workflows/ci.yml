@@ -120,6 +120,14 @@ jobs:
           objdump -h "/tmp/ff3mf-win/FF-3MF-Converter-${VERSION}-win-x64/FF-3MF.exe" | grep -q '\.rsrc'
           file "FF-3MF-Converter-${VERSION}-win-x64.zip"
           tar -tzf "FF-3MF-Converter-${VERSION}-linux-x64.tar.gz" >/dev/null
+          for ARCH in arm64 x64; do
+            mkdir -p "/tmp/ff3mf-macos-${ARCH}"
+            tar -xzf "FF-3MF-Converter-${VERSION}-macos-${ARCH}.tar.gz" -C "/tmp/ff3mf-macos-${ARCH}" --strip-components=1
+            file "/tmp/ff3mf-macos-${ARCH}/ff3mf" | grep -q 'Mach-O 64-bit'
+            test -x "/tmp/ff3mf-macos-${ARCH}/ff3mf"
+          done
+          file /tmp/ff3mf-macos-arm64/ff3mf | grep -q 'arm64'
+          file /tmp/ff3mf-macos-x64/ff3mf | grep -q 'x86_64'
 
       - name: Smoke-test Linux executable
         run: |
@@ -136,6 +144,42 @@ jobs:
           curl -fsS http://127.0.0.1:8098/api/health
           curl -fsS -o /dev/null http://127.0.0.1:8098/
           kill "$(cat /tmp/ff3mf-portable.pid)"
+
+  macos:
+    name: macOS executable smoke test
+    runs-on: macos-latest
+    needs: [portable]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download portable artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: portable-artifacts
+          path: build/artifacts
+
+      - name: Smoke-test macOS executable
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          case "$(uname -m)" in
+            arm64) ARCH="arm64" ;;
+            x86_64) ARCH="x64" ;;
+            *) echo "Unsupported macOS runner architecture: $(uname -m)"; exit 1 ;;
+          esac
+          echo "Testing the ${ARCH} build on $(uname -m)"
+          mkdir -p /tmp/ff3mf-macos /tmp/ff3mf-data
+          tar -xzf "build/artifacts/FF-3MF-Converter-${VERSION}-macos-${ARCH}.tar.gz" -C /tmp/ff3mf-macos --strip-components=1
+          cd /tmp/ff3mf-macos
+          ./ff3mf --no-browser --port 8099 --data-dir /tmp/ff3mf-data >/tmp/ff3mf-macos.log 2>&1 &
+          echo $! >/tmp/ff3mf-macos.pid
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8099/api/health >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8099/api/health
+          curl -fsS -o /dev/null http://127.0.0.1:8099/
+          kill "$(cat /tmp/ff3mf-macos.pid)"
 
   docker:
     name: Docker build test
@@ -164,12 +208,12 @@ jobs:
   status:
     name: Build Status
     runs-on: ubuntu-latest
-    needs: [quality, e2e, portable, docker]
+    needs: [quality, e2e, portable, macos, docker]
     if: always()
     steps:
       - name: Check status
         run: |
-          if [ "${{ needs.quality.result }}" != "success" ] || [ "${{ needs.e2e.result }}" != "success" ] || [ "${{ needs.portable.result }}" != "success" ] || [ "${{ needs.docker.result }}" != "success" ]; then
+          if [ "${{ needs.quality.result }}" != "success" ] || [ "${{ needs.e2e.result }}" != "success" ] || [ "${{ needs.portable.result }}" != "success" ] || [ "${{ needs.macos.result }}" != "success" ] || [ "${{ needs.docker.result }}" != "success" ]; then
             echo "Build or tests failed"
             exit 1
           fi
