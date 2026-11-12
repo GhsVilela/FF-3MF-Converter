@@ -6,6 +6,9 @@
   more colours than the target printer exposes, it keeps one filament slot per
   used source colour instead of merging into the printer slots. Available in the
   UI, the API and the CLI (`--keep-all-colors`).
+- Fixed portable archives containing absolute `node_modules` symlinks from the
+  build machine. The broken `.bin`/workspace links caused noisy `xattr`
+  warnings when removing the macOS quarantine flag.
 
 ## 0.1.0
 

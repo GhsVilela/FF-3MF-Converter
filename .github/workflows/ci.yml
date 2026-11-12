@@ -128,6 +128,16 @@ jobs:
           done
           file /tmp/ff3mf-macos-arm64/ff3mf | grep -q 'arm64'
           file /tmp/ff3mf-macos-x64/ff3mf | grep -q 'x86_64'
+          for ARCHIVE in \
+            "FF-3MF-Converter-${VERSION}-linux-x64.tar.gz" \
+            "FF-3MF-Converter-${VERSION}-macos-arm64.tar.gz" \
+            "FF-3MF-Converter-${VERSION}-macos-x64.tar.gz"; do
+            if tar -tvzf "$ARCHIVE" | grep -q ' -> '; then
+              echo "Unexpected symlink in $ARCHIVE"
+              exit 1
+            fi
+          done
+          python3 -c "import stat, zipfile; z=zipfile.ZipFile('FF-3MF-Converter-${VERSION}-win-x64.zip'); bad=[i.filename for i in z.infolist() if stat.S_ISLNK(i.external_attr >> 16)]; assert not bad, bad; print('Windows zip has no symlinks')"
 
       - name: Smoke-test Linux executable
         run: |

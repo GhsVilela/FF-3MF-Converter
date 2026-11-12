@@ -7,6 +7,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -58,6 +59,25 @@ function run(command, args, options = {}) {
 
 function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
+}
+
+// npm creates workspace and .bin symlinks. fs.cpSync rewrites them as absolute
+// build-machine paths, which are broken after extraction on another OS. The
+// runtime never needs them, so strip symlinks and .bin folders.
+function stripNodeModulesSymlinks(directory) {
+  if (!existsSync(directory)) return;
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const target = path.join(directory, entry.name);
+    if (entry.isSymbolicLink()) {
+      rmSync(target, { force: true });
+    } else if (entry.isDirectory()) {
+      if (entry.name === '.bin') {
+        rmSync(target, { recursive: true, force: true });
+      } else {
+        stripNodeModulesSymlinks(target);
+      }
+    }
+  }
 }
 
 async function download(url, destination) {
@@ -178,6 +198,9 @@ function buildProductionApp() {
     rmSync(path.join(target, 'tsconfig.json'), { force: true });
   }
   rmSync(path.join(appDir, 'node_modules', '@ff3mf', 'web'), { recursive: true, force: true });
+
+  // Remove npm symlinks before packaging so archives work on every platform.
+  stripNodeModulesSymlinks(path.join(appDir, 'node_modules'));
 
   // The UI is prebuilt; these packages are not needed at runtime.
   for (const packageName of [

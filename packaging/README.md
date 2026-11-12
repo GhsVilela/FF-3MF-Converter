@@ -31,6 +31,10 @@ Windows archive contains `FF-3MF.exe` with the embedded icon, the bundled
 `runtime/node.exe`, the app and the FlashForge profiles. The macOS archives are
 built for Apple Silicon (`macos-arm64`) and Intel (`macos-x64`).
 
+The build strips npm `.bin` and workspace symlinks from the bundled
+`node_modules`. They point at build-machine paths and are not needed at runtime;
+keeping them produced broken links and noisy `xattr` warnings on macOS.
+
 The macOS launchers are not signed with an Apple Developer ID and are not
 notarized. If Gatekeeper blocks the first launch after a browser download,
 remove the quarantine flag from the extracted folder:
