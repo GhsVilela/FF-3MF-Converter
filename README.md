@@ -3,6 +3,7 @@
 [![Build](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/ci.yml/badge.svg)](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/ci.yml)
 [![Release](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/release.yml/badge.svg)](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/release.yml)
 [![GHCR](https://img.shields.io/badge/ghcr.io-ff-3mf-converter-blue?logo=github)](https://ghcr.io/ghsvilela/ff-3mf-converter)
+[![Docker Hub](https://img.shields.io/badge/docker.io-ff--3mf--converter-blue?logo=docker)](https://hub.docker.com/r/ghsvilela/ff-3mf-converter)
 [![License](https://img.shields.io/badge/license-AGPL--3.0--or--later-orange)](LICENSE)
 
 **Self-hosted 3MF project converter for FlashForge printers.**
@@ -88,6 +89,11 @@ generation; the Creator 5 templates use the newer OrcaSlicer profile set. See
 | Sliced `.gcode.3mf` print files                                                                   | Rejected                | Upload the original editable project instead                             |
 
 ## Quick start
+
+> [!NOTE]
+> The `:latest` container images and portable archives are produced by the
+> release workflow. Until the first `v*.*.*` release is published, build from
+> source with the commands in [Development](#development).
 
 ### Docker
 
