@@ -9,6 +9,9 @@
 - Fixed portable archives containing absolute `node_modules` symlinks from the
   build machine. The broken `.bin`/workspace links caused noisy `xattr`
   warnings when removing the macOS quarantine flag.
+- Fixed support-interface filaments being treated as unused. A filament used
+  only by `support_interface_filament` is now included in the colour list and
+  preserved by `keepAllColors`.
 
 ## 0.1.0
 

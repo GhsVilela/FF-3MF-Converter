@@ -203,10 +203,10 @@ function unionBounds(
   };
 }
 
-function extractExtruderSlots(modelSettingsXml?: string): number[] {
+function extractFilamentSlots(modelSettingsXml?: string): number[] {
   if (!modelSettingsXml) return [];
   const slots: number[] = [];
-  const pattern = /key="extruder"\s+value="(\d+)"/g;
+  const pattern = /key="(?:extruder|support_filament|support_interface_filament)"\s+value="(\d+)"/g;
   for (const match of modelSettingsXml.matchAll(pattern)) {
     const value = Number(match[1]);
     if (Number.isFinite(value) && value > 0) slots.push(value);
@@ -333,8 +333,11 @@ function loadSourceFromContents(filePath: string, contents: ZipContents): Loaded
     for (const state of scan.paintStates) paintStates.add(state);
   }
 
-  const extruderSlots = extractExtruderSlots(modelSettingsXml);
-  const usedSlots = [...new Set([...paintStates, ...extruderSlots])]
+  const filamentSlots = extractFilamentSlots(modelSettingsXml);
+  const projectSupportSlots = ['support_filament', 'support_interface_filament']
+    .flatMap((key) => arrayValue(projectConfig?.[key]).map(Number))
+    .filter((slot) => Number.isFinite(slot) && slot > 0);
+  const usedSlots = [...new Set([...paintStates, ...filamentSlots, ...projectSupportSlots])]
     .filter((slot) => Number.isFinite(slot) && slot > 0)
     .sort((a, b) => a - b);
 

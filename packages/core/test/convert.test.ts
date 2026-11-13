@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readZip } from '../src/zip.js';
-import { convert3mf } from '../src/convert.js';
+import { analyze3mf, convert3mf } from '../src/convert.js';
 import { ConversionError } from '../src/errors.js';
 import { encodePaintState } from '../src/paint.js';
 import { createFixtureAsync } from './fixtures.js';
@@ -159,6 +159,55 @@ describe('3MF conversion', () => {
     expect(new Set(paintValues(part))).toEqual(
       new Set(states.map((state) => encodePaintState(state))),
     );
+  });
+
+  it('counts and keeps a support-interface filament that is not painted', async () => {
+    const fixture = await createFixtureAsync({
+      paintStates: ['4', '8', '0C', '1C'],
+      supportInterfaceFilament: 5,
+      filamentColors: ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#C0C0C0'],
+      filamentTypes: ['PLA', 'PLA', 'PLA', 'PLA', 'PETG'],
+      filamentNames: [
+        'Bambu PLA Basic',
+        'Bambu PLA Basic',
+        'Bambu PLA Basic',
+        'Bambu PLA Basic',
+        'Bambu PETG Basic',
+      ],
+    });
+    cleanups.push(fixture.cleanup);
+    const output = path.join(fixture.directory, 'out.3mf');
+    const profile = loadTargetProfile('creator-5', '0.4');
+
+    const analysis = await analyze3mf(fixture.file);
+    expect(analysis.usedColorCount).toBe(5);
+    expect(analysis.colors[4]).toMatchObject({ slot: 5, type: 'PETG', used: true });
+
+    const result = await convert3mf(fixture.file, output, profile, {
+      printerId: 'creator-5',
+      nozzle: '0.4',
+      preserveTemperatures: true,
+      keepAllColors: true,
+      layout: 'center',
+    });
+
+    expect(result.report.filaments).toHaveLength(5);
+    expect(result.report.filaments[4]).toMatchObject({
+      sourceSlot: 5,
+      sourceType: 'PETG',
+      targetSlot: 5,
+    });
+
+    const contents = await readZip(output);
+    const config = JSON.parse(
+      contents.files.get('Metadata/project_settings.config')!.toString('utf8'),
+    );
+    expect(config.filament_colour).toHaveLength(5);
+    expect(config.filament_colour[4]).toBe('#C0C0C0');
+    expect(config.filament_type[4]).toBe('PETG');
+
+    const modelSettings = contents.files.get('Metadata/model_settings.config')!.toString('utf8');
+    expect(modelSettings).toContain('key="support_interface_filament" value="5"');
   });
 
   it('generates model settings for a bare geometry 3MF', async () => {

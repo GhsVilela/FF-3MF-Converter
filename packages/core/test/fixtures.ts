@@ -7,6 +7,11 @@ export interface FixtureOptions {
   withSettings?: boolean;
   withModelSettings?: boolean;
   paintStates?: string[];
+  filamentColors?: string[];
+  filamentTypes?: string[];
+  filamentNames?: string[];
+  supportFilament?: number;
+  supportInterfaceFilament?: number;
   sliced?: boolean;
 }
 
@@ -95,7 +100,11 @@ ${faces
 </model>`;
 }
 
-function projectSettings() {
+function projectSettings(options: FixtureOptions = {}) {
+  const colors = options.filamentColors ?? ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF'];
+  const types = options.filamentTypes ?? colors.map(() => 'PLA');
+  const names = options.filamentNames ?? colors.map(() => 'Bambu PLA Basic');
+  const temperatures = colors.map(() => '220');
   return JSON.stringify(
     {
       printer_model: 'Bambu Lab X1 Carbon',
@@ -108,24 +117,16 @@ function projectSettings() {
       enable_support: '1',
       support_threshold_angle: '40',
       top_shell_layers: '5',
-      filament_colour: ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF'],
-      filament_type: ['PLA', 'PLA', 'PLA', 'PLA'],
-      filament_settings_id: [
-        'Bambu PLA Basic',
-        'Bambu PLA Basic',
-        'Bambu PLA Basic',
-        'Bambu PLA Basic',
-      ],
-      nozzle_temperature: ['220', '220', '220', '220'],
-      nozzle_temperature_initial_layer: ['220', '220', '220', '220'],
-      hot_plate_temp: ['60', '60', '60', '60'],
-      hot_plate_temp_initial_layer: ['60', '60', '60', '60'],
+      filament_colour: colors,
+      filament_type: types,
+      filament_settings_id: names,
+      nozzle_temperature: temperatures,
+      nozzle_temperature_initial_layer: temperatures,
+      hot_plate_temp: colors.map(() => '60'),
+      hot_plate_temp_initial_layer: colors.map(() => '60'),
       different_settings_to_system: [
         'enable_support;layer_height;sparse_infill_density;support_threshold_angle;top_shell_layers;wall_loops',
-        'nozzle_temperature',
-        'nozzle_temperature',
-        'nozzle_temperature',
-        'nozzle_temperature',
+        ...colors.map(() => 'nozzle_temperature'),
         '',
       ],
     },
@@ -134,13 +135,19 @@ function projectSettings() {
   );
 }
 
-function modelSettings() {
+function modelSettings(options: FixtureOptions = {}) {
+  const supportFilament = options.supportFilament
+    ? `  <metadata key="support_filament" value="${options.supportFilament}"/>\n`
+    : '';
+  const supportInterfaceFilament = options.supportInterfaceFilament
+    ? `  <metadata key="support_interface_filament" value="${options.supportInterfaceFilament}"/>\n`
+    : '';
   return `<?xml version="1.0" encoding="UTF-8"?>
 <config>
  <object id="2">
   <metadata key="name" value="Fixture part"/>
   <metadata key="extruder" value="1"/>
-  <part id="1" subtype="normal_part">
+${supportFilament}${supportInterfaceFilament}  <part id="1" subtype="normal_part">
    <metadata key="name" value="Fixture part"/>
   </part>
  </object>
@@ -167,10 +174,10 @@ export async function createFixtureAsync(options: FixtureOptions = {}) {
     { name: '3D/Objects/part.model', data: partModel(options.paintStates ?? []) },
   ];
   if (options.withModelSettings !== false) {
-    entries.push({ name: 'Metadata/model_settings.config', data: modelSettings() });
+    entries.push({ name: 'Metadata/model_settings.config', data: modelSettings(options) });
   }
   if (options.withSettings !== false) {
-    entries.push({ name: 'Metadata/project_settings.config', data: projectSettings() });
+    entries.push({ name: 'Metadata/project_settings.config', data: projectSettings(options) });
   }
   if (options.sliced) {
     entries.push({ name: 'Metadata/plate_1.gcode', data: '; sliced\nG28\n' });

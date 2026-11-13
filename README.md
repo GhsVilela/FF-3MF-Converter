@@ -4,6 +4,7 @@
 [![Release](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/release.yml/badge.svg)](https://github.com/GhsVilela/FF-3MF-Converter/actions/workflows/release.yml)
 [![GHCR](https://img.shields.io/badge/ghcr.io-ff--3mf--converter-blue?logo=github)](https://github.com/GhsVilela/FF-3MF-Converter/pkgs/container/ff-3mf-converter)
 [![Docker Hub](https://img.shields.io/docker/v/ghsvilela/ff-3mf-converter?label=docker.io&logo=docker)](https://hub.docker.com/r/ghsvilela/ff-3mf-converter/tags)
+[![Docker image size](https://img.shields.io/docker/image-size/ghsvilela/ff-3mf-converter?label=image%20size&logo=docker)](https://hub.docker.com/r/ghsvilela/ff-3mf-converter/tags)
 [![License](https://img.shields.io/badge/license-AGPL--3.0--or--later-orange)](LICENSE)
 
 **Self-hosted 3MF project converter for FlashForge printers.**
