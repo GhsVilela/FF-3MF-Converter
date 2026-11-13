@@ -11,6 +11,7 @@ const UPLOAD_METADATA = 'upload.json';
 export interface UploadThumbnail {
   file: string;
   mime: string;
+  plate: number;
 }
 
 interface PersistedUpload {
@@ -18,7 +19,7 @@ interface PersistedUpload {
   originalName: string;
   size: number;
   analysis: SourceAnalysis;
-  thumbnail?: UploadThumbnail;
+  thumbnails?: UploadThumbnail[];
   createdAt: number;
   expiresAt: number;
 }
@@ -29,7 +30,7 @@ export interface UploadRecord {
   originalName: string;
   size: number;
   analysis: SourceAnalysis;
-  thumbnail?: UploadThumbnail;
+  thumbnails?: UploadThumbnail[];
   createdAt: number;
   expiresAt: number;
 }
@@ -64,7 +65,7 @@ export function createUpload(
   originalName: string,
   size: number,
   analysis: SourceAnalysis,
-  thumbnail?: UploadThumbnail,
+  thumbnails?: UploadThumbnail[],
 ): UploadRecord {
   const now = Date.now();
   const record: UploadRecord = {
@@ -73,7 +74,7 @@ export function createUpload(
     originalName,
     size,
     analysis,
-    thumbnail,
+    thumbnails,
     createdAt: now,
     expiresAt: now + config.jobTtlMinutes * 60_000,
   };
@@ -84,7 +85,7 @@ export function createUpload(
       originalName: record.originalName,
       size: record.size,
       analysis: record.analysis,
-      thumbnail: record.thumbnail,
+      thumbnails: record.thumbnails,
       createdAt: record.createdAt,
       expiresAt: record.expiresAt,
     };
@@ -127,16 +128,20 @@ export function restoreUploads(): void {
         existsSync(inputPath) &&
         persisted.expiresAt > now
       ) {
-        const thumbnail =
-          persisted.thumbnail &&
-          (persisted.thumbnail.mime === 'image/png' || persisted.thumbnail.mime === 'image/jpeg') &&
-          existsSync(path.join(directory, path.basename(persisted.thumbnail.file)))
-            ? {
-                file: path.basename(persisted.thumbnail.file),
-                mime: persisted.thumbnail.mime,
-              }
-            : undefined;
-        uploads.set(id, { ...persisted, thumbnail, inputPath });
+        const thumbnails = (persisted.thumbnails ?? [])
+          .flatMap((entry) => {
+            if (!entry || !Number.isInteger(entry.plate) || entry.plate <= 0) return [];
+            if (entry.mime !== 'image/png' && entry.mime !== 'image/jpeg') return [];
+            const file = path.basename(entry.file);
+            if (!existsSync(path.join(directory, file))) return [];
+            return [{ file, mime: entry.mime, plate: entry.plate }];
+          })
+          .sort((left, right) => left.plate - right.plate);
+        uploads.set(id, {
+          ...persisted,
+          thumbnails: thumbnails.length > 0 ? thumbnails : undefined,
+          inputPath,
+        });
         continue;
       }
     } catch {

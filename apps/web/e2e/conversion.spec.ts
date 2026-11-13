@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import path from 'node:path';
 
 const fixture = path.resolve('tests/fixtures/four-color.3mf');
+const multiPlateFixture = path.resolve('tests/fixtures/multi-plate-preview.3mf');
 
 test('converts a four-colour project through the UI', async ({ page }) => {
   await page.goto('/');
@@ -31,13 +32,22 @@ test('converts a four-colour project through the UI', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
 });
 
-test('shows the plate preview after upload', async ({ page }) => {
+test('shows and navigates the plate preview carousel', async ({ page }) => {
   await page.goto('/');
-  await page.locator('input[type="file"]').setInputFiles(fixture);
+  await page.locator('input[type="file"]').setInputFiles(multiPlateFixture);
   await expect(page.getByRole('heading', { name: 'File analysis' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'First plate' })).toBeVisible();
-  await expect(page.getByRole('img', { name: /Preview of the first build plate/ })).toBeVisible();
-  await expect(page.getByText('Plate 1 of 1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Build plate preview' })).toBeVisible();
+  await expect(page.getByRole('img', { name: /Preview of plate 1/ })).toBeVisible();
+  await expect(page.getByText('Plate 1 of 3')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Next plate' }).click();
+  await expect(page.getByRole('img', { name: /Preview of plate 2/ })).toBeVisible();
+  await expect(page.getByText('Plate 2 of 3')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Previous plate' }).click();
+  await expect(page.getByText('Plate 1 of 3')).toBeVisible();
+  await page.getByRole('button', { name: 'Show plate 3' }).click();
+  await expect(page.getByText('Plate 3 of 3')).toBeVisible();
 });
 
 test('rejects a non-3MF file with a clear message', async ({ page }) => {

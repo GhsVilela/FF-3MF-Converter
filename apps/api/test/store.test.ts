@@ -46,11 +46,12 @@ describe('upload store persistence', () => {
     const inputPath = path.join(directory, 'uploads', id, 'input.3mf');
     mkdirSync(path.dirname(inputPath), { recursive: true });
     writeFileSync(inputPath, '3mf!');
-    writeFileSync(path.join(path.dirname(inputPath), 'thumbnail.png'), 'png');
-    first.createUpload(id, inputPath, 'GTA.3mf', 4, analysis('GTA.3mf'), {
-      file: 'thumbnail.png',
-      mime: 'image/png',
-    });
+    writeFileSync(path.join(path.dirname(inputPath), 'plate-1.png'), 'png');
+    writeFileSync(path.join(path.dirname(inputPath), 'plate-2.png'), 'png');
+    first.createUpload(id, inputPath, 'GTA.3mf', 4, analysis('GTA.3mf'), [
+      { file: 'plate-1.png', mime: 'image/png', plate: 1 },
+      { file: 'plate-2.png', mime: 'image/png', plate: 2 },
+    ]);
 
     vi.resetModules();
     const restoredStore = await import('../src/store.js');
@@ -64,7 +65,10 @@ describe('upload store persistence', () => {
       inputPath,
       originalName: 'GTA.3mf',
       size: 4,
-      thumbnail: { file: 'thumbnail.png', mime: 'image/png' },
+      thumbnails: [
+        { file: 'plate-1.png', mime: 'image/png', plate: 1 },
+        { file: 'plate-2.png', mime: 'image/png', plate: 2 },
+      ],
     });
   });
 

@@ -22,6 +22,7 @@ export interface UploadResponse {
   uploadId: string;
   analysis: SourceAnalysis;
   hasThumbnail?: boolean;
+  thumbnails?: Array<{ plate: number }>;
 }
 
 export interface UploadProgress {
@@ -141,12 +142,13 @@ export function getPrinters(): Promise<PrintersResponse> {
   return apiFetch<PrintersResponse>('/printers');
 }
 
-export async function getUploadThumbnail(uploadId: string): Promise<Blob> {
+export async function getUploadThumbnail(uploadId: string, plate?: number): Promise<Blob> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20_000);
+  const query = plate === undefined ? '' : `?plate=${encodeURIComponent(String(plate))}`;
   let response: Response;
   try {
-    response = await fetch(`${apiBase()}/uploads/${uploadId}/thumbnail`, {
+    response = await fetch(`${apiBase()}/uploads/${uploadId}/thumbnail${query}`, {
       headers: authHeaders(),
       signal: controller.signal,
     });

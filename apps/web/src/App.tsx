@@ -152,7 +152,7 @@ export default function App() {
   const [uploadProgress, setUploadProgress] = useState<UploadProgress>(EMPTY_UPLOAD_PROGRESS);
   const [fileName, setFileName] = useState<string>();
   const [uploadId, setUploadId] = useState<string>();
-  const [hasThumbnail, setHasThumbnail] = useState(false);
+  const [thumbnailPlates, setThumbnailPlates] = useState<number[]>([]);
   const [analysis, setAnalysis] = useState<SourceAnalysis>();
   const [selectedPrinterId, setSelectedPrinterId] = useState('');
   const [selectedNozzle, setSelectedNozzle] = useState('0.4');
@@ -255,7 +255,9 @@ export default function App() {
       }
       const response = await uploadFile(file, setUploadProgress);
       setUploadId(response.uploadId);
-      setHasThumbnail(Boolean(response.hasThumbnail));
+      setThumbnailPlates(
+        response.thumbnails?.map((entry) => entry.plate) ?? (response.hasThumbnail ? [1] : []),
+      );
       setAnalysis(response.analysis);
       setKeepAllColors(false);
       const printer = defaultPrinter(response.analysis, availablePrinters);
@@ -345,7 +347,7 @@ export default function App() {
   const reset = () => {
     setStage('upload');
     setUploadId(undefined);
-    setHasThumbnail(false);
+    setThumbnailPlates([]);
     setAnalysis(undefined);
     setFileName(undefined);
     setJob(undefined);
@@ -438,7 +440,7 @@ export default function App() {
               <div className="rise">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-y border-[var(--border)] py-2">
                   <span className="mono-label text-[var(--accent)]">{t('hero.kicker')}</span>
-                  <span className="mono-label text-[var(--muted)]">REV 0.3.0 / LOCAL INSTANCE</span>
+                  <span className="mono-label text-[var(--muted)]">REV 0.3.1 / LOCAL INSTANCE</span>
                 </div>
 
                 <div className="grid items-start gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-14">
@@ -607,11 +609,12 @@ export default function App() {
                   </div>
                 </div>
 
-                {uploadId && hasThumbnail && (
+                {uploadId && thumbnailPlates.length > 0 && (
                   <PreviewCard
                     uploadId={uploadId}
                     fileName={fileName}
-                    plateCount={analysis.plates}
+                    plateCount={Math.max(analysis.plates, ...thumbnailPlates)}
+                    plates={thumbnailPlates}
                   />
                 )}
 

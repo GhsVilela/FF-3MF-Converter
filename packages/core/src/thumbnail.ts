@@ -4,24 +4,32 @@ export interface ProjectThumbnail {
   data: Buffer;
   mime: 'image/png' | 'image/jpeg';
   name: string;
+  plate: number;
 }
 
 const MAX_THUMBNAIL_BYTES = 4 * 1024 * 1024;
+const MAX_TOTAL_THUMBNAIL_BYTES = 24 * 1024 * 1024;
+const MAX_THUMBNAILS = 64;
 
-const CANDIDATES = [
-  'Metadata/plate_1.png',
-  'Metadata/plate_1.jpg',
-  'Metadata/plate_1.jpeg',
-  'Metadata/plate_1_small.png',
-  'Metadata/plate_1_small.jpg',
+const GENERIC_CANDIDATES = [
   'Metadata/thumbnail.png',
   'Metadata/thumbnail.jpg',
   'Auxiliaries/.thumbnails/thumbnail_3mf.png',
   'Auxiliaries/.thumbnails/thumbnail_middle.png',
   'Auxiliaries/.thumbnails/thumbnail_small.png',
-  'Metadata/plate_no_light_1.png',
-  'Metadata/top_1.png',
 ];
+
+function plateCandidates(plate: number): string[] {
+  return [
+    `Metadata/plate_${plate}.png`,
+    `Metadata/plate_${plate}.jpg`,
+    `Metadata/plate_${plate}.jpeg`,
+    `Metadata/plate_${plate}_small.png`,
+    `Metadata/plate_${plate}_small.jpg`,
+    `Metadata/plate_no_light_${plate}.png`,
+    `Metadata/top_${plate}.png`,
+  ];
+}
 
 function imageMime(data: Buffer): ProjectThumbnail['mime'] | undefined {
   if (
@@ -39,29 +47,57 @@ function imageMime(data: Buffer): ProjectThumbnail['mime'] | undefined {
   return undefined;
 }
 
-/**
- * Return the best available plate/project preview from a 3MF package. The
- * image itself is not part of the shared analysis payload; the API stores it
- * next to the upload and serves it through a dedicated endpoint.
- */
-export function findProjectThumbnail(contents: ZipContents): ProjectThumbnail | undefined {
-  const names = new Set(contents.names);
-  const ordered = [
-    ...CANDIDATES.filter((name) => names.has(name)),
-    ...contents.names
-      .filter(
-        (name) =>
-          /^Metadata\/plate_1(?:_small)?\.(?:png|jpe?g)$/i.test(name) && !CANDIDATES.includes(name),
-      )
-      .sort(),
-  ];
-
-  for (const name of ordered) {
+function readThumbnail(
+  contents: ZipContents,
+  names: Set<string>,
+  candidates: string[],
+  plate: number,
+): ProjectThumbnail | undefined {
+  for (const name of candidates) {
+    if (!names.has(name)) continue;
     const data = contents.files.get(name);
     if (!data || data.length === 0 || data.length > MAX_THUMBNAIL_BYTES) continue;
     const mime = imageMime(data);
     if (!mime) continue;
-    return { data, mime, name };
+    return { data, mime, name, plate };
   }
   return undefined;
+}
+
+/**
+ * Return every plate preview embedded in a 3MF package, ordered by plate.
+ * Some packages only contain a single project thumbnail; those are exposed as
+ * plate 1 so the UI can still show a useful preview.
+ */
+export function findProjectThumbnails(contents: ZipContents): ProjectThumbnail[] {
+  const names = new Set(contents.names);
+  const plateNumbers = new Set<number>();
+  for (const name of contents.names) {
+    const match = /^Metadata\/(?:plate|plate_no_light|top)_(\d+)(?:_small)?\.(?:png|jpe?g)$/i.exec(
+      name,
+    );
+    if (!match) continue;
+    const plate = Number(match[1]);
+    if (Number.isInteger(plate) && plate > 0) plateNumbers.add(plate);
+  }
+
+  const thumbnails: ProjectThumbnail[] = [];
+  let totalBytes = 0;
+  if (plateNumbers.size > 0) {
+    for (const plate of [...plateNumbers].sort((left, right) => left - right)) {
+      const thumbnail = readThumbnail(contents, names, plateCandidates(plate), plate);
+      if (!thumbnail) continue;
+      if (thumbnails.length >= MAX_THUMBNAILS) break;
+      if (totalBytes + thumbnail.data.length > MAX_TOTAL_THUMBNAIL_BYTES) break;
+      totalBytes += thumbnail.data.length;
+      thumbnails.push(thumbnail);
+    }
+  }
+
+  if (thumbnails.length === 0) {
+    const fallback = readThumbnail(contents, names, GENERIC_CANDIDATES, 1);
+    if (fallback) thumbnails.push(fallback);
+  }
+
+  return thumbnails;
 }

@@ -13,7 +13,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "uptimeSeconds": 42,
   "profiles": {
     "generatedAt": "2026-11-11",
@@ -54,6 +54,7 @@ Response `201`:
 {
   "uploadId": "2e5f...",
   "hasThumbnail": true,
+  "thumbnails": [{ "plate": 1 }, { "plate": 2 }, { "plate": 3 }],
   "analysis": {
     "fileName": "model.3mf",
     "sourceApp": "Bambu Studio / OrcaSlicer family",
@@ -77,12 +78,15 @@ a plate preview that the UI can display.
 
 ```http
 GET /api/uploads/:id/thumbnail
+GET /api/uploads/:id/thumbnail?plate=2
 ```
 
-Returns the first plate preview embedded in the 3MF as `image/png` or
-`image/jpeg`. The converter accepts `Metadata/plate_1.png`, smaller plate
-variants, project thumbnails and the common auxiliary thumbnail locations. If
-the package has no usable preview, the endpoint returns `404`.
+Returns a plate preview embedded in the 3MF as `image/png` or `image/jpeg`.
+Without `plate`, the first available preview is returned. Use the `thumbnails`
+array from the upload response to list the plates that have a preview. The
+converter accepts `Metadata/plate_<n>.png`, smaller plate variants, project
+thumbnails and the common auxiliary thumbnail locations. If the package has no
+usable preview, or the requested plate has no image, the endpoint returns `404`.
 
 ## Start a conversion
 

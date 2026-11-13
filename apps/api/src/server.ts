@@ -222,24 +222,33 @@ app.post(
       analysis.fileName = originalName;
       analysis.fileSize = statSync(inputPath).size;
 
-      let thumbnail: UploadThumbnail | undefined;
-      if (project.thumbnail) {
-        const extension = project.thumbnail.mime === 'image/jpeg' ? 'jpg' : 'png';
-        const file = `thumbnail.${extension}`;
+      const thumbnails: UploadThumbnail[] = [];
+      for (const thumbnail of project.thumbnails) {
+        const extension = thumbnail.mime === 'image/jpeg' ? 'jpg' : 'png';
+        const file = `plate-${thumbnail.plate}.${extension}`;
         try {
-          writeFileSync(path.join(directory, file), project.thumbnail.data, { mode: 0o600 });
-          thumbnail = { file, mime: project.thumbnail.mime };
+          writeFileSync(path.join(directory, file), thumbnail.data, { mode: 0o600 });
+          thumbnails.push({ file, mime: thumbnail.mime, plate: thumbnail.plate });
         } catch {
           // A missing preview must not fail an otherwise valid upload.
         }
       }
 
-      createUpload(id, inputPath, originalName, analysis.fileSize, analysis, thumbnail);
+      createUpload(id, inputPath, originalName, analysis.fileSize, analysis, thumbnails);
       request.log.info(
-        { uploadId: id, bytes: analysis.fileSize, thumbnail: Boolean(thumbnail) },
+        {
+          uploadId: id,
+          bytes: analysis.fileSize,
+          thumbnails: thumbnails.length,
+        },
         'upload analysed',
       );
-      return reply.code(201).send({ uploadId: id, analysis, hasThumbnail: Boolean(thumbnail) });
+      return reply.code(201).send({
+        uploadId: id,
+        analysis,
+        hasThumbnail: thumbnails.length > 0,
+        thumbnails: thumbnails.map(({ plate }) => ({ plate })),
+      });
     } catch (error) {
       rmSync(directory, { recursive: true, force: true });
       throw error;
@@ -253,22 +262,43 @@ app.get(
   async (request, reply) => {
     const id = (request.params as { id: string }).id;
     const upload = getUpload(id);
-    if (!upload?.thumbnail) {
+    if (!upload) {
       return reply.code(404).send({
         error: { code: 'NOT_FOUND', message: 'No preview is available for this upload.' },
       });
     }
-    const thumbnailPath = path.join(
-      path.dirname(upload.inputPath),
-      path.basename(upload.thumbnail.file),
-    );
-    if (!existsSync(thumbnailPath)) {
+    const thumbnails = upload.thumbnails ?? [];
+    if (thumbnails.length === 0) {
       return reply.code(404).send({
         error: { code: 'NOT_FOUND', message: 'No preview is available for this upload.' },
+      });
+    }
+
+    const plateParam = (request.query as { plate?: string }).plate;
+    const requested = plateParam === undefined ? undefined : Number(plateParam);
+    if (requested !== undefined && (!Number.isInteger(requested) || requested <= 0)) {
+      return reply.code(400).send({
+        error: { code: 'INVALID_REQUEST', message: 'The plate number is invalid.' },
+      });
+    }
+    const thumbnail =
+      requested === undefined
+        ? thumbnails[0]
+        : thumbnails.find((entry) => entry.plate === requested);
+    if (!thumbnail) {
+      return reply.code(404).send({
+        error: { code: 'NOT_FOUND', message: 'No preview is available for this plate.' },
+      });
+    }
+
+    const thumbnailPath = path.join(path.dirname(upload.inputPath), path.basename(thumbnail.file));
+    if (!existsSync(thumbnailPath)) {
+      return reply.code(404).send({
+        error: { code: 'NOT_FOUND', message: 'No preview is available for this plate.' },
       });
     }
     return reply
-      .header('Content-Type', upload.thumbnail.mime)
+      .header('Content-Type', thumbnail.mime)
       .header('Content-Length', statSync(thumbnailPath).size)
       .header('Cache-Control', 'private, max-age=3600')
       .header('Content-Disposition', 'inline')

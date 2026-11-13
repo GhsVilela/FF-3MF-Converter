@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name('ff3mf')
   .description('Convert 3MF projects into FlashForge Flash Studio projects')
-  .version('0.3.0');
+  .version('0.3.1');
 
 program
   .command('printers')
