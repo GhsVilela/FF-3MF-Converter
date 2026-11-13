@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - Added an optional `keepAllColors` conversion mode. When a source project uses
   more colours than the target printer exposes, it keeps one filament slot per
