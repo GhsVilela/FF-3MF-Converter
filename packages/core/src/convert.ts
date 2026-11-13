@@ -11,12 +11,26 @@ import { buildTargetConfig, summarizeSettings, type TargetProfileInput } from '.
 import { ConversionError } from './errors.js';
 import { patchModelSettingsXml } from './model-settings.js';
 import { loadSourceAsync } from './source.js';
+import { findProjectThumbnail, type ProjectThumbnail } from './thumbnail.js';
 import { scanModelXml, rewriteModelXml } from './xml.js';
 import { readZip, writeZip, type ZipOutputEntry } from './zip.js';
 
-export async function analyze3mf(filePath: string): Promise<SourceAnalysis> {
+export interface ProjectAnalysis {
+  analysis: SourceAnalysis;
+  thumbnail?: ProjectThumbnail;
+}
+
+export async function analyze3mfProject(filePath: string): Promise<ProjectAnalysis> {
   const source = await loadSourceAsync(filePath);
-  return source.analysis;
+  return {
+    analysis: source.analysis,
+    thumbnail: findProjectThumbnail(source.contents),
+  };
+}
+
+export async function analyze3mf(filePath: string): Promise<SourceAnalysis> {
+  const result = await analyze3mfProject(filePath);
+  return result.analysis;
 }
 
 function xmlEscape(value: string): string {

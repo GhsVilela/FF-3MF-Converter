@@ -58,6 +58,11 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   manual mapping in Flash Studio.
 - **Multi-plate projects.** Plates are preserved. Single-plate projects can be
   centred on the target bed; models are never scaled automatically.
+- **First-plate preview.** The project's embedded plate render is shown after
+  upload, so you can confirm orientation and layout before choosing a target.
+- **Fast on large projects.** A lower-memory streaming XML scanner and rewriter
+  handles multi-million-triangle projects with a 10-minute default conversion
+  timeout.
 - **Transparent report.** Every transferred setting is listed as kept, translated,
   clamped, replaced or dropped, with a reason. Download it as JSON.
 - **No black box.** The target configuration is generated from pinned,
@@ -273,7 +278,7 @@ start/end G-code and hardware-specific keys).
 | `MAX_CONCURRENT_JOBS`        | `1`     | Conversions processed in parallel     |
 | `MAX_QUEUED_JOBS`            | `10`    | Maximum queued conversions            |
 | `JOB_TTL_MINUTES`            | `60`    | How long uploads and results are kept |
-| `CONVERSION_TIMEOUT_SECONDS` | `120`   | Per-conversion timeout                |
+| `CONVERSION_TIMEOUT_SECONDS` | `600`   | Per-conversion timeout                |
 | `AUTH_TOKEN`                 | unset   | Optional bearer token for `/api`      |
 | `TRUST_PROXY`                | `false` | Trust `X-Forwarded-*` headers         |
 | `LOG_LEVEL`                  | `info`  | Pino log level                        |

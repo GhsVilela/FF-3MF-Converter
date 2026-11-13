@@ -13,7 +13,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "uptimeSeconds": 42,
   "profiles": {
     "generatedAt": "2026-11-11",
@@ -53,6 +53,7 @@ Response `201`:
 ```json
 {
   "uploadId": "2e5f...",
+  "hasThumbnail": true,
   "analysis": {
     "fileName": "model.3mf",
     "sourceApp": "Bambu Studio / OrcaSlicer family",
@@ -69,7 +70,19 @@ Response `201`:
 
 The upload is kept for `JOB_TTL_MINUTES`. Upload metadata is written next to the
 staged file, so a valid upload survives a process restart or container redeploy
-when `DATA_DIR` is persistent.
+when `DATA_DIR` is persistent. `hasThumbnail` reports whether the project embeds
+a plate preview that the UI can display.
+
+## Upload preview
+
+```http
+GET /api/uploads/:id/thumbnail
+```
+
+Returns the first plate preview embedded in the 3MF as `image/png` or
+`image/jpeg`. The converter accepts `Metadata/plate_1.png`, smaller plate
+variants, project thumbnails and the common auxiliary thumbnail locations. If
+the package has no usable preview, the endpoint returns `404`.
 
 ## Start a conversion
 

@@ -47,7 +47,8 @@ for a NAS-friendly deployment.
 The conversion engine:
 
 - `zip.ts` — safe ZIP reader/writer with entry, size and compression limits.
-- `xml.ts` — SAX-based model scanner and XML rewriter.
+- `xml.ts` — streaming model scanner and XML rewriter. Untouched tags are
+  copied verbatim, namespace resolution is skipped and DTDs are rejected.
 - `paint.ts` — TriangleSelector paint codec and remapping.
 - `source.ts` — source detection, analysis, bounds and plate data.
 - `config.ts` — target template, setting translation, filaments, report.

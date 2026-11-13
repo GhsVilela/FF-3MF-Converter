@@ -1,6 +1,6 @@
 {
   "name": "@ff3mf/cli",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "bin": {
@@ -13,9 +13,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ff3mf/core": "0.2.1",
-    "@ff3mf/profiles": "0.2.1",
-    "@ff3mf/shared": "0.2.1",
+    "@ff3mf/core": "0.3.0",
+    "@ff3mf/profiles": "0.3.0",
+    "@ff3mf/shared": "0.3.0",
     "commander": "^13.1.0"
   }
 }

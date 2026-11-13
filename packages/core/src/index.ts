@@ -1,4 +1,6 @@
-export { analyze3mf, convert3mf } from './convert.js';
+export { analyze3mf, analyze3mfProject, convert3mf } from './convert.js';
+export type { ProjectAnalysis } from './convert.js';
+export type { ProjectThumbnail } from './thumbnail.js';
 export { buildTargetConfig } from './config.js';
 export type {
   BuildConfigResult,

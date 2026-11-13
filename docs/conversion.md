@@ -39,7 +39,7 @@ sliced `.gcode.3mf` is rejected.
 
 ### 2. Analyse
 
-The core reads model XML with a SAX parser and collects:
+The core reads model XML with a streaming scanner and collects:
 
 - Objects, instances, vertices, triangles and units.
 - Plate count and object-to-plate membership.

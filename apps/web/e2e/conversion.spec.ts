@@ -31,6 +31,15 @@ test('converts a four-colour project through the UI', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
 });
 
+test('shows the plate preview after upload', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('input[type="file"]').setInputFiles(fixture);
+  await expect(page.getByRole('heading', { name: 'File analysis' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'First plate' })).toBeVisible();
+  await expect(page.getByRole('img', { name: /Preview of the first build plate/ })).toBeVisible();
+  await expect(page.getByText('Plate 1 of 1')).toBeVisible();
+});
+
 test('rejects a non-3MF file with a clear message', async ({ page }) => {
   await page.goto('/');
   await page.locator('input[type="file"]').setInputFiles({
