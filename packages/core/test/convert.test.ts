@@ -268,6 +268,39 @@ describe('3MF conversion', () => {
     expect(modelSettings).toContain('value="1"');
   });
 
+  it('reports conversion progress through each stage', async () => {
+    const fixture = await createFixtureAsync({
+      paintStates: ['4', '8', '0C', '1C'],
+    });
+    cleanups.push(fixture.cleanup);
+    const output = path.join(fixture.directory, 'out.3mf');
+    const profile = loadTargetProfile('ad5x', '0.4', '0.16mm Standard @FF AD5X');
+    const updates: Array<{ stage: string; progress: number }> = [];
+
+    await convert3mf(
+      fixture.file,
+      output,
+      profile,
+      {
+        printerId: 'ad5x',
+        nozzle: '0.4',
+        preserveTemperatures: true,
+        layout: 'center',
+      },
+      (update) => updates.push(update),
+    );
+
+    expect(updates[0]?.stage).toBe('analysing');
+    expect(new Set(updates.map((update) => update.stage))).toEqual(
+      new Set(['analysing', 'profiling', 'rewriting', 'packaging', 'validating']),
+    );
+    expect(updates.at(-1)?.stage).toBe('validating');
+    const progresses = updates.map((update) => update.progress);
+    expect(progresses).toEqual([...progresses].sort((left, right) => left - right));
+    expect(progresses.at(-1)).toBeGreaterThan(90);
+    expect(progresses.at(-1)).toBeLessThan(100);
+  });
+
   it('rejects sliced print files', async () => {
     const fixture = await createFixtureAsync({ sliced: true });
     cleanups.push(fixture.cleanup);

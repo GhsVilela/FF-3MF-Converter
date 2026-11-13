@@ -77,6 +77,17 @@ export interface SourceAnalysis {
   warnings: string[];
 }
 
+export type ConversionStage = 'analysing' | 'profiling' | 'rewriting' | 'packaging' | 'validating';
+
+export type JobStage = 'queued' | ConversionStage | 'completed' | 'failed';
+
+export interface ConversionProgress {
+  stage: ConversionStage;
+  progress: number;
+}
+
+export type ConversionProgressHandler = (update: ConversionProgress) => void;
+
 export type LayoutMode = 'center' | 'keep' | 'scale';
 
 export interface ConversionOptions {

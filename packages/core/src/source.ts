@@ -334,6 +334,9 @@ function loadSourceFromContents(filePath: string, contents: ZipContents): Loaded
     throw new ConversionError('NO_MODEL', `The 3MF model entry is missing: ${rootModelName}`);
   }
   const rootXml = rootBuffer.toString('utf8');
+  // The model XML strings are retained for rewriting; keeping the raw buffers
+  // as well doubles the memory needed for large projects.
+  contents.files.delete(rootModelName);
   const rootScan = scanModelXml(rootXml);
 
   const modelFiles = new Map<string, { xml: string; scan: XmlScan }>();
@@ -343,6 +346,7 @@ function loadSourceFromContents(filePath: string, contents: ZipContents): Loaded
     const buffer = contents.files.get(name);
     if (!buffer) continue;
     const xml = buffer.toString('utf8');
+    contents.files.delete(name);
     modelFiles.set(name, { xml, scan: scanModelXml(xml) });
   }
 

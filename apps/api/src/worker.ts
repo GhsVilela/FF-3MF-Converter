@@ -1,5 +1,5 @@
 import { parentPort } from 'node:worker_threads';
-import type { ConversionOptions } from '@ff3mf/shared';
+import type { ConversionOptions, ConversionReport, ConversionStage } from '@ff3mf/shared';
 import { asConversionError, convert3mf } from '@ff3mf/core';
 import { loadTargetProfile } from '@ff3mf/profiles';
 
@@ -12,6 +12,19 @@ interface WorkerRequest {
   options: ConversionOptions;
 }
 
+interface WorkerProgress {
+  type: 'progress';
+  stage: ConversionStage;
+  progress: number;
+}
+
+interface WorkerResult {
+  type: 'result';
+  ok: boolean;
+  report?: ConversionReport;
+  error?: { code: string; message: string; details?: string[] };
+}
+
 parentPort?.on('message', async (message: WorkerRequest) => {
   try {
     const profile = loadTargetProfile(message.printerId, message.nozzle, message.processName);
@@ -20,17 +33,24 @@ parentPort?.on('message', async (message: WorkerRequest) => {
       message.outputPath,
       profile,
       message.options,
+      (progress) => {
+        const update: WorkerProgress = { type: 'progress', ...progress };
+        parentPort?.postMessage(update);
+      },
     );
-    parentPort?.postMessage({ ok: true, report: result.report });
+    const resultMessage: WorkerResult = { type: 'result', ok: true, report: result.report };
+    parentPort?.postMessage(resultMessage);
   } catch (error) {
     const conversionError = asConversionError(error);
-    parentPort?.postMessage({
+    const resultMessage: WorkerResult = {
+      type: 'result',
       ok: false,
       error: {
         code: conversionError.code,
         message: conversionError.message,
         details: conversionError.details,
       },
-    });
+    };
+    parentPort?.postMessage(resultMessage);
   }
 });

@@ -13,7 +13,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "uptimeSeconds": 42,
   "profiles": {
     "generatedAt": "2026-11-11",
@@ -67,7 +67,9 @@ Response `201`:
 }
 ```
 
-The upload is kept for `JOB_TTL_MINUTES`.
+The upload is kept for `JOB_TTL_MINUTES`. Upload metadata is written next to the
+staged file, so a valid upload survives a process restart or container redeploy
+when `DATA_DIR` is persistent.
 
 ## Start a conversion
 
@@ -100,6 +102,7 @@ Response `202`:
 {
   "id": "8b4c...",
   "status": "queued",
+  "stage": "queued",
   "progress": 0,
   "download": null
 }
@@ -115,6 +118,7 @@ GET /api/conversions/:id
 {
   "id": "8b4c...",
   "status": "completed",
+  "stage": "completed",
   "progress": 100,
   "report": {
     "source": {},
@@ -133,8 +137,15 @@ GET /api/conversions/:id
 }
 ```
 
-Status is `queued`, `converting`, `completed` or `failed`. A failed job includes
-an `error` object with `code`, `message` and optional `details`.
+Status is `queued`, `converting`, `completed` or `failed`. While converting,
+`stage` progresses through `analysing`, `profiling`, `rewriting`, `packaging` and
+`validating`; `progress` follows the same order from 0 to 100. A failed job
+includes an `error` object with `code`, `message` and optional `details`.
+
+The status endpoint has its own rate-limit budget so frequent polling cannot
+exhaust the limits for uploads, conversions and downloads. The UI retries
+transient `429`, `5xx` and network failures while polling instead of abandoning
+the conversion.
 
 ## Download
 

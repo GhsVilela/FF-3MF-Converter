@@ -1,10 +1,21 @@
-import { mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { ConversionOptions, ConversionReport, SourceAnalysis } from '@ff3mf/shared';
+import type { ConversionOptions, ConversionReport, JobStage, SourceAnalysis } from '@ff3mf/shared';
 import { config } from './config.js';
 
 export type JobStatus = 'queued' | 'converting' | 'completed' | 'failed';
+
+const UPLOAD_METADATA = 'upload.json';
+
+interface PersistedUpload {
+  id: string;
+  originalName: string;
+  size: number;
+  analysis: SourceAnalysis;
+  createdAt: number;
+  expiresAt: number;
+}
 
 export interface UploadRecord {
   id: string;
@@ -20,6 +31,7 @@ export interface JobRecord {
   id: string;
   uploadId: string;
   status: JobStatus;
+  stage: JobStage;
   progress: number;
   options: ConversionOptions;
   report?: ConversionReport;
@@ -57,7 +69,66 @@ export function createUpload(
     expiresAt: now + config.jobTtlMinutes * 60_000,
   };
   uploads.set(id, record);
+  try {
+    const persisted: PersistedUpload = {
+      id: record.id,
+      originalName: record.originalName,
+      size: record.size,
+      analysis: record.analysis,
+      createdAt: record.createdAt,
+      expiresAt: record.expiresAt,
+    };
+    writeFileSync(path.join(path.dirname(inputPath), UPLOAD_METADATA), JSON.stringify(persisted), {
+      encoding: 'utf8',
+      mode: 0o600,
+    });
+  } catch {
+    // Persistence is best-effort; the in-memory record still works.
+  }
   return record;
+}
+
+/**
+ * Restore uploads that were still valid when the process last stopped. Without
+ * this, a container restart (for example a routine redeploy) makes the browser's
+ * uploadId unusable even though the staged file is still on the data volume.
+ */
+export function restoreUploads(): void {
+  const root = path.join(config.dataDir, 'uploads');
+  let entries: string[];
+  try {
+    entries = readdirSync(root);
+  } catch {
+    return;
+  }
+  const now = Date.now();
+  for (const id of entries) {
+    const directory = uploadDir(id);
+    const inputPath = path.join(directory, 'input.3mf');
+    const metadataPath = path.join(directory, UPLOAD_METADATA);
+    try {
+      const persisted = JSON.parse(readFileSync(metadataPath, 'utf8')) as PersistedUpload;
+      if (
+        persisted &&
+        persisted.id === id &&
+        typeof persisted.originalName === 'string' &&
+        Number.isFinite(persisted.size) &&
+        persisted.analysis &&
+        existsSync(inputPath) &&
+        persisted.expiresAt > now
+      ) {
+        uploads.set(id, { ...persisted, inputPath });
+        continue;
+      }
+    } catch {
+      // Invalid or missing metadata; the directory is not a usable upload.
+    }
+    try {
+      rmSync(directory, { recursive: true, force: true });
+    } catch {
+      // Ignore cleanup failures.
+    }
+  }
 }
 
 export function getUpload(id: string): UploadRecord | undefined {
@@ -82,6 +153,7 @@ export function createJob(
     id,
     uploadId,
     status: 'queued',
+    stage: 'queued',
     progress: 0,
     options,
     outputPath,

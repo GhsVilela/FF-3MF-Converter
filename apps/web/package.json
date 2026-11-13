@@ -1,6 +1,6 @@
 {
   "name": "@ff3mf/web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ff3mf/shared": "0.2.0",
+    "@ff3mf/shared": "0.2.1",
     "@fontsource-variable/ibm-plex-sans": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "clsx": "^2.1.1",

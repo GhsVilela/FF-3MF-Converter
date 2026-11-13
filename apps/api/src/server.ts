@@ -28,6 +28,7 @@ import {
   ensureDataDirs,
   getJob,
   getUpload,
+  restoreUploads,
   uploadDir,
   type JobRecord,
 } from './store.js';
@@ -35,6 +36,12 @@ import { enqueueJob, runnerStatus, safeBaseName } from './runner.js';
 
 const startedAt = Date.now();
 const defaultRateLimit = { max: config.rateLimitMax, timeWindow: config.rateLimitWindow };
+// Browsers poll the job endpoint while a conversion runs. Give it its own
+// budget so a slow conversion cannot exhaust the global request allowance.
+const statusRateLimit = {
+  max: Math.max(1200, config.rateLimitMax * 10),
+  timeWindow: config.rateLimitWindow,
+};
 const app = Fastify({
   logger: {
     level: config.logLevel,
@@ -74,6 +81,7 @@ function jobPayload(job: JobRecord) {
   return {
     id: job.id,
     status: job.status,
+    stage: job.stage,
     progress: job.progress,
     report: job.report,
     error: job.error,
@@ -120,6 +128,16 @@ async function registerPlugins() {
       parts: 16,
     },
   });
+}
+
+// Fastify's rate-limit plugin installs its hooks through `onRoute`. Plugins must
+// therefore be registered before the routes below; registering them inside
+// `start()` leaves every route without a rate limit.
+try {
+  await registerPlugins();
+} catch (error) {
+  app.log.error(error);
+  process.exit(1);
 }
 
 app.addHook('onRequest', async (request, reply) => {
@@ -252,13 +270,17 @@ app.post(
   },
 );
 
-app.get('/api/conversions/:id', async (request, reply) => {
-  const id = (request.params as { id: string }).id;
-  const job = getJob(id);
-  if (!job)
-    return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'Job not found.' } });
-  return jobPayload(job);
-});
+app.get(
+  '/api/conversions/:id',
+  { config: { rateLimit: statusRateLimit } },
+  async (request, reply) => {
+    const id = (request.params as { id: string }).id;
+    const job = getJob(id);
+    if (!job)
+      return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'Job not found.' } });
+    return jobPayload(job);
+  },
+);
 
 app.get(
   '/api/conversions/:id/download',
@@ -295,7 +317,16 @@ app.setErrorHandler((error, request, reply) => {
     const status = error.code === 'INVALID_FILE' || error.code === 'UNSUPPORTED_FILE' ? 400 : 422;
     return reply.code(status).send(errorPayload(error));
   }
-  if ((error as { statusCode?: number }).statusCode === 413) {
+  const statusCode = (error as { statusCode?: number }).statusCode;
+  if (statusCode === 429) {
+    return reply.code(429).send({
+      error: {
+        code: 'RATE_LIMITED',
+        message: 'Too many requests. Wait a moment and try again.',
+      },
+    });
+  }
+  if (statusCode === 413) {
     return reply.code(413).send({
       error: {
         code: 'FILE_TOO_LARGE',
@@ -329,7 +360,7 @@ async function registerStaticUi() {
 
 async function start() {
   ensureDataDirs();
-  await registerPlugins();
+  restoreUploads();
   await registerStaticUi();
   const cleanupTimer = setInterval(cleanupExpired, 60_000);
   cleanupTimer.unref();

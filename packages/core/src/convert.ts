@@ -2,6 +2,7 @@ import { mkdirSync, statSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
 import type {
   ConversionOptions,
+  ConversionProgressHandler,
   ConversionReport,
   ConversionResult,
   SourceAnalysis,
@@ -151,11 +152,22 @@ export async function convert3mf(
   outputPath: string,
   profile: TargetProfileInput,
   options: ConversionOptions,
+  onProgress?: ConversionProgressHandler,
 ): Promise<ConversionResult> {
   const startedAt = Date.now();
-  const source = await loadSourceAsync(inputPath);
-  const built = buildTargetConfig(source, profile, options);
+  const reportProgress: ConversionProgressHandler = (update) => {
+    onProgress?.(update);
+  };
 
+  reportProgress({ stage: 'analysing', progress: 8 });
+  const source = await loadSourceAsync(inputPath);
+  reportProgress({ stage: 'analysing', progress: 24 });
+
+  reportProgress({ stage: 'profiling', progress: 32 });
+  const built = buildTargetConfig(source, profile, options);
+  reportProgress({ stage: 'profiling', progress: 45 });
+
+  reportProgress({ stage: 'rewriting', progress: 48 });
   const rootXml = rewriteModelXml(source.rootXml, {
     paintMap: built.paintMap,
     translate: built.translate,
@@ -166,6 +178,7 @@ export async function convert3mf(
     isRootModel: true,
     setUnit: 'millimeter',
   });
+  source.rootXml = '';
 
   const modelSettingsXml = patchModelSettingsXml(
     source.modelSettingsXml,
@@ -190,7 +203,8 @@ export async function convert3mf(
     });
   }
 
-  for (const name of modelFileNames) {
+  const totalModels = Math.max(1, modelFileNames.length);
+  for (const [index, name] of modelFileNames.entries()) {
     const model = source.modelFiles.get(name);
     if (!model) continue;
     entries.push({
@@ -203,8 +217,14 @@ export async function convert3mf(
       }),
       compress: true,
     });
+    source.modelFiles.delete(name);
+    reportProgress({
+      stage: 'rewriting',
+      progress: 48 + Math.round(((index + 1) / totalModels) * 24),
+    });
   }
 
+  reportProgress({ stage: 'packaging', progress: 76 });
   for (const name of source.contents.names) {
     if (name.startsWith('3D/Textures/')) {
       const buffer = source.contents.files.get(name);
@@ -236,8 +256,17 @@ export async function convert3mf(
 
   mkdirSync(path.dirname(outputPath), { recursive: true });
   try {
+    reportProgress({ stage: 'packaging', progress: 84 });
     await writeZip(outputPath, entries);
+    // Release the source and output buffers before validation reads the package
+    // back. Large multi-plate projects otherwise hold several copies at once.
+    entries.length = 0;
+    source.modelFiles.clear();
+    source.contents.files.clear();
+    source.contents.names.length = 0;
+    reportProgress({ stage: 'validating', progress: 92 });
     await validateOutput(outputPath, profile, built.targetSlotCount, profile.template.application);
+    reportProgress({ stage: 'validating', progress: 99 });
   } catch (error) {
     try {
       unlinkSync(outputPath);

@@ -136,6 +136,9 @@ app is not directly reachable.
 
 - `DATA_DIR` holds temporary uploads and converted files.
 - Jobs and uploads expire after `JOB_TTL_MINUTES`.
+- Staged uploads are restored from `DATA_DIR` after a restart, so a redeploy or
+  container restart does not invalidate an upload that is still within its TTL.
+  Conversion jobs themselves are in memory; retry the conversion after a restart.
 - The container removes stale files on startup and every minute.
 - A 100 MB upload may need several hundred MB of temporary disk while the output
   is assembled. Keep this in mind on small NAS devices.

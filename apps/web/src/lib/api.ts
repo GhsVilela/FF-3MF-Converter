@@ -1,6 +1,7 @@
 import type {
   ConversionOptions,
   ConversionReport,
+  JobStage,
   PrinterSummary,
   ProfileSource,
   SourceAnalysis,
@@ -22,11 +23,19 @@ export interface UploadResponse {
   analysis: SourceAnalysis;
 }
 
+export interface UploadProgress {
+  percent: number;
+  loaded: number;
+  total: number;
+  phase: 'uploading' | 'analysing';
+}
+
 export type JobStatus = 'queued' | 'converting' | 'completed' | 'failed';
 
 export interface JobResponse {
   id: string;
   status: JobStatus;
+  stage?: JobStage;
   progress: number;
   report?: ConversionReport;
   error?: { code: string; message: string; details?: string[] };
@@ -76,12 +85,23 @@ async function parseResponse<T>(response: Response): Promise<T> {
     payload = undefined;
   }
   if (!response.ok) {
-    const error = (payload as { error?: { code?: string; message?: string; details?: string[] } })
-      ?.error;
+    const body = payload as
+      | {
+          error?: { code?: string; message?: string; details?: string[] } | string;
+          message?: string;
+        }
+      | undefined;
+    const error = typeof body?.error === 'object' ? body.error : undefined;
+    const message =
+      error?.message ??
+      (typeof body?.message === 'string' ? body.message : undefined) ??
+      (response.status === 429
+        ? 'Too many requests. Wait a moment and try again.'
+        : `Request failed with status ${response.status}`);
     throw new ApiError(
       response.status,
       error?.code ?? `HTTP_${response.status}`,
-      error?.message ?? `Request failed with status ${response.status}`,
+      message,
       error?.details,
     );
   }
@@ -89,13 +109,30 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${apiBase()}${path}`, {
-    ...init,
-    headers: {
-      ...authHeaders(),
-      ...(init?.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20_000);
+  let response: Response;
+  try {
+    response = await fetch(`${apiBase()}${path}`, {
+      ...init,
+      signal: init?.signal ?? controller.signal,
+      headers: {
+        ...authHeaders(),
+        ...(init?.headers ?? {}),
+      },
+    });
+  } catch (caught) {
+    if (caught instanceof DOMException && caught.name === 'AbortError') {
+      throw new ApiError(0, 'TIMEOUT', 'The server did not respond in time. Try again.');
+    }
+    throw new ApiError(
+      0,
+      'NETWORK_ERROR',
+      'The server could not be reached. Check the connection and try again.',
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
   return parseResponse<T>(response);
 }
 
@@ -105,15 +142,34 @@ export function getPrinters(): Promise<PrintersResponse> {
 
 export function uploadFile(
   file: File,
-  onProgress: (fraction: number) => void,
+  onProgress: (progress: UploadProgress) => void,
 ): Promise<UploadResponse> {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
     request.open('POST', `${apiBase()}/uploads`);
     const token = getToken();
     if (token) request.setRequestHeader('Authorization', `Bearer ${token}`);
+    const report = (
+      percent: number,
+      loaded: number,
+      total: number,
+      phase: UploadProgress['phase'],
+    ) => {
+      onProgress({
+        percent: Math.max(0, Math.min(100, percent)),
+        loaded,
+        total,
+        phase,
+      });
+    };
     request.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable) onProgress(event.loaded / event.total);
+      // Reserve the last part of the bar for the server-side analysis that
+      // happens after the request body has been transferred.
+      const fraction = event.lengthComputable && event.total > 0 ? event.loaded / event.total : 0;
+      report(fraction * 90, event.loaded, event.total || file.size, 'uploading');
+    });
+    request.upload.addEventListener('load', () => {
+      report(92, file.size, file.size, 'analysing');
     });
     request.addEventListener('load', () => {
       let payload: unknown;

@@ -2,11 +2,12 @@ import { useRef, useState } from 'react';
 import { FileUp, Loader2, LockKeyhole } from 'lucide-react';
 import { useI18n } from '../lib/i18n';
 import { cn } from '../lib/utils';
+import { formatBytes, type UploadProgress } from '../lib/api';
 
 interface DropzoneProps {
   maxMb: number;
   uploading: boolean;
-  progress: number;
+  progress: UploadProgress;
   fileName?: string;
   onFile: (file: File) => void;
 }
@@ -15,6 +16,7 @@ export function Dropzone({ maxMb, uploading, progress, fileName, onFile }: Dropz
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+  const analysing = uploading && progress.phase === 'analysing';
 
   const choose = (file?: File) => {
     if (!file) return;
@@ -68,18 +70,33 @@ export function Dropzone({ maxMb, uploading, progress, fileName, onFile }: Dropz
         </div>
 
         <h2 className="mt-5 max-w-[260px] text-xl font-semibold tracking-[-0.02em]">
-          {uploading ? t('progress.upload') : t('upload.drop')}
+          {analysing ? t('upload.analysing') : uploading ? t('upload.uploading') : t('upload.drop')}
         </h2>
         <p className="mx-auto mt-2 max-w-[300px] text-xs leading-5 text-[var(--muted)]">
           {uploading && fileName ? fileName : t('upload.hint')}
         </p>
 
         {uploading ? (
-          <div className="mt-6 w-full max-w-[260px]">
+          <div className="mt-6 w-full max-w-[280px]">
             <div className="progress-track h-2 overflow-hidden">
-              <div className="progress-bar h-full" style={{ width: `${progress}%` }} />
+              <div
+                className={cn('progress-bar h-full', analysing && 'animate-pulse')}
+                style={{ width: `${progress.percent}%` }}
+              />
             </div>
-            <div className="mono-label mt-2 text-[var(--muted)]">{Math.round(progress)}%</div>
+            <div className="mt-2 flex items-center justify-between gap-3 font-mono text-[10px] text-[var(--muted)]">
+              <span className="truncate">
+                {analysing
+                  ? t('upload.analysingHint')
+                  : t('upload.bytes', {
+                      loaded: formatBytes(progress.loaded),
+                      total: formatBytes(progress.total),
+                    })}
+              </span>
+              <span className="shrink-0">
+                {analysing ? '…' : `${Math.round(progress.percent)}%`}
+              </span>
+            </div>
           </div>
         ) : (
           <>
