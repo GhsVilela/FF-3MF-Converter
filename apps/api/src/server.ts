@@ -1,4 +1,4 @@
-import { createReadStream, existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import path from 'node:path';
@@ -11,7 +11,7 @@ import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyCors from '@fastify/cors';
 import fastifyCompress from '@fastify/compress';
 import { createConversionSchema } from '@ff3mf/shared';
-import { analyze3mf, ConversionError, asConversionError } from '@ff3mf/core';
+import { analyze3mfProject, ConversionError, asConversionError } from '@ff3mf/core';
 import {
   availableMaterials,
   getCatalog,
@@ -31,6 +31,7 @@ import {
   restoreUploads,
   uploadDir,
   type JobRecord,
+  type UploadThumbnail,
 } from './store.js';
 import { enqueueJob, runnerStatus, safeBaseName } from './runner.js';
 
@@ -216,16 +217,62 @@ app.post(
           `The file exceeds the ${config.maxUploadMb} MB upload limit.`,
         );
       }
-      const analysis = await analyze3mf(inputPath);
+      const project = await analyze3mfProject(inputPath);
+      const analysis = project.analysis;
       analysis.fileName = originalName;
       analysis.fileSize = statSync(inputPath).size;
-      createUpload(id, inputPath, originalName, analysis.fileSize, analysis);
-      request.log.info({ uploadId: id, bytes: analysis.fileSize }, 'upload analysed');
-      return reply.code(201).send({ uploadId: id, analysis });
+
+      let thumbnail: UploadThumbnail | undefined;
+      if (project.thumbnail) {
+        const extension = project.thumbnail.mime === 'image/jpeg' ? 'jpg' : 'png';
+        const file = `thumbnail.${extension}`;
+        try {
+          writeFileSync(path.join(directory, file), project.thumbnail.data, { mode: 0o600 });
+          thumbnail = { file, mime: project.thumbnail.mime };
+        } catch {
+          // A missing preview must not fail an otherwise valid upload.
+        }
+      }
+
+      createUpload(id, inputPath, originalName, analysis.fileSize, analysis, thumbnail);
+      request.log.info(
+        { uploadId: id, bytes: analysis.fileSize, thumbnail: Boolean(thumbnail) },
+        'upload analysed',
+      );
+      return reply.code(201).send({ uploadId: id, analysis, hasThumbnail: Boolean(thumbnail) });
     } catch (error) {
       rmSync(directory, { recursive: true, force: true });
       throw error;
     }
+  },
+);
+
+app.get(
+  '/api/uploads/:id/thumbnail',
+  { config: { rateLimit: defaultRateLimit } },
+  async (request, reply) => {
+    const id = (request.params as { id: string }).id;
+    const upload = getUpload(id);
+    if (!upload?.thumbnail) {
+      return reply.code(404).send({
+        error: { code: 'NOT_FOUND', message: 'No preview is available for this upload.' },
+      });
+    }
+    const thumbnailPath = path.join(
+      path.dirname(upload.inputPath),
+      path.basename(upload.thumbnail.file),
+    );
+    if (!existsSync(thumbnailPath)) {
+      return reply.code(404).send({
+        error: { code: 'NOT_FOUND', message: 'No preview is available for this upload.' },
+      });
+    }
+    return reply
+      .header('Content-Type', upload.thumbnail.mime)
+      .header('Content-Length', statSync(thumbnailPath).size)
+      .header('Cache-Control', 'private, max-age=3600')
+      .header('Content-Disposition', 'inline')
+      .send(createReadStream(thumbnailPath));
   },
 );
 

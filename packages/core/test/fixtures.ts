@@ -16,6 +16,7 @@ export interface FixtureOptions {
   supportFilament?: number;
   supportInterfaceFilament?: number;
   sliced?: boolean;
+  thumbnail?: Buffer;
 }
 
 const contentTypes = `<?xml version="1.0" encoding="UTF-8"?>
@@ -196,6 +197,9 @@ export async function createFixtureAsync(options: FixtureOptions = {}) {
   }
   if (options.sliced) {
     entries.push({ name: 'Metadata/plate_1.gcode', data: '; sliced\nG28\n' });
+  }
+  if (options.thumbnail) {
+    entries.push({ name: 'Metadata/plate_1.png', data: options.thumbnail });
   }
   await writeZip(file, entries);
   return {

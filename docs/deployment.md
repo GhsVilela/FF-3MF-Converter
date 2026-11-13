@@ -167,6 +167,13 @@ with reverse-proxy authentication and TLS.
 | Slow disk                | Keep `JOB_TTL_MINUTES` low and monitor free space |
 | Public exposure          | `AUTH_TOKEN`, TLS, rate limiting at the proxy     |
 
+Each conversion is CPU-bound and runs in one worker thread. On a multi-core NAS
+this looks like roughly one busy core per active job, not full-machine CPU use.
+Raise `MAX_CONCURRENT_JOBS` only when there is enough memory for several large
+projects at once. A 100 MB project with millions of triangles can take a few
+minutes; the default `CONVERSION_TIMEOUT_SECONDS` is 600. Raise it further for
+very large multi-plate projects or slower disks.
+
 ## Updating
 
 ```bash

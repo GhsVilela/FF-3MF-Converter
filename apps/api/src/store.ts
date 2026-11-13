@@ -8,11 +8,17 @@ export type JobStatus = 'queued' | 'converting' | 'completed' | 'failed';
 
 const UPLOAD_METADATA = 'upload.json';
 
+export interface UploadThumbnail {
+  file: string;
+  mime: string;
+}
+
 interface PersistedUpload {
   id: string;
   originalName: string;
   size: number;
   analysis: SourceAnalysis;
+  thumbnail?: UploadThumbnail;
   createdAt: number;
   expiresAt: number;
 }
@@ -23,6 +29,7 @@ export interface UploadRecord {
   originalName: string;
   size: number;
   analysis: SourceAnalysis;
+  thumbnail?: UploadThumbnail;
   createdAt: number;
   expiresAt: number;
 }
@@ -57,6 +64,7 @@ export function createUpload(
   originalName: string,
   size: number,
   analysis: SourceAnalysis,
+  thumbnail?: UploadThumbnail,
 ): UploadRecord {
   const now = Date.now();
   const record: UploadRecord = {
@@ -65,6 +73,7 @@ export function createUpload(
     originalName,
     size,
     analysis,
+    thumbnail,
     createdAt: now,
     expiresAt: now + config.jobTtlMinutes * 60_000,
   };
@@ -75,6 +84,7 @@ export function createUpload(
       originalName: record.originalName,
       size: record.size,
       analysis: record.analysis,
+      thumbnail: record.thumbnail,
       createdAt: record.createdAt,
       expiresAt: record.expiresAt,
     };
@@ -117,7 +127,16 @@ export function restoreUploads(): void {
         existsSync(inputPath) &&
         persisted.expiresAt > now
       ) {
-        uploads.set(id, { ...persisted, inputPath });
+        const thumbnail =
+          persisted.thumbnail &&
+          (persisted.thumbnail.mime === 'image/png' || persisted.thumbnail.mime === 'image/jpeg') &&
+          existsSync(path.join(directory, path.basename(persisted.thumbnail.file)))
+            ? {
+                file: path.basename(persisted.thumbnail.file),
+                mime: persisted.thumbnail.mime,
+              }
+            : undefined;
+        uploads.set(id, { ...persisted, thumbnail, inputPath });
         continue;
       }
     } catch {

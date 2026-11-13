@@ -59,9 +59,12 @@ review each plate.
 
 ## Conversion times out
 
-Increase `CONVERSION_TIMEOUT_SECONDS` or reduce `MAX_CONCURRENT_JOBS` on a
-memory-constrained host. Large projects with millions of triangles are limited
-by the machine running the container.
+The default `CONVERSION_TIMEOUT_SECONDS` is 600 (ten minutes). Increase it for
+very large multi-plate projects or slower hardware. Each conversion is
+CPU-bound and uses one worker thread, so a multi-core NAS will show roughly one
+busy core per active job; raise `MAX_CONCURRENT_JOBS` only when memory allows.
+Reduce concurrency on a memory-constrained host. Projects with millions of
+triangles are ultimately limited by the machine running the container.
 
 ## Authentication problems
 

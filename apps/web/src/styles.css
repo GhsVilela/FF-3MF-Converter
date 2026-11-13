@@ -136,6 +136,21 @@ pre {
   outline-offset: 2px;
 }
 
+.preview-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--border) 55%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--border) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 28px 28px;
+}
+
 .progress-track {
   background: var(--surface-3);
 }

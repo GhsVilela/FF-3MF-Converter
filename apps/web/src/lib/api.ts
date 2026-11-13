@@ -21,6 +21,7 @@ export interface PrintersResponse {
 export interface UploadResponse {
   uploadId: string;
   analysis: SourceAnalysis;
+  hasThumbnail?: boolean;
 }
 
 export interface UploadProgress {
@@ -138,6 +139,36 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function getPrinters(): Promise<PrintersResponse> {
   return apiFetch<PrintersResponse>('/printers');
+}
+
+export async function getUploadThumbnail(uploadId: string): Promise<Blob> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20_000);
+  let response: Response;
+  try {
+    response = await fetch(`${apiBase()}/uploads/${uploadId}/thumbnail`, {
+      headers: authHeaders(),
+      signal: controller.signal,
+    });
+  } catch {
+    throw new ApiError(
+      0,
+      'NETWORK_ERROR',
+      'The preview could not be loaded. Check the connection and try again.',
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      response.status === 404 ? 'THUMBNAIL_UNAVAILABLE' : 'THUMBNAIL_FAILED',
+      response.status === 404
+        ? 'This project does not include a preview image.'
+        : 'The preview could not be loaded.',
+    );
+  }
+  return response.blob();
 }
 
 export function uploadFile(

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0
+
+- Added a first-plate preview after upload. The converter reads the plate render
+  embedded in the 3MF, stores it with the staged upload and serves it through
+  `GET /api/uploads/:id/thumbnail`; the configure screen shows it before the
+  target settings.
+- Reworked the 3MF model XML scanner and rewriter. The new streaming scanner
+  avoids namespace resolution, keeps untouched tags verbatim, preserves
+  self-closing elements and only rebuilds tags that actually change. A 61 MB
+  project with 4.1 million triangles dropped from about 67 s and 2.8 GB peak RSS
+  to about 27 s and 1.4 GB in local testing.
+- Fixed migration of legacy `slic3rpe:mmu_segmentation`,
+  `slic3rpe:custom_supports` and `slic3rpe:custom_seam` attributes.
+- Increased the default `CONVERSION_TIMEOUT_SECONDS` from 120 to 600 seconds for
+  large multi-plate projects. The documentation now explains that a conversion
+  is CPU-bound and uses one worker thread per active job.
+- Upload analysis also uses the faster scanner, reducing the wait before the
+  configure screen for large projects.
+
 ## 0.2.1
 
 - Fixed the upload progress bar staying near zero until the transfer finished.

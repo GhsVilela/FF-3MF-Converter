@@ -14,6 +14,7 @@ import { Header } from './components/Header';
 import { Steps } from './components/Steps';
 import { Dropzone } from './components/Dropzone';
 import { AnalysisCard } from './components/AnalysisCard';
+import { PreviewCard } from './components/PreviewCard';
 import { PrinterPicker } from './components/PrinterPicker';
 import { ColorMapping } from './components/ColorMapping';
 import { ReportView } from './components/ReportView';
@@ -151,6 +152,7 @@ export default function App() {
   const [uploadProgress, setUploadProgress] = useState<UploadProgress>(EMPTY_UPLOAD_PROGRESS);
   const [fileName, setFileName] = useState<string>();
   const [uploadId, setUploadId] = useState<string>();
+  const [hasThumbnail, setHasThumbnail] = useState(false);
   const [analysis, setAnalysis] = useState<SourceAnalysis>();
   const [selectedPrinterId, setSelectedPrinterId] = useState('');
   const [selectedNozzle, setSelectedNozzle] = useState('0.4');
@@ -253,6 +255,7 @@ export default function App() {
       }
       const response = await uploadFile(file, setUploadProgress);
       setUploadId(response.uploadId);
+      setHasThumbnail(Boolean(response.hasThumbnail));
       setAnalysis(response.analysis);
       setKeepAllColors(false);
       const printer = defaultPrinter(response.analysis, availablePrinters);
@@ -342,6 +345,7 @@ export default function App() {
   const reset = () => {
     setStage('upload');
     setUploadId(undefined);
+    setHasThumbnail(false);
     setAnalysis(undefined);
     setFileName(undefined);
     setJob(undefined);
@@ -434,7 +438,7 @@ export default function App() {
               <div className="rise">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-y border-[var(--border)] py-2">
                   <span className="mono-label text-[var(--accent)]">{t('hero.kicker')}</span>
-                  <span className="mono-label text-[var(--muted)]">REV 0.2.1 / LOCAL INSTANCE</span>
+                  <span className="mono-label text-[var(--muted)]">REV 0.3.0 / LOCAL INSTANCE</span>
                 </div>
 
                 <div className="grid items-start gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-14">
@@ -602,6 +606,14 @@ export default function App() {
                     {fileName} · {analysis ? formatBytes(analysis.fileSize) : ''}
                   </div>
                 </div>
+
+                {uploadId && hasThumbnail && (
+                  <PreviewCard
+                    uploadId={uploadId}
+                    fileName={fileName}
+                    plateCount={analysis.plates}
+                  />
+                )}
 
                 <div className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
                   <AnalysisCard analysis={analysis} />

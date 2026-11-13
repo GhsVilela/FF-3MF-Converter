@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readZip } from '../src/zip.js';
-import { analyze3mf, convert3mf } from '../src/convert.js';
+import { analyze3mf, analyze3mfProject, convert3mf } from '../src/convert.js';
 import { ConversionError } from '../src/errors.js';
 import { encodePaintState } from '../src/paint.js';
 import { loadSourceAsync } from '../src/source.js';
@@ -299,6 +299,25 @@ describe('3MF conversion', () => {
     expect(progresses).toEqual([...progresses].sort((left, right) => left - right));
     expect(progresses.at(-1)).toBeGreaterThan(90);
     expect(progresses.at(-1)).toBeLessThan(100);
+  });
+
+  it('extracts the first plate preview from the 3MF package', async () => {
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=',
+      'base64',
+    );
+    const fixture = await createFixtureAsync({ thumbnail: png });
+    cleanups.push(fixture.cleanup);
+
+    const result = await analyze3mfProject(fixture.file);
+    expect(result.thumbnail?.mime).toBe('image/png');
+    expect(result.thumbnail?.name).toBe('Metadata/plate_1.png');
+    expect(result.thumbnail?.data.equals(png)).toBe(true);
+
+    const plainFixture = await createFixtureAsync();
+    cleanups.push(plainFixture.cleanup);
+    const withoutPreview = await analyze3mfProject(plainFixture.file);
+    expect(withoutPreview.thumbnail).toBeUndefined();
   });
 
   it('rejects sliced print files', async () => {
