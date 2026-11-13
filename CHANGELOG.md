@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.1
+
+- Fixed the upload progress bar staying near zero until the transfer finished.
+  It now follows the uploaded bytes and switches to an analysing state while the
+  server reads plates, objects and colours.
+- Conversion progress now reports real stages: analysing the 3MF, building the
+  target profile, remapping the model, packaging the Flash Studio project and
+  validating the output. The UI shows the active stage, percentage and elapsed
+  time instead of remaining at 10%.
+- Polling is resilient to transient rate-limit, server and network failures. It
+  retries with backoff and shows a reconnect notice instead of returning to the
+  configuration screen with a bare `Failed to fetch`.
+- Fixed rate limiting never being applied because the Fastify plugins were
+  registered after the routes. The job-status endpoint now has its own budget so
+  normal conversion polling cannot exhaust the request limit.
+- Staged uploads persist their metadata under `DATA_DIR`, so a server restart or
+  container redeploy no longer invalidates a valid `uploadId`.
+- Reduced peak memory for large multi-plate projects by releasing raw model
+  buffers as soon as the XML strings and rewritten entries are built.
+- Improved timeout and interrupted-conversion messages.
+
 ## 0.2.0
 
 - Added an optional `keepAllColors` conversion mode. When a source project uses

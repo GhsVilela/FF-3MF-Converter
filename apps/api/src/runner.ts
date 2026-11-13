@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-import type { ConversionOptions, ConversionReport } from '@ff3mf/shared';
+import type { ConversionOptions, ConversionReport, ConversionStage } from '@ff3mf/shared';
 import { ConversionError } from '@ff3mf/core';
 import { loadTargetProfile } from '@ff3mf/profiles';
 import { config } from './config.js';
@@ -13,11 +13,20 @@ import {
   type UploadRecord,
 } from './store.js';
 
-interface WorkerMessage {
+interface WorkerProgressMessage {
+  type: 'progress';
+  stage: ConversionStage;
+  progress: number;
+}
+
+interface WorkerResultMessage {
+  type: 'result';
   ok: boolean;
   report?: ConversionReport;
   error?: { code: string; message: string; details?: string[] };
 }
+
+type WorkerMessage = WorkerProgressMessage | WorkerResultMessage;
 
 let active = 0;
 const queue: string[] = [];
@@ -49,7 +58,11 @@ function runConversionWorker(
       if (settled) return;
       settled = true;
       void worker.terminate();
-      reject(new Error('Conversion timed out'));
+      reject(
+        new Error(
+          `The conversion timed out after ${Math.round(timeoutMs / 1000)} seconds. Large projects may need a higher CONVERSION_TIMEOUT_SECONDS value.`,
+        ),
+      );
     }, timeoutMs);
     timer.unref();
 
@@ -61,7 +74,11 @@ function runConversionWorker(
       callback();
     };
 
-    worker.once('message', (message: WorkerMessage) => {
+    worker.on('message', (message: WorkerMessage) => {
+      if (message.type === 'progress') {
+        updateJob(job.id, { stage: message.stage, progress: message.progress });
+        return;
+      }
       if (message.ok && message.report) {
         finish(() => resolve(message.report as ConversionReport));
         return;
@@ -106,7 +123,7 @@ export function safeBaseName(name: string): string {
 async function runJob(job: JobRecord, upload: UploadRecord): Promise<void> {
   active += 1;
   try {
-    updateJob(job.id, { status: 'converting', progress: 10 });
+    updateJob(job.id, { status: 'converting', stage: 'analysing', progress: 2 });
     const outputPath = path.join(conversionDir(job.id), 'output.3mf');
     const report = await runConversionWorker(
       upload,
@@ -118,6 +135,7 @@ async function runJob(job: JobRecord, upload: UploadRecord): Promise<void> {
     report.source.fileSize = upload.size;
     updateJob(job.id, {
       status: 'completed',
+      stage: 'completed',
       progress: 100,
       report,
       outputPath,
@@ -127,6 +145,7 @@ async function runJob(job: JobRecord, upload: UploadRecord): Promise<void> {
     const conversionError = error instanceof ConversionError ? error : null;
     updateJob(job.id, {
       status: 'failed',
+      stage: 'failed',
       progress: 100,
       error: {
         code: conversionError?.code ?? 'CONVERSION_FAILED',
@@ -150,6 +169,7 @@ function pump(): void {
     if (!upload) {
       updateJob(job.id, {
         status: 'failed',
+        stage: 'failed',
         progress: 100,
         error: { code: 'INVALID_FILE', message: 'The uploaded file has expired' },
       });
@@ -163,6 +183,7 @@ export function enqueueJob(job: JobRecord): void {
   if (queue.length >= config.maxQueuedJobs) {
     updateJob(job.id, {
       status: 'failed',
+      stage: 'failed',
       progress: 100,
       error: {
         code: 'CONVERSION_FAILED',

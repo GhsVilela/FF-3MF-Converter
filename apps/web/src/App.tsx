@@ -9,7 +9,7 @@ import {
   LockKeyhole,
   X,
 } from 'lucide-react';
-import type { ConversionOptions, PrinterSummary, SourceAnalysis } from '@ff3mf/shared';
+import type { ConversionOptions, JobStage, PrinterSummary, SourceAnalysis } from '@ff3mf/shared';
 import { Header } from './components/Header';
 import { Steps } from './components/Steps';
 import { Dropzone } from './components/Dropzone';
@@ -28,16 +28,57 @@ import {
   uploadFile,
   type JobResponse,
   type PrinterWithMaterials,
+  type UploadProgress,
 } from './lib/api';
-import { useI18n } from './lib/i18n';
+import { useI18n, type TranslationKey } from './lib/i18n';
 import { cn } from './lib/utils';
 
 type Stage = 'upload' | 'configure' | 'converting' | 'done';
 
 const DEFAULT_MAX_UPLOAD_MB = 100;
+const CONVERSION_POLL_MS = 900;
+const MAX_POLL_FAILURES = 10;
+const EMPTY_UPLOAD_PROGRESS: UploadProgress = {
+  percent: 0,
+  loaded: 0,
+  total: 0,
+  phase: 'uploading',
+};
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function stageLabelKey(stage: JobStage | undefined): TranslationKey {
+  switch (stage) {
+    case 'analysing':
+      return 'progress.analysing';
+    case 'profiling':
+      return 'progress.profiling';
+    case 'rewriting':
+      return 'progress.rewriting';
+    case 'packaging':
+      return 'progress.packaging';
+    case 'validating':
+      return 'progress.validating';
+    case 'completed':
+      return 'progress.completed';
+    case 'failed':
+      return 'progress.failed';
+    default:
+      return 'progress.queued';
+  }
+}
+
+function isTransientError(error: unknown): boolean {
+  return (
+    error instanceof ApiError && (error.status === 0 || error.status === 429 || error.status >= 500)
+  );
+}
+
+function formatElapsed(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
 function parseLayerHeight(entry: { layerHeight: string }): number {
@@ -107,7 +148,7 @@ export default function App() {
   const [maxUploadMb, setMaxUploadMb] = useState(DEFAULT_MAX_UPLOAD_MB);
   const [stage, setStage] = useState<Stage>('upload');
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress>(EMPTY_UPLOAD_PROGRESS);
   const [fileName, setFileName] = useState<string>();
   const [uploadId, setUploadId] = useState<string>();
   const [analysis, setAnalysis] = useState<SourceAnalysis>();
@@ -119,6 +160,8 @@ export default function App() {
   const [preserveTemperatures, setPreserveTemperatures] = useState(true);
   const [layout, setLayout] = useState<NonNullable<ConversionOptions['layout']>>('center');
   const [job, setJob] = useState<JobResponse>();
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [pollWarning, setPollWarning] = useState<string>();
   const [error, setError] = useState<{ message: string; details?: string[] }>();
   const [authRequired, setAuthRequired] = useState(false);
   const [authError, setAuthError] = useState<string>();
@@ -127,6 +170,16 @@ export default function App() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('ff3mf-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (stage !== 'converting') return;
+    const startedAt = Date.now();
+    setElapsedSeconds(0);
+    const timer = window.setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startedAt) / 1000));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [stage]);
 
   const loadPrinters = async () => {
     try {
@@ -183,7 +236,12 @@ export default function App() {
 
     setFileName(file.name);
     setUploading(true);
-    setUploadProgress(0);
+    setUploadProgress({
+      percent: 0,
+      loaded: 0,
+      total: file.size,
+      phase: 'uploading',
+    });
     setStage('upload');
     try {
       let availablePrinters = printers;
@@ -223,6 +281,7 @@ export default function App() {
   const handleConvert = async () => {
     if (!uploadId || !selectedPrinter || !analysis) return;
     setError(undefined);
+    setPollWarning(undefined);
     setStage('converting');
     setJob(undefined);
     try {
@@ -236,10 +295,26 @@ export default function App() {
         layout,
       });
       setJob(current);
+      let failures = 0;
       while (current.status === 'queued' || current.status === 'converting') {
-        await delay(650);
-        current = await getJob(current.id);
-        setJob(current);
+        await delay(CONVERSION_POLL_MS);
+        try {
+          current = await getJob(current.id);
+          failures = 0;
+          setPollWarning(undefined);
+          setJob(current);
+        } catch (caught) {
+          if (caught instanceof ApiError && caught.status === 404) {
+            throw new ApiError(404, 'CONVERSION_LOST', t('error.interrupted'));
+          }
+          if (isTransientError(caught) && failures < MAX_POLL_FAILURES) {
+            failures += 1;
+            setPollWarning(t('progress.reconnecting'));
+            await delay(Math.min(5_000, 1_000 * failures));
+            continue;
+          }
+          throw caught;
+        }
       }
       if (current.status === 'failed') {
         throw new ApiError(
@@ -259,6 +334,7 @@ export default function App() {
         message: caught instanceof Error ? caught.message : t('error.convert'),
         details: caught instanceof ApiError ? caught.details : undefined,
       });
+      setPollWarning(undefined);
       setStage('configure');
     }
   };
@@ -270,6 +346,8 @@ export default function App() {
     setFileName(undefined);
     setJob(undefined);
     setError(undefined);
+    setPollWarning(undefined);
+    setUploadProgress(EMPTY_UPLOAD_PROGRESS);
     setSelectedProcess('');
     setColorMapping({});
     setKeepAllColors(false);
@@ -299,6 +377,23 @@ export default function App() {
       );
     }
   };
+
+  const conversionStageIndex = (() => {
+    switch (job?.stage) {
+      case 'profiling':
+      case 'rewriting':
+        return 2;
+      case 'packaging':
+      case 'validating':
+        return 3;
+      case 'completed':
+        return 4;
+      default:
+        return 1;
+    }
+  })();
+  const conversionProgress =
+    job?.status === 'completed' ? 100 : Math.max(2, Math.round(job?.progress ?? 0));
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -339,7 +434,7 @@ export default function App() {
               <div className="rise">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-y border-[var(--border)] py-2">
                   <span className="mono-label text-[var(--accent)]">{t('hero.kicker')}</span>
-                  <span className="mono-label text-[var(--muted)]">REV 0.2.0 / LOCAL INSTANCE</span>
+                  <span className="mono-label text-[var(--muted)]">REV 0.2.1 / LOCAL INSTANCE</span>
                 </div>
 
                 <div className="grid items-start gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-14">
@@ -716,19 +811,31 @@ export default function App() {
                     </div>
 
                     <div className="mt-6">
-                      <div className="progress-track h-2 overflow-hidden">
+                      <div className="flex items-center justify-between gap-3 text-xs">
+                        <span className="text-[var(--text)]">{t(stageLabelKey(job?.stage))}</span>
+                        <span className="font-mono text-[10px] text-[var(--muted)]">
+                          {conversionProgress}%
+                        </span>
+                      </div>
+                      <div className="progress-track mt-2 h-2 overflow-hidden">
                         <div
-                          className="progress-bar h-full"
-                          style={{ width: `${job?.progress ?? 5}%` }}
+                          className="progress-bar h-full transition-[width] duration-500"
+                          style={{ width: `${conversionProgress}%` }}
                         />
                       </div>
-                      <div className="mt-2 flex justify-between font-mono text-[10px] text-[var(--muted)]">
+                      <div className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 font-mono text-[10px] text-[var(--muted)]">
                         <span>
-                          {job?.status === 'queued' ? t('progress.analyse') : t('progress.config')}
+                          {t('progress.elapsed', { time: formatElapsed(elapsedSeconds) })}
                         </span>
-                        <span>{job?.progress ?? 0}%</span>
+                        <span className="max-w-[340px] text-right">{t('progress.hint')}</span>
                       </div>
                     </div>
+
+                    {pollWarning && (
+                      <div className="mt-3 border border-[var(--orange)]/40 bg-[var(--orange-soft)] px-3 py-2 text-[11px] leading-5 text-[var(--orange)]">
+                        {pollWarning}
+                      </div>
+                    )}
 
                     <ul className="mt-6 space-y-2">
                       {[
@@ -737,22 +844,34 @@ export default function App() {
                         t('progress.config'),
                         t('progress.package'),
                       ].map((label, index) => {
-                        const progress = job?.progress ?? 0;
-                        const threshold = [5, 25, 60, 85][index] ?? 0;
-                        const done = progress >= threshold;
+                        const done = index < conversionStageIndex;
+                        const active = index === conversionStageIndex;
                         return (
                           <li key={label} className="flex items-center gap-2.5 text-xs">
                             <span
                               className={cn(
                                 'grid size-5 place-items-center border font-mono text-[10px]',
-                                done
-                                  ? 'border-[var(--success)]/40 bg-[color-mix(in_srgb,var(--success)_12%,var(--surface))] text-[var(--success)]'
-                                  : 'border-[var(--border)] text-[var(--muted)]',
+                                done &&
+                                  'border-[var(--success)]/40 bg-[color-mix(in_srgb,var(--success)_12%,var(--surface))] text-[var(--success)]',
+                                active &&
+                                  'border-[var(--accent)]/40 bg-[var(--accent-soft)] text-[var(--accent)]',
+                                !done && !active && 'border-[var(--border)] text-[var(--muted)]',
                               )}
                             >
-                              {done ? <Check className="size-3" /> : index + 1}
+                              {done ? (
+                                <Check className="size-3" />
+                              ) : active ? (
+                                <Loader2 className="size-3 animate-spin" />
+                              ) : (
+                                index + 1
+                              )}
                             </span>
-                            <span className={done ? 'text-[var(--text)]' : 'text-[var(--muted)]'}>
+                            <span
+                              className={cn(
+                                'transition-colors',
+                                done || active ? 'text-[var(--text)]' : 'text-[var(--muted)]',
+                              )}
+                            >
                               {label}
                             </span>
                           </li>

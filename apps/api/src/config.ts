@@ -25,7 +25,7 @@ export const config = {
   trustProxy: /^(1|true|yes)$/i.test(process.env.TRUST_PROXY ?? ''),
   corsOrigin: process.env.CORS_ORIGIN ?? '',
   logLevel: process.env.LOG_LEVEL ?? 'info',
-  version: process.env.APP_VERSION ?? '0.2.0',
+  version: process.env.APP_VERSION ?? '0.2.1',
   gitSha: process.env.GIT_SHA ?? 'dev',
   buildDate: process.env.BUILD_DATE ?? '',
   rateLimitMax: intEnv('RATE_LIMIT_MAX', 120),

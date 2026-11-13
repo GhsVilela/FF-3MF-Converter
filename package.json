@@ -1,6 +1,6 @@
 {
   "name": "ff-3mf-converter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Self-hosted 3MF project converter for FlashForge printers",
