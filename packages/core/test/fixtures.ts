@@ -17,6 +17,7 @@ export interface FixtureOptions {
   supportInterfaceFilament?: number;
   sliced?: boolean;
   thumbnail?: Buffer;
+  thumbnails?: Buffer[];
 }
 
 const contentTypes = `<?xml version="1.0" encoding="UTF-8"?>
@@ -198,7 +199,11 @@ export async function createFixtureAsync(options: FixtureOptions = {}) {
   if (options.sliced) {
     entries.push({ name: 'Metadata/plate_1.gcode', data: '; sliced\nG28\n' });
   }
-  if (options.thumbnail) {
+  if (options.thumbnails) {
+    options.thumbnails.forEach((thumbnail, index) => {
+      entries.push({ name: `Metadata/plate_${index + 1}.png`, data: thumbnail, compress: false });
+    });
+  } else if (options.thumbnail) {
     entries.push({ name: 'Metadata/plate_1.png', data: options.thumbnail });
   }
   await writeZip(file, entries);

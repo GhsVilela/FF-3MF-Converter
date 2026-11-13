@@ -25,7 +25,7 @@ body:
     attributes:
       label: Version
       description: Image tag or commit.
-      placeholder: v0.3.0 / ghcr.io/...:edge / commit
+      placeholder: v0.3.1 / ghcr.io/...:edge / commit
     validations:
       required: true
   - type: dropdown

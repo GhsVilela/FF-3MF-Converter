@@ -58,8 +58,9 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   manual mapping in Flash Studio.
 - **Multi-plate projects.** Plates are preserved. Single-plate projects can be
   centred on the target bed; models are never scaled automatically.
-- **First-plate preview.** The project's embedded plate render is shown after
-  upload, so you can confirm orientation and layout before choosing a target.
+- **Plate preview carousel.** The project's embedded plate renders are shown
+  after upload with previous/next controls and plate dots, so you can review
+  every plate before choosing a target.
 - **Fast on large projects.** A lower-memory streaming XML scanner and rewriter
   handles multi-million-triangle projects with a 10-minute default conversion
   timeout.

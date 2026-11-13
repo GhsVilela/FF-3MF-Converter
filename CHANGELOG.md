@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.1
+
+- Added multi-plate preview pagination. Every embedded `plate_<n>` render is
+  extracted, stored with the upload and exposed through the thumbnail endpoint.
+  The configure screen now has previous/next controls, keyboard arrow support
+  and plate indicators.
+- `POST /api/uploads` returns a `thumbnails` array listing the plates with a
+  preview. `GET /api/uploads/:id/thumbnail?plate=N` serves a specific plate.
+- Projects with only a single project thumbnail still show it as plate 1.
+- Added a three-plate synthetic fixture and Playwright coverage for carousel
+  navigation.
+
 ## 0.3.0
 
 - Added a first-plate preview after upload. The converter reads the plate render

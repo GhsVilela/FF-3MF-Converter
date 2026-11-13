@@ -11,20 +11,20 @@ import { buildTargetConfig, summarizeSettings, type TargetProfileInput } from '.
 import { ConversionError } from './errors.js';
 import { patchModelSettingsXml } from './model-settings.js';
 import { loadSourceAsync } from './source.js';
-import { findProjectThumbnail, type ProjectThumbnail } from './thumbnail.js';
+import { findProjectThumbnails, type ProjectThumbnail } from './thumbnail.js';
 import { scanModelXml, rewriteModelXml } from './xml.js';
 import { readZip, writeZip, type ZipOutputEntry } from './zip.js';
 
 export interface ProjectAnalysis {
   analysis: SourceAnalysis;
-  thumbnail?: ProjectThumbnail;
+  thumbnails: ProjectThumbnail[];
 }
 
 export async function analyze3mfProject(filePath: string): Promise<ProjectAnalysis> {
   const source = await loadSourceAsync(filePath);
   return {
     analysis: source.analysis,
-    thumbnail: findProjectThumbnail(source.contents),
+    thumbnails: findProjectThumbnails(source.contents),
   };
 }
 

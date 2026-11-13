@@ -310,14 +310,32 @@ describe('3MF conversion', () => {
     cleanups.push(fixture.cleanup);
 
     const result = await analyze3mfProject(fixture.file);
-    expect(result.thumbnail?.mime).toBe('image/png');
-    expect(result.thumbnail?.name).toBe('Metadata/plate_1.png');
-    expect(result.thumbnail?.data.equals(png)).toBe(true);
+    expect(result.thumbnails).toHaveLength(1);
+    expect(result.thumbnails[0]?.mime).toBe('image/png');
+    expect(result.thumbnails[0]?.name).toBe('Metadata/plate_1.png');
+    expect(result.thumbnails[0]?.plate).toBe(1);
+    expect(result.thumbnails[0]?.data.equals(png)).toBe(true);
 
     const plainFixture = await createFixtureAsync();
     cleanups.push(plainFixture.cleanup);
     const withoutPreview = await analyze3mfProject(plainFixture.file);
-    expect(withoutPreview.thumbnail).toBeUndefined();
+    expect(withoutPreview.thumbnails).toHaveLength(0);
+  });
+
+  it('extracts every available plate preview', async () => {
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=',
+      'base64',
+    );
+    const fixture = await createFixtureAsync({
+      plateCount: 3,
+      thumbnails: [png, png, png],
+    });
+    cleanups.push(fixture.cleanup);
+
+    const result = await analyze3mfProject(fixture.file);
+    expect(result.analysis.plates).toBe(3);
+    expect(result.thumbnails.map((thumbnail) => thumbnail.plate)).toEqual([1, 2, 3]);
   });
 
   it('rejects sliced print files', async () => {

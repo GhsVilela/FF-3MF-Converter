@@ -1,6 +1,6 @@
 {
   "name": "@ff3mf/api",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "main": "./dist/server.js",
@@ -17,9 +17,9 @@
     "@fastify/multipart": "^10.1.8",
     "@fastify/rate-limit": "^10.2.2",
     "@fastify/static": "^10.1.10",
-    "@ff3mf/core": "0.3.0",
-    "@ff3mf/profiles": "0.3.0",
-    "@ff3mf/shared": "0.3.0",
+    "@ff3mf/core": "0.3.1",
+    "@ff3mf/profiles": "0.3.1",
+    "@ff3mf/shared": "0.3.1",
     "fastify": "^5.2.1",
     "zod": "^4.6.7"
   }
