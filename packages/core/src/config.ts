@@ -941,20 +941,78 @@ function layoutResult(
   warnings: string[],
 ): { translate: { x: number; y: number } | undefined; scale: number; plates: PlateInfo[] } {
   const bed = bedExtents(profile.machine.printable_area as string[]);
-  const bounds = source.worldBounds ?? source.bounds;
   const layout = options.layout ?? 'center';
-  const plates: PlateInfo[] = [];
 
+  if (source.plateCount > 1) {
+    const plates: PlateInfo[] = [];
+    const oversized: string[] = [];
+    let missingBounds = 0;
+
+    for (let index = 0; index < source.plateCount; index += 1) {
+      const plate = source.plateData?.[index];
+      const bounds = plate?.bounds ?? null;
+      const objects = plate?.instances.length ?? source.analysis.objects;
+      if (!bounds) {
+        missingBounds += 1;
+        plates.push({
+          plate: index + 1,
+          objects,
+          fits: true,
+          moved: false,
+          note: 'Plate bounds could not be determined; verify this plate in Flash Studio.',
+        });
+        continue;
+      }
+      const width = bounds.max[0] - bounds.min[0];
+      const height = bounds.max[1] - bounds.min[1];
+      const fits = width <= bed.width + 0.01 && height <= bed.height + 0.01;
+      if (!fits) oversized.push(`${index + 1} (${width.toFixed(1)} × ${height.toFixed(1)} mm)`);
+      plates.push({
+        plate: index + 1,
+        objects,
+        fits,
+        moved: false,
+        note: fits
+          ? `Plate fits the ${bed.width} × ${bed.height} mm build plate.`
+          : `Plate is larger than the ${bed.width} × ${bed.height} mm build plate.`,
+      });
+    }
+
+    if (layout === 'scale') {
+      warnings.push(
+        'Automatic scaling is not applied to multi-plate projects. Review each plate in Flash Studio.',
+      );
+    }
+    if (oversized.length > 0) {
+      warnings.push(
+        `Plate${oversized.length === 1 ? '' : 's'} ${oversized.join(', ')} exceed${oversized.length === 1 ? 's' : ''} the ${bed.width} × ${bed.height} mm build plate. The project was not scaled; review the layout in Flash Studio.`,
+      );
+    }
+    if (missingBounds > 0) {
+      warnings.push(
+        `Could not determine bounds for ${missingBounds} build plate${missingBounds === 1 ? '' : 's'}; verify the layout in Flash Studio.`,
+      );
+    }
+    warnings.push(
+      'Multiple build plates were preserved as-is. Review the plate layout and fit in Flash Studio before slicing.',
+    );
+    return { translate: undefined, scale: 1, plates };
+  }
+
+  const bounds = source.worldBounds ?? source.bounds;
+  const plates: PlateInfo[] = [];
   if (!bounds) {
     return {
       translate: undefined,
       scale: 1,
-      plates: Array.from({ length: source.plateCount }, (_, index) => ({
-        plate: index + 1,
-        objects: source.analysis.objects,
-        fits: true,
-        moved: false,
-      })),
+      plates: [
+        {
+          plate: 1,
+          objects: source.analysis.objects,
+          fits: true,
+          moved: false,
+        },
+      ],
     };
   }
 
@@ -971,7 +1029,7 @@ function layoutResult(
   const scaledWidth = width * scale;
   const scaledHeight = height * scale;
   const fits = scaledWidth <= bed.width + 0.01 && scaledHeight <= bed.height + 0.01;
-  const shouldMove = layout !== 'keep' && source.plateCount === 1;
+  const shouldMove = layout !== 'keep';
 
   let translate: { x: number; y: number } | undefined;
   if (shouldMove) {
@@ -988,26 +1046,16 @@ function layoutResult(
       `The model is ${scaledWidth.toFixed(1)} × ${scaledHeight.toFixed(1)} mm and does not fit the ${bed.width} × ${bed.height} mm build plate. It was not scaled. Use "Scale to fit" or arrange it in Flash Studio.`,
     );
   }
-  if (source.plateCount > 1) {
-    warnings.push(
-      'Multiple build plates were preserved as-is. Review the plate layout and fit in Flash Studio before slicing.',
-    );
-  }
 
-  for (let plate = 1; plate <= source.plateCount; plate += 1) {
-    plates.push({
-      plate,
-      objects: source.analysis.objects,
-      fits,
-      moved: Boolean(translate),
-      note:
-        source.plateCount > 1
-          ? 'Multi-plate layout preserved; verify placement in Flash Studio.'
-          : fits
-            ? 'Model fits the target build plate.'
-            : 'Model is larger than the target build plate.',
-    });
-  }
+  plates.push({
+    plate: 1,
+    objects: source.analysis.objects,
+    fits,
+    moved: Boolean(translate),
+    note: fits
+      ? 'Model fits the target build plate.'
+      : 'Model is larger than the target build plate.',
+  });
 
   return { translate, scale, plates };
 }

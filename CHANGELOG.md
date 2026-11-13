@@ -12,6 +12,9 @@
 - Fixed support-interface filaments being treated as unused. A filament used
   only by `support_interface_filament` is now included in the colour list and
   preserved by `keepAllColors`.
+- Fixed multi-plate fit checks using the combined bounds of every plate. Each
+  plate is now checked separately, using the full 3MF object transform (scale,
+  rotation and translation).
 
 ## 0.1.0
 

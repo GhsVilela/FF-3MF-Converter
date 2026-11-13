@@ -4,6 +4,7 @@ import { readZip } from '../src/zip.js';
 import { analyze3mf, convert3mf } from '../src/convert.js';
 import { ConversionError } from '../src/errors.js';
 import { encodePaintState } from '../src/paint.js';
+import { loadSourceAsync } from '../src/source.js';
 import { createFixtureAsync } from './fixtures.js';
 import { loadTargetProfile } from '@ff3mf/profiles';
 
@@ -208,6 +209,44 @@ describe('3MF conversion', () => {
 
     const modelSettings = contents.files.get('Metadata/model_settings.config')!.toString('utf8');
     expect(modelSettings).toContain('key="support_interface_filament" value="5"');
+  });
+
+  it('applies object scale to world bounds', async () => {
+    const fixture = await createFixtureAsync({
+      itemTransform: '0.5 0 0 0 0.5 0 0 0 0.5 0 0 0',
+    });
+    cleanups.push(fixture.cleanup);
+    const source = await loadSourceAsync(fixture.file);
+    expect(source.worldBounds).not.toBeNull();
+    expect((source.worldBounds?.max[0] ?? 0) - (source.worldBounds?.min[0] ?? 0)).toBeCloseTo(
+      10,
+      5,
+    );
+    expect((source.worldBounds?.max[1] ?? 0) - (source.worldBounds?.min[1] ?? 0)).toBeCloseTo(
+      10,
+      5,
+    );
+  });
+
+  it('checks each build plate separately for multi-plate projects', async () => {
+    const fixture = await createFixtureAsync({
+      plateCount: 2,
+      itemTransforms: ['1 0 0 0 1 0 0 0 1 90 90 0', '1 0 0 0 1 0 0 0 1 90 390 0'],
+    });
+    cleanups.push(fixture.cleanup);
+    const output = path.join(fixture.directory, 'out.3mf');
+    const profile = loadTargetProfile('ad5m', '0.4');
+    const result = await convert3mf(fixture.file, output, profile, {
+      printerId: 'ad5m',
+      nozzle: '0.4',
+      layout: 'center',
+    });
+
+    expect(result.report.plates).toHaveLength(2);
+    expect(result.report.plates.every((plate) => plate.fits)).toBe(true);
+    expect(result.report.plates.map((plate) => plate.objects)).toEqual([1, 1]);
+    expect(result.report.warnings.join(' ')).toContain('Multiple build plates');
+    expect(result.report.warnings.join(' ')).not.toContain('does not fit');
   });
 
   it('generates model settings for a bare geometry 3MF', async () => {

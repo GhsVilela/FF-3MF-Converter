@@ -7,6 +7,9 @@ export interface FixtureOptions {
   withSettings?: boolean;
   withModelSettings?: boolean;
   paintStates?: string[];
+  itemTransform?: string;
+  itemTransforms?: string[];
+  plateCount?: number;
   filamentColors?: string[];
   filamentTypes?: string[];
   filamentNames?: string[];
@@ -32,7 +35,13 @@ const modelRels = `<?xml version="1.0" encoding="UTF-8"?>
  <Relationship Target="/3D/Objects/part.model" Id="rel-1" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>
 </Relationships>`;
 
-function rootModel() {
+function rootModel(options: FixtureOptions = {}) {
+  const transforms = options.itemTransforms ?? [
+    options.itemTransform ?? '1 0 0 0 1 0 0 0 1 90 90 0',
+  ];
+  const items = transforms
+    .map((transform) => `  <item objectid="2" transform="${transform}" printable="1"/>`)
+    .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p">
  <metadata name="Application">BambuStudio-2.3.0</metadata>
@@ -46,7 +55,7 @@ function rootModel() {
   </object>
  </resources>
  <build p:UUID="00000003-0000-4000-8000-000000000003">
-  <item objectid="2" transform="1 0 0 0 1 0 0 0 1 90 90 0" printable="1"/>
+${items}
  </build>
 </model>`;
 }
@@ -142,6 +151,20 @@ function modelSettings(options: FixtureOptions = {}) {
   const supportInterfaceFilament = options.supportInterfaceFilament
     ? `  <metadata key="support_interface_filament" value="${options.supportInterfaceFilament}"/>\n`
     : '';
+  const plateCount = options.plateCount ?? 1;
+  const plates = Array.from({ length: plateCount }, (_, index) => {
+    return [
+      ' <plate>',
+      `  <metadata key="plater_id" value="${index + 1}"/>`,
+      '  <metadata key="plater_name" value=""/>',
+      '  <model_instance>',
+      '   <metadata key="object_id" value="2"/>',
+      `   <metadata key="instance_id" value="${index}"/>`,
+      `   <metadata key="identify_id" value="${14 + index}"/>`,
+      '  </model_instance>',
+      ' </plate>',
+    ].join('\n');
+  }).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <config>
  <object id="2">
@@ -151,15 +174,7 @@ ${supportFilament}${supportInterfaceFilament}  <part id="1" subtype="normal_part
    <metadata key="name" value="Fixture part"/>
   </part>
  </object>
- <plate>
-  <metadata key="plater_id" value="1"/>
-  <metadata key="plater_name" value=""/>
-  <model_instance>
-   <metadata key="object_id" value="2"/>
-   <metadata key="instance_id" value="0"/>
-   <metadata key="identify_id" value="14"/>
-  </model_instance>
- </plate>
+${plates}
 </config>`;
 }
 
@@ -169,7 +184,7 @@ export async function createFixtureAsync(options: FixtureOptions = {}) {
   const entries = [
     { name: '[Content_Types].xml', data: contentTypes },
     { name: '_rels/.rels', data: rels },
-    { name: '3D/3dmodel.model', data: rootModel() },
+    { name: '3D/3dmodel.model', data: rootModel(options) },
     { name: '3D/_rels/3dmodel.model.rels', data: modelRels },
     { name: '3D/Objects/part.model', data: partModel(options.paintStates ?? []) },
   ];

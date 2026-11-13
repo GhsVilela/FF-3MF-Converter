@@ -20,31 +20,70 @@ export interface LoadedSource {
   usedSlots: number[];
   sourceFilaments: SourceFilament[];
   plateCount: number;
+  plateData: Array<{
+    instances: Array<{ objectId: string; instanceId: number }>;
+    bounds: Bounds | null;
+  }> | null;
   bounds: { min: [number, number, number]; max: [number, number, number] } | null;
   worldBounds: { min: [number, number, number]; max: [number, number, number] } | null;
 }
 
 type Bounds = { min: [number, number, number]; max: [number, number, number] };
 
-function transformTranslation(transform: string | undefined): [number, number, number] {
-  if (!transform) return [0, 0, 0];
+function parseTransform(transform: string | undefined): number[] | undefined {
+  if (!transform) return undefined;
   const parts = transform.trim().split(/\s+/).map(Number);
-  if (parts.length !== 12 || parts.some((part) => !Number.isFinite(part))) return [0, 0, 0];
-  return [parts[9] ?? 0, parts[10] ?? 0, parts[11] ?? 0];
+  if (parts.length !== 12 || parts.some((part) => !Number.isFinite(part))) return undefined;
+  return parts;
 }
 
-function shiftBounds(bounds: Bounds, translation: [number, number, number]): Bounds {
+function transformBounds(bounds: Bounds, transform: string | undefined): Bounds {
+  const matrix = parseTransform(transform);
+  if (!matrix) return bounds;
+  // 3MF stores a 4x3 row-vector matrix: m00 m01 m02 m10 ... m30 m31 m32.
+  const [
+    m00 = 0,
+    m01 = 0,
+    m02 = 0,
+    m10 = 0,
+    m11 = 0,
+    m12 = 0,
+    m20 = 0,
+    m21 = 0,
+    m22 = 0,
+    m30 = 0,
+    m31 = 0,
+    m32 = 0,
+  ] = matrix;
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let minZ = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  let maxZ = Number.NEGATIVE_INFINITY;
+  for (const x of [bounds.min[0], bounds.max[0]]) {
+    for (const y of [bounds.min[1], bounds.max[1]]) {
+      for (const z of [bounds.min[2], bounds.max[2]]) {
+        const tx = x * m00 + y * m10 + z * m20 + m30;
+        const ty = x * m01 + y * m11 + z * m21 + m31;
+        const tz = x * m02 + y * m12 + z * m22 + m32;
+        minX = Math.min(minX, tx);
+        minY = Math.min(minY, ty);
+        minZ = Math.min(minZ, tz);
+        maxX = Math.max(maxX, tx);
+        maxY = Math.max(maxY, ty);
+        maxZ = Math.max(maxZ, tz);
+      }
+    }
+  }
+  return { min: [minX, minY, minZ], max: [maxX, maxY, maxZ] };
+}
+
+function scaleBounds(bounds: Bounds, scale: number): Bounds {
+  if (scale === 1) return bounds;
   return {
-    min: [
-      bounds.min[0] + translation[0],
-      bounds.min[1] + translation[1],
-      bounds.min[2] + translation[2],
-    ],
-    max: [
-      bounds.max[0] + translation[0],
-      bounds.max[1] + translation[1],
-      bounds.max[2] + translation[2],
-    ],
+    min: [bounds.min[0] * scale, bounds.min[1] * scale, bounds.min[2] * scale],
+    max: [bounds.max[0] * scale, bounds.max[1] * scale, bounds.max[2] * scale],
   };
 }
 
@@ -68,7 +107,11 @@ function mergeBounds(left: Bounds | null, right: Bounds | null): Bounds | null {
 function computeWorldBounds(
   rootScan: XmlScan,
   modelFiles: Map<string, { xml: string; scan: XmlScan }>,
-): Bounds | null {
+): {
+  world: Bounds | null;
+  objectBounds: Map<string, Bounds>;
+  objectInstanceBounds: Map<string, Bounds[]>;
+} {
   const rootBounds = new Map<string, Bounds>();
   for (const [id, bounds] of Object.entries(rootScan.objectBounds)) {
     rootBounds.set(id, bounds);
@@ -95,8 +138,7 @@ function computeWorldBounds(
         ? (modelBoundsByPath.get(path)?.get(component.objectId) ?? null)
         : resolveRootObject(component.objectId, seen);
       if (child) {
-        const shifted = shiftBounds(child, transformTranslation(component.transform));
-        combined = mergeBounds(combined, shifted);
+        combined = mergeBounds(combined, transformBounds(child, component.transform));
       }
     }
     if (combined) rootBounds.set(id, combined);
@@ -106,11 +148,21 @@ function computeWorldBounds(
   for (const object of rootScan.objects) resolveRootObject(object.id);
 
   let world: Bounds | null = null;
+  const objectBounds = new Map<string, Bounds>();
+  const objectInstanceBounds = new Map<string, Bounds[]>();
   if (rootScan.items.length > 0) {
     for (const item of rootScan.items) {
       const local = resolveRootObject(item.objectId);
       if (!local) continue;
-      world = mergeBounds(world, shiftBounds(local, transformTranslation(item.transform)));
+      const transformed = transformBounds(local, item.transform);
+      world = mergeBounds(world, transformed);
+      objectBounds.set(
+        item.objectId,
+        mergeBounds(objectBounds.get(item.objectId) ?? null, transformed) ?? transformed,
+      );
+      const instances = objectInstanceBounds.get(item.objectId) ?? [];
+      instances.push(transformed);
+      objectInstanceBounds.set(item.objectId, instances);
     }
   }
   if (!world) {
@@ -121,7 +173,7 @@ function computeWorldBounds(
       world = mergeBounds(world, bounds);
     }
   }
-  return world;
+  return { world, objectBounds, objectInstanceBounds };
 }
 
 const xmlParser = new XMLParser({
@@ -214,6 +266,23 @@ function extractFilamentSlots(modelSettingsXml?: string): number[] {
   return slots;
 }
 
+function extractPlateObjects(
+  modelSettingsXml?: string,
+): Array<Array<{ objectId: string; instanceId: number }>> {
+  if (!modelSettingsXml) return [];
+  return [...modelSettingsXml.matchAll(/<plate\b[^>]*>([\s\S]*?)<\/plate>/g)].map((plate) => {
+    const body = plate[1] ?? '';
+    return [...body.matchAll(/<model_instance\b[^>]*>([\s\S]*?)<\/model_instance>/g)]
+      .map((instance) => {
+        const content = instance[1] ?? '';
+        const objectId = /key="object_id"\s+value="(\d+)"/.exec(content)?.[1];
+        const instanceId = Number(/key="instance_id"\s+value="(\d+)"/.exec(content)?.[1] ?? '0');
+        return objectId ? { objectId, instanceId } : undefined;
+      })
+      .filter((value): value is { objectId: string; instanceId: number } => Boolean(value));
+  });
+}
+
 function parseProjectConfig(contents: ZipContents): Record<string, unknown> | undefined {
   const raw = contents.files.get('Metadata/project_settings.config');
   if (!raw) return undefined;
@@ -298,29 +367,31 @@ function loadSourceFromContents(filePath: string, contents: ZipContents): Loaded
 
   const unit = rootScan.unit || 'millimeter';
   const unitScale = getUnitScale(unit);
-  let worldBounds = computeWorldBounds(rootScan, modelFiles);
+  const computedBounds = computeWorldBounds(rootScan, modelFiles);
+  let worldBounds = computedBounds.world;
   if (unitScale !== 1) {
-    if (bounds) {
-      bounds = {
-        min: [bounds.min[0] * unitScale, bounds.min[1] * unitScale, bounds.min[2] * unitScale],
-        max: [bounds.max[0] * unitScale, bounds.max[1] * unitScale, bounds.max[2] * unitScale],
-      };
-    }
-    if (worldBounds) {
-      worldBounds = {
-        min: [
-          worldBounds.min[0] * unitScale,
-          worldBounds.min[1] * unitScale,
-          worldBounds.min[2] * unitScale,
-        ],
-        max: [
-          worldBounds.max[0] * unitScale,
-          worldBounds.max[1] * unitScale,
-          worldBounds.max[2] * unitScale,
-        ],
-      };
-    }
+    if (bounds) bounds = scaleBounds(bounds, unitScale);
+    if (worldBounds) worldBounds = scaleBounds(worldBounds, unitScale);
   }
+
+  const plateObjects = extractPlateObjects(modelSettingsXml);
+  const plateData =
+    plateObjects.length > 0
+      ? plateObjects.map((instances) => {
+          let plateBounds: Bounds | null = null;
+          for (const { objectId, instanceId } of instances) {
+            const instanceBounds =
+              computedBounds.objectInstanceBounds.get(objectId)?.[instanceId] ??
+              computedBounds.objectBounds.get(objectId) ??
+              null;
+            plateBounds = mergeBounds(plateBounds, instanceBounds);
+          }
+          return {
+            instances,
+            bounds: plateBounds ? scaleBounds(plateBounds, unitScale) : null,
+          };
+        })
+      : null;
 
   const paintStates = new Set<number>();
   let hasPaint = false;
@@ -448,6 +519,7 @@ function loadSourceFromContents(filePath: string, contents: ZipContents): Loaded
     usedSlots: effectiveUsedSlots,
     sourceFilaments,
     plateCount,
+    plateData,
     bounds,
     worldBounds,
   };
