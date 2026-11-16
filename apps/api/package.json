@@ -15,7 +15,7 @@
     "@fastify/cors": "^11.0.0",
     "@fastify/helmet": "^13.0.1",
     "@fastify/multipart": "^10.1.8",
-    "@fastify/rate-limit": "^10.2.2",
+    "@fastify/rate-limit": "^11.2.2",
     "@fastify/static": "^10.1.10",
     "@ff3mf/core": "0.3.1",
     "@ff3mf/profiles": "0.3.1",
