@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+- Updated the dependency set across the workspace: Fastify Compress 9,
+  Fastify Rate Limit 11, Commander 15, Fast XML Parser 5.12.1, Lucide React 1.x,
+  Tailwind Merge 3.7.1, Playwright 1.65.1, ESLint 10.15, Prettier 3.10.1,
+  TypeScript ESLint 8.74 and Vitest 5.1.1.
+- Upgraded to TypeScript 6.0.3 and declared the Node type library explicitly in
+  the shared tsconfig. TypeScript 7.0.2 is not adopted yet because
+  `typescript-eslint` 8.74 only supports TypeScript `<6.1.0`.
+- Replaced the Lucide GitHub brand icon, which was removed in Lucide 1.x, with a
+  local GitHub mark so the repository link keeps its appearance.
+- Conversion, profile and browser tests continue to pass; no conversion
+  behaviour changed.
+
 ## 0.3.1
 
 - Added multi-plate preview pagination. Every embedded `plate_<n>` render is

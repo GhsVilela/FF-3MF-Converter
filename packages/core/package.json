@@ -1,6 +1,6 @@
 {
   "name": "@ff3mf/core",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
@@ -17,8 +17,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ff3mf/shared": "0.3.1",
-    "fast-xml-parser": "^5.12.0",
+    "@ff3mf/shared": "0.4.0",
+    "fast-xml-parser": "^5.12.1",
     "saxes": "^6.0.0",
     "yauzl": "^3.2.0",
     "yazl": "^3.3.1"
