@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FF-3MF Converter</title>
+    <style>
+      /*__FF3MF_CSS__*/
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <svg
+            class="brand-mark"
+            viewBox="0 0 40 40"
+            role="img"
+            aria-label="FF-3MF"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="40" height="40" rx="3" fill="#09121a" />
+            <path
+              d="M20 7.5 31.5 14v12L20 32.5 8.5 26V14Z"
+              fill="none"
+              stroke="#00a0e9"
+              stroke-width="2"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M8.5 14 20 20.5 31.5 14M20 20.5v12"
+              fill="none"
+              stroke="#00a0e9"
+              stroke-width="2"
+              stroke-linejoin="round"
+            />
+            <path d="M25.5 7.5h7v7" fill="none" stroke="#e96114" stroke-width="2" />
+          </svg>
+          <div class="brand-copy">
+            <span class="mono-label">ORCASLICER / FLASH STUDIO</span>
+            <h1>FlashForge project converter</h1>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button
+            id="connection-pill"
+            class="status-pill"
+            type="button"
+            data-state="unknown"
+            title="Check the FF-3MF connection"
+          >
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="connection-text">Checking</span>
+          </button>
+          <button id="toggle-settings" class="button button-quiet" type="button">Settings</button>
+        </div>
+      </header>
+
+      <div id="error-banner" class="banner banner-error" hidden role="alert">
+        <div class="banner-copy">
+          <strong id="error-title">Could not continue</strong>
+          <span id="error-message"></span>
+          <details id="error-details-wrap" hidden>
+            <summary>Details</summary>
+            <ul id="error-details"></ul>
+          </details>
+        </div>
+        <button id="dismiss-error" class="button button-small" type="button">Dismiss</button>
+      </div>
+
+      <div id="notice-banner" class="banner banner-notice" hidden role="status">
+        <div class="banner-copy"><span id="notice-message"></span></div>
+        <button id="dismiss-notice" class="button button-small" type="button">Dismiss</button>
+      </div>
+
+      <section id="settings-panel" class="panel settings-panel" hidden>
+        <div class="panel-accent"></div>
+        <div class="panel-head">
+          <div>
+            <span class="mono-label">CONNECTION / SETTINGS</span>
+            <h2>FF-3MF instance</h2>
+          </div>
+          <button id="close-settings" class="button button-quiet button-small" type="button">
+            Close
+          </button>
+        </div>
+        <div class="settings-grid">
+          <label class="field field-wide">
+            <span>FF-3MF URL</span>
+            <input
+              id="settings-api-url"
+              type="url"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="http://127.0.0.1:8080"
+            />
+            <small>Use the address shown in the FF-3MF browser tab.</small>
+          </label>
+          <label class="field field-wide">
+            <span>API TOKEN</span>
+            <input
+              id="settings-token"
+              type="password"
+              spellcheck="false"
+              autocomplete="new-password"
+              placeholder="Leave blank to keep the saved token"
+            />
+            <small id="settings-token-state">No token saved.</small>
+          </label>
+          <div class="settings-actions">
+            <button id="clear-token" class="button button-quiet button-small" type="button">
+              Clear saved token
+            </button>
+          </div>
+          <label class="field field-wide">
+            <span>OUTPUT FOLDER</span>
+            <input
+              id="settings-output-dir"
+              type="text"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Default: plugin data / outputs"
+            />
+            <small>
+              Leave blank to keep converted projects in the plugin data folder. A custom folder is
+              written directly by the plugin.
+            </small>
+          </label>
+          <div class="settings-actions">
+            <button id="reset-output" class="button button-quiet button-small" type="button">
+              Use default folder
+            </button>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button id="save-settings" class="button button-primary" type="button">
+            Save and test
+          </button>
+          <button id="test-connection" class="button button-quiet" type="button">Test only</button>
+        </div>
+        <p class="privacy-note" id="settings-privacy">
+          The token is stored in OrcaSlicer's plugin data folder and is never displayed again.
+        </p>
+      </section>
+
+      <main class="layout">
+        <div class="workspace">
+          <section class="panel">
+            <div class="panel-accent"></div>
+            <div class="panel-head">
+              <div>
+                <span class="mono-label">SOURCE / 01</span>
+                <h2>Conversion source</h2>
+              </div>
+              <span id="project-dirty" class="tag tag-orange" hidden>UNSAVED</span>
+            </div>
+            <div class="source-switch" role="group" aria-label="Conversion source">
+              <button id="source-current" class="source-tab" type="button">
+                Current OrcaSlicer project
+              </button>
+              <button id="source-file" class="source-tab" type="button">Select a .3mf file</button>
+            </div>
+            <div class="project-body">
+              <div
+                id="preview-carousel"
+                class="project-preview"
+                aria-roledescription="carousel"
+                aria-label="Build plate preview"
+              >
+                <div id="preview-stage" class="preview-stage">
+                  <img id="preview-image" alt="Plate preview" hidden />
+                  <div id="preview-empty" class="preview-empty">
+                    <span id="preview-empty-title">NO PREVIEW</span>
+                    <small id="preview-empty-message"
+                      >Analyse the source to load the plate renders.</small
+                    >
+                  </div>
+                </div>
+                <div id="preview-controls" class="preview-controls" hidden>
+                  <button
+                    id="preview-prev"
+                    class="preview-nav"
+                    type="button"
+                    aria-label="Previous plate"
+                    hidden
+                  >
+                    &#8249;
+                  </button>
+                  <div id="preview-pager" class="preview-pager" hidden>
+                    <span id="preview-label" class="mono-label" aria-live="polite">PLATE 1</span>
+                  </div>
+                  <button
+                    id="preview-next"
+                    class="preview-nav"
+                    type="button"
+                    aria-label="Next plate"
+                    hidden
+                  >
+                    &#8250;
+                  </button>
+                </div>
+              </div>
+              <div class="project-meta">
+                <div class="meta-row">
+                  <span>NAME</span>
+                  <strong id="project-name">Untitled project</strong>
+                </div>
+                <div class="meta-row">
+                  <span>FILE</span>
+                  <code id="project-path">Not saved yet</code>
+                </div>
+                <div class="meta-row">
+                  <span id="project-mode-label">EXPORT</span>
+                  <span id="project-mode">A temporary copy will be exported.</span>
+                </div>
+                <div id="file-source-controls" class="file-source-controls" hidden>
+                  <input
+                    id="file-source-input"
+                    type="file"
+                    accept=".3mf,application/octet-stream"
+                    hidden
+                  />
+                  <div class="inline-actions">
+                    <button id="choose-file-button" class="button button-primary" type="button">
+                      Choose .3mf file
+                    </button>
+                    <button id="clear-selected-file" class="button button-quiet" type="button">
+                      Clear file
+                    </button>
+                  </div>
+                  <div class="selected-file-summary">
+                    <span class="mono-label">SELECTED FILE</span>
+                    <strong id="selected-file-name">No file selected</strong>
+                    <span id="selected-file-size"></span>
+                    <span id="selected-file-status"></span>
+                  </div>
+                  <div id="file-transfer-progress" class="progress-block" hidden>
+                    <div class="progress-line">
+                      <span id="file-transfer-label">Transferring file</span>
+                      <span id="file-transfer-percent" class="mono">0%</span>
+                    </div>
+                    <div class="progress-track">
+                      <div id="file-transfer-fill" class="progress-fill"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="inline-actions">
+                  <button id="analyze-button" class="button button-primary" type="button">
+                    Upload &amp; analyse
+                  </button>
+                  <button id="open-project-folder" class="button button-quiet" type="button">
+                    Show project folder
+                  </button>
+                </div>
+                <p class="hint" id="project-hint">
+                  Unsaved changes are included when OrcaSlicer can export a temporary copy.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-accent accent-orange"></div>
+            <div class="panel-head">
+              <div>
+                <span class="mono-label">TARGET / 02</span>
+                <h2>FlashForge target</h2>
+              </div>
+              <span id="api-version" class="mono-label muted">API --</span>
+            </div>
+            <div class="field-grid">
+              <label class="field">
+                <span>PRINTER</span>
+                <select id="printer-select"></select>
+              </label>
+              <label class="field">
+                <span>NOZZLE</span>
+                <select id="nozzle-select"></select>
+              </label>
+              <label class="field field-wide">
+                <span>PROCESS</span>
+                <select id="process-select"></select>
+              </label>
+              <label class="field">
+                <span>LAYOUT</span>
+                <select id="layout-select">
+                  <option value="center">Center single plate</option>
+                  <option value="keep">Keep position</option>
+                  <option value="scale">Scale to fit</option>
+                </select>
+              </label>
+              <label class="check">
+                <input id="preserve-temps" type="checkbox" />
+                <span>Preserve author temperatures</span>
+              </label>
+            </div>
+            <p class="hint" id="target-hint">
+              Select the printer and nozzle you will open in Flash Studio.
+            </p>
+          </section>
+
+          <section id="colors-panel" class="panel" hidden>
+            <div class="panel-accent accent-teal"></div>
+            <div class="panel-head">
+              <div>
+                <span class="mono-label">FILAMENTS / 03</span>
+                <h2>Colour mapping</h2>
+              </div>
+              <span id="color-count" class="tag">0 COLOURS</span>
+            </div>
+            <p class="hint" id="colors-hint">
+              Map every used source filament to a FlashForge tool or IFS slot.
+            </p>
+            <label id="keep-all-row" class="check check-box" hidden>
+              <input id="keep-all-colors" type="checkbox" />
+              <span>
+                Keep every source colour
+                <small>
+                  Keeps one filament slot per used source colour instead of merging into the
+                  printer's slots. Verify the mapping in Flash Studio.
+                </small>
+              </span>
+            </label>
+            <div id="colors-list" class="color-list"></div>
+            <div id="colors-warning" class="warning-box" hidden></div>
+          </section>
+        </div>
+
+        <aside class="sidebar">
+          <section class="panel run-panel">
+            <div class="panel-accent"></div>
+            <div class="panel-head">
+              <div>
+                <span class="mono-label">CONVERT / 04</span>
+                <h2>Run</h2>
+              </div>
+              <span id="busy-label" class="mono-label muted"></span>
+            </div>
+            <div class="run-actions">
+              <button id="convert-button" class="button button-primary" type="button">
+                Convert to Flash Studio
+              </button>
+              <button id="cancel-button" class="button button-danger" type="button" hidden>
+                Cancel
+              </button>
+            </div>
+            <div id="progress-block" class="progress-block" hidden>
+              <div class="progress-line">
+                <span id="progress-stage">Preparing</span>
+                <span id="progress-percent" class="mono">0%</span>
+              </div>
+              <div class="progress-track" role="progressbar">
+                <div id="progress-fill" class="progress-fill"></div>
+              </div>
+              <span id="progress-message" class="progress-message"></span>
+            </div>
+            <p class="hint" id="run-hint">Analyse the project first.</p>
+            <p class="privacy-note" id="run-privacy">
+              The project is sent only to the configured FF-3MF instance.
+            </p>
+          </section>
+
+          <section id="result-panel" class="panel" hidden>
+            <div class="panel-accent accent-teal"></div>
+            <div class="panel-head">
+              <div>
+                <span class="mono-label">RESULT / 05</span>
+                <h2>Flash Studio project</h2>
+              </div>
+              <button id="clear-result" class="button button-quiet button-small" type="button">
+                Clear
+              </button>
+            </div>
+            <div class="result-summary">
+              <div>
+                <span>TARGET</span>
+                <strong id="result-target">--</strong>
+              </div>
+              <div>
+                <span>FILE</span>
+                <code id="result-output">--</code>
+              </div>
+              <div>
+                <span>SIZE</span>
+                <span id="result-size">--</span>
+              </div>
+              <div>
+                <span>REPORT</span>
+                <code id="result-report">--</code>
+              </div>
+            </div>
+            <div id="result-stats" class="stat-row"></div>
+            <div id="result-warnings" class="warning-list"></div>
+            <div id="result-filaments" class="filament-list"></div>
+            <div class="inline-actions">
+              <button id="open-output" class="button button-primary" type="button">
+                Open output folder
+              </button>
+              <button id="convert-again" class="button button-quiet" type="button">
+                Analyse again
+              </button>
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="footer">
+        <span id="footer-version">FF-3MF plugin</span>
+        <span id="footer-api">API --</span>
+        <span id="footer-orca">OrcaSlicer --</span>
+      </footer>
+    </div>
+
+    <script>
+      /*__FF3MF_JS__*/
+    </script>
+  </body>
+</html>

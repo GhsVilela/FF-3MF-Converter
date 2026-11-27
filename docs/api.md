@@ -4,6 +4,10 @@ The API is served under `/api`. Requests and responses are JSON except for file
 upload and download. When `AUTH_TOKEN` is configured, send
 `Authorization: Bearer <token>` or `X-API-Key: <token>`.
 
+The OrcaSlicer plugin is an API client and uses the same upload, conversion,
+status and download endpoints. See
+[orcaslicer-plugin.md](orcaslicer-plugin.md).
+
 ## Health
 
 ```http
@@ -13,7 +17,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "uptimeSeconds": 42,
   "profiles": {
     "generatedAt": "2026-11-11",

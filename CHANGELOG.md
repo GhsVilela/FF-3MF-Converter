@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.5.0
+
+- Added an OrcaSlicer 2.5+ Python plugin. It adds an FF-3MF tab, exports the
+  current project (including unsaved changes when the host supports it), runs
+  the existing FF-3MF conversion, shows progress and colour mapping, and stores
+  the converted project and report in the plugin data folder.
+- Added a second plugin source: **Select a .3mf file**. It copies the chosen
+  file to plugin staging in 512 KiB chunks, validates it, and converts it
+  without requiring the file to be open in OrcaSlicer. Current-project and
+  selected-file analyses are invalidated independently.
+- Plugin upload progress now reports the actual upload percentage and byte
+  count instead of stopping at 18%. After the upload, the progress bar switches
+  to an indeterminate server-analysis state.
+- Clarified the two plugin steps: **Upload & analyse** prepares the source and
+  preview; **Convert** reuses the uploaded source and starts with
+  **Preparing the conversion**, without uploading again.
+- Added the multi-plate preview carousel to the plugin. Plate images are loaded
+  lazily and cached; previous/next buttons, arrow keys and a compact plate
+  counter let users inspect every embedded plate render.
+- Enlarged the plugin preview and moved the arrows and plate counter to a
+  separate control row below the image so they no longer overlap the render.
+- Renamed the plugin tab to **FF-3MF**, updated the header to **FlashForge
+  project converter**, matched the web brand mark, and stopped automatically
+  opening the file picker when switching to the selected-file source.
+- Fixed the plugin staying **Offline** after OrcaSlicer's network permission
+  prompt is approved. The first connection probe now retries automatically for
+  about 30 seconds, and the page re-checks when it regains focus.
+- Added the single-file plugin build (`npm run build:orca-plugin`) and the
+  standard-library Python test suite (`npm run test:orca-plugin`), including an
+  end-to-end upload → convert → download test against the real API.
+- The release workflow publishes `ff3mf_orca_<version>.py` and its checksum.
+  The version suffix uses underscores because OrcaSlicer imports `.py` plugins
+  by file stem and a dotted filename is treated as a dotted module path.
+
 ## 0.4.0
 
 - Updated the dependency set across the workspace: Fastify Compress 9,

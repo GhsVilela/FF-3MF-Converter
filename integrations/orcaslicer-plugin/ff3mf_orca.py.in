@@ -1,0 +1,2530 @@
+# /// script
+# requires-python = ">=3.10"
+# dependencies = []
+#
+# [tool.orcaslicer.plugin]
+# name = "FF-3MF Converter for OrcaSlicer"
+# description = "Convert the current OrcaSlicer project or a selected 3MF file into a FlashForge Flash Studio project."
+# author = "FF-3MF Converter contributors"
+# version = "__FF3MF_VERSION__"
+# ///
+# SPDX-License-Identifier: AGPL-3.0-or-later
+"""OrcaSlicer 2.5+ plugin for the FF-3MF Converter.
+
+The plugin adds an FF-3MF tab. It exports the project currently open in
+OrcaSlicer or stages a user-selected .3mf file, uploads the source to a running
+FF-3MF instance, follows the conversion and stores the resulting Flash Studio
+project in the plugin's data folder.
+
+The conversion itself is still performed by the FF-3MF API. This file contains
+only the OrcaSlicer integration and a small standard-library HTTP client.
+"""
+
+from __future__ import annotations
+
+import base64
+import http.client
+import json
+import os
+import re
+import secrets
+import ssl
+import subprocess
+import sys
+import threading
+import time
+import traceback
+import urllib.parse
+import uuid
+import zipfile
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable
+
+import orca
+
+PLUGIN_VERSION = "__FF3MF_VERSION__"
+PANEL_HTML = "__FF3MF_PANEL_HTML__"
+
+DEFAULT_API_URL = "http://127.0.0.1:8080"
+DEFAULT_OUTPUT_FOLDER = "outputs"
+DEFAULT_HTTP_TIMEOUT = 30.0
+HEALTH_TIMEOUT = 5.0
+PROBE_PERMISSION_RETRY_DELAYS = (3.0, 5.0, 8.0, 13.0)
+MAX_JSON_BYTES = 16 * 1024 * 1024
+MAX_IMAGE_BYTES = 4 * 1024 * 1024
+MAX_THUMBNAIL_BYTES = 2 * 1024 * 1024
+MAX_PREVIEW_CACHE = 32
+MAX_DOWNLOAD_BYTES = 2 * 1024 * 1024 * 1024
+MAX_ZIP_ENTRIES = 200_000
+FILE_CHUNK_BYTES = 512 * 1024
+FALLBACK_MAX_UPLOAD_MB = 1024
+TRANSFER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
+POLL_INTERVAL_SECONDS = 1.0
+POLL_TIMEOUT_SECONDS = 15 * 60
+MAX_TOKEN_LENGTH = 4096
+LOG_PREFIX = "[ff3mf]"
+
+RETRYABLE_HTTP_STATUS = {429, 502, 503, 504}
+RESERVED_WINDOWS_NAMES = {
+    "CON",
+    "PRN",
+    "AUX",
+    "NUL",
+    *(f"COM{index}" for index in range(1, 10)),
+    *(f"LPT{index}" for index in range(1, 10)),
+}
+
+STAGE_LABELS = {
+    "queued": "Queued on the converter",
+    "analysing": "Preparing the conversion",
+    "profiling": "Building the target profile",
+    "rewriting": "Rewriting the model",
+    "packaging": "Packaging the project",
+    "validating": "Validating the output",
+    "completed": "Conversion complete",
+    "failed": "Conversion failed",
+}
+
+DENIED_PATH_WORDS = ("secret", "cert", "conf")
+DENIED_WORD_REPLACEMENTS = {"secret": "scrt", "cert": "crt", "conf": "cf"}
+
+
+class PluginError(Exception):
+    """An expected failure with a user-facing code and message."""
+
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        details: list[str] | None = None,
+        status: int | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.details = details or []
+        self.status = status
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {"code": self.code, "message": self.message}
+        if self.details:
+            payload["details"] = self.details
+        if self.status is not None:
+            payload["status"] = self.status
+        return payload
+
+
+def log(message: str) -> None:
+    """Print plugin diagnostics to OrcaSlicer's python log."""
+
+    try:
+        print(f"{LOG_PREFIX} {message}", flush=True)
+    except Exception:
+        pass
+
+
+def normalize_api_url(value: Any) -> str:
+    if not isinstance(value, str):
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL must be text.")
+    raw = value.strip()
+    if not raw:
+        raise PluginError("INVALID_CONFIG", "Enter the FF-3MF URL.")
+    if len(raw) > 2048:
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL is too long.")
+    if any(ord(character) < 32 or character.isspace() for character in raw):
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL contains whitespace or control characters.")
+
+    parsed = urllib.parse.urlsplit(raw)
+    if parsed.scheme not in {"http", "https"}:
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL must start with http:// or https://.")
+    if not parsed.hostname:
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL has no host name.")
+    if parsed.username or parsed.password:
+        raise PluginError("INVALID_CONFIG", "Do not put credentials in the FF-3MF URL.")
+    if parsed.query or parsed.fragment:
+        raise PluginError("INVALID_CONFIG", "The FF-3MF URL must not contain a query or fragment.")
+    try:
+        port = parsed.port
+    except ValueError as error:
+        raise PluginError("INVALID_CONFIG", f"The FF-3MF URL has an invalid port: {error}") from error
+
+    host = parsed.hostname.lower()
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+    netloc = host
+    if port is not None:
+        netloc = f"{netloc}:{port}"
+
+    path = parsed.path or ""
+    if path and not path.startswith("/"):
+        path = f"/{path}"
+    path = path.rstrip("/")
+    return f"{parsed.scheme}://{netloc}{path}"
+
+
+def replace_denied_words(value: str) -> str:
+    """Avoid OrcaSlicer's blanket conf/cert/secret path-component deny list."""
+
+    result = value
+    for word in DENIED_PATH_WORDS:
+        result = re.sub(word, DENIED_WORD_REPLACEMENTS[word], result, flags=re.IGNORECASE)
+    return result
+
+
+def sanitize_path_name(
+    name: Any,
+    fallback: str = "project",
+    max_length: int = 120,
+) -> str:
+    raw = str(name or "").replace("\\", "/")
+    base = raw.rsplit("/", 1)[-1]
+    base = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", base)
+    base = replace_denied_words(base)
+    base = re.sub(r"_+", "_", base).strip(" .")
+    if not base or base in {".", ".."}:
+        base = fallback
+    stem = base.rsplit(".", 1)[0] if "." in base else base
+    if stem.upper() in RESERVED_WINDOWS_NAMES:
+        base = f"_{base}"
+    if len(base) > max_length:
+        extension = ""
+        if "." in base:
+            extension = f".{base.rsplit('.', 1)[1]}"
+        keep = max(1, max_length - len(extension))
+        base = f"{base[:keep].rstrip(' ._')}{extension}"
+    return base
+
+
+def safe_3mf_name(name: Any, fallback: str = "project.3mf") -> str:
+    base = sanitize_path_name(name, fallback=fallback)
+    if not base.lower().endswith(".3mf"):
+        base = f"{base}.3mf"
+    if len(base) > 120:
+        base = f"{base[:-4][:116].rstrip(' ._')}.3mf"
+    return base or fallback
+
+
+def safe_upload_name(name: Any) -> str:
+    base = safe_3mf_name(name)
+    ascii_name = base.encode("ascii", "replace").decode("ascii").replace("?", "_")
+    ascii_name = re.sub(r"\s+", "_", ascii_name)
+    ascii_name = re.sub(r"_+", "_", ascii_name).strip(" .")
+    if not ascii_name or ascii_name == ".3mf":
+        ascii_name = "project.3mf"
+    return safe_3mf_name(ascii_name)
+
+
+def has_denied_path_component(path: Path) -> bool:
+    return any(
+        any(word in part.lower() for word in DENIED_PATH_WORDS)
+        for part in path.parts
+    )
+
+
+def unique_path(directory: Path, filename: str) -> Path:
+    candidate = directory / safe_3mf_name(filename)
+    if not candidate.exists():
+        return candidate
+    stem = candidate.name[:-4] if candidate.name.lower().endswith(".3mf") else candidate.stem
+    suffix = candidate.suffix if candidate.suffix else ".3mf"
+    index = 2
+    while True:
+        next_candidate = directory / f"{stem}-{index}{suffix}"
+        if not next_candidate.exists():
+            return next_candidate
+        index += 1
+
+
+@dataclass
+class PluginConfig:
+    api_url: str = DEFAULT_API_URL
+    output_dir: str = ""
+    last_printer_id: str = ""
+    last_nozzle: str = ""
+    schema_version: int = 1
+
+    @classmethod
+    def from_dict(cls, value: Any) -> "PluginConfig":
+        data = value if isinstance(value, dict) else {}
+        try:
+            api_url = normalize_api_url(data.get("apiUrl") or DEFAULT_API_URL)
+        except PluginError:
+            api_url = DEFAULT_API_URL
+        output_dir = data.get("outputDir")
+        if not isinstance(output_dir, str):
+            output_dir = ""
+        last_printer = data.get("lastPrinterId")
+        last_nozzle = data.get("lastNozzle")
+        return cls(
+            api_url=api_url,
+            output_dir=output_dir.strip(),
+            last_printer_id=last_printer if isinstance(last_printer, str) else "",
+            last_nozzle=last_nozzle if isinstance(last_nozzle, str) else "",
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schemaVersion": self.schema_version,
+            "apiUrl": self.api_url,
+            "outputDir": self.output_dir,
+            "lastPrinterId": self.last_printer_id,
+            "lastNozzle": self.last_nozzle,
+        }
+
+
+def validate_token(token: Any) -> str:
+    if not isinstance(token, str):
+        raise PluginError("INVALID_TOKEN", "The API token must be text.")
+    cleaned = token.strip()
+    if not cleaned:
+        return ""
+    if len(cleaned) > MAX_TOKEN_LENGTH:
+        raise PluginError("INVALID_TOKEN", "The API token is too long.")
+    if any(ord(character) < 32 or ord(character) > 126 for character in cleaned):
+        raise PluginError(
+            "INVALID_TOKEN",
+            "The API token must use printable ASCII characters.",
+        )
+    return cleaned
+
+
+class TokenStore:
+    """Store the optional API token outside the plugin's visible JSON config."""
+
+    def __init__(self, directory: Path) -> None:
+        self.directory = directory
+        self.path = directory / "auth.json"
+
+    def read(self) -> str:
+        try:
+            payload = json.loads(self.path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return ""
+        except Exception as error:
+            log(f"could not read the saved API token: {error}")
+            return ""
+        token = payload.get("token") if isinstance(payload, dict) else ""
+        try:
+            return validate_token(token)
+        except PluginError:
+            return ""
+
+    def write(self, token: str) -> None:
+        cleaned = validate_token(token)
+        if not cleaned:
+            self.clear()
+            return
+        temporary = self.path.with_name("auth.tmp")
+        try:
+            self.directory.mkdir(parents=True, exist_ok=True)
+            temporary.write_text(json.dumps({"token": cleaned}), encoding="utf-8")
+            try:
+                os.chmod(temporary, 0o600)
+            except OSError:
+                pass
+            os.replace(temporary, self.path)
+            try:
+                os.chmod(self.path, 0o600)
+            except OSError:
+                pass
+        except OSError as error:
+            raise PluginError("TOKEN_STORE_FAILED", f"Could not save the API token: {error}") from error
+        finally:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def clear(self) -> None:
+        try:
+            self.path.unlink(missing_ok=True)
+        except OSError as error:
+            raise PluginError("TOKEN_STORE_FAILED", f"Could not clear the API token: {error}") from error
+
+
+class ConverterError(PluginError):
+    """An error returned by, or while talking to, the FF-3MF API."""
+
+
+class ConverterClient:
+    """Minimal standard-library client for the FF-3MF API."""
+
+    def __init__(
+        self,
+        base_url: str,
+        token: str = "",
+        timeout: float = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        self.base_url = normalize_api_url(base_url)
+        parsed = urllib.parse.urlsplit(self.base_url)
+        self._scheme = parsed.scheme
+        self._host = parsed.hostname or ""
+        self._port = parsed.port
+        self._base_path = parsed.path.rstrip("/")
+        self._token = token.strip() if isinstance(token, str) else ""
+        self._timeout = timeout
+        self._sleep = time.sleep
+
+    def _connection(self, timeout: float | None = None) -> http.client.HTTPConnection:
+        effective_timeout = self._timeout if timeout is None else timeout
+        if self._scheme == "https":
+            return http.client.HTTPSConnection(
+                self._host,
+                self._port,
+                timeout=effective_timeout,
+                context=ssl.create_default_context(),
+            )
+        return http.client.HTTPConnection(self._host, self._port, timeout=effective_timeout)
+
+    def _target(self, path: str) -> str:
+        if not path.startswith("/"):
+            path = f"/{path}"
+        return f"{self._base_path}{path}" or "/"
+
+    def _headers(self, extra: dict[str, str] | None = None) -> dict[str, str]:
+        headers = {
+            "Accept": "application/json",
+            "Accept-Encoding": "identity",
+            "Connection": "close",
+            "User-Agent": f"FF3MF-OrcaSlicer/{PLUGIN_VERSION}",
+        }
+        if self._token:
+            headers["Authorization"] = f"Bearer {self._token}"
+        if extra:
+            headers.update(extra)
+        return headers
+
+    def _network_error(self, error: Exception) -> ConverterError:
+        details = [str(error)] if str(error) else []
+        if isinstance(error, PermissionError):
+            details.append("OrcaSlicer network permission is required for this host.")
+        return ConverterError(
+            "NETWORK_ERROR",
+            f"Could not reach the FF-3MF instance at {self.base_url}.",
+            details,
+        )
+
+    def _raise_error(self, status: int, body: bytes) -> None:
+        payload: Any = None
+        try:
+            payload = json.loads(body.decode("utf-8")) if body else None
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            payload = None
+        error = payload.get("error") if isinstance(payload, dict) else None
+        if isinstance(error, dict):
+            code = str(error.get("code") or f"HTTP_{status}")
+            message = str(error.get("message") or f"The converter returned HTTP {status}.")
+            details_value = error.get("details")
+            details = [str(item) for item in details_value] if isinstance(details_value, list) else []
+        else:
+            code = f"HTTP_{status}"
+            message = {
+                401: "The FF-3MF API token is missing or invalid.",
+                413: "The project is larger than the FF-3MF upload limit.",
+                429: "The converter is busy. Try again in a moment.",
+            }.get(status, f"The converter returned HTTP {status}.")
+            details = []
+        raise ConverterError(code, message, details, status=status)
+
+    def _read_json(self, connection: http.client.HTTPConnection, response: http.client.HTTPResponse) -> Any:
+        try:
+            body = response.read(MAX_JSON_BYTES + 1)
+        finally:
+            response.close()
+            connection.close()
+        if len(body) > MAX_JSON_BYTES:
+            raise ConverterError("INVALID_RESPONSE", "The converter response is too large.")
+        if response.status >= 400:
+            self._raise_error(response.status, body)
+        if not body:
+            return {}
+        try:
+            return json.loads(body.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ConverterError(
+                "INVALID_RESPONSE",
+                "The converter returned a response that is not valid JSON.",
+                [str(error)],
+            ) from error
+
+    def _retry_delay(self, attempt: int, response: http.client.HTTPResponse | None = None) -> float:
+        if response is not None:
+            retry_after = response.getheader("Retry-After")
+            if retry_after:
+                try:
+                    return max(0.0, min(float(retry_after), 10.0))
+                except ValueError:
+                    pass
+        return min(0.5 * (2**attempt), 5.0)
+
+    def _request_json(
+        self,
+        method: str,
+        path: str,
+        payload: dict[str, Any] | None = None,
+        timeout: float | None = None,
+        retries: int = 2,
+    ) -> Any:
+        body = json.dumps(payload).encode("utf-8") if payload is not None else None
+        headers = self._headers({"Content-Type": "application/json"} if body is not None else None)
+        attempt = 0
+        while True:
+            connection = self._connection(timeout)
+            try:
+                connection.request(method, self._target(path), body=body, headers=headers)
+                response = connection.getresponse()
+            except (OSError, http.client.HTTPException, TimeoutError) as error:
+                connection.close()
+                if attempt < retries:
+                    attempt += 1
+                    self._sleep(self._retry_delay(attempt - 1))
+                    continue
+                raise self._network_error(error) from error
+            if response.status in RETRYABLE_HTTP_STATUS and attempt < retries:
+                delay = self._retry_delay(attempt, response)
+                response.close()
+                connection.close()
+                attempt += 1
+                self._sleep(delay)
+                continue
+            return self._read_json(connection, response)
+
+    def health(self, timeout: float = HEALTH_TIMEOUT, retries: int = 0) -> dict[str, Any]:
+        result = self._request_json("GET", "/api/health", timeout=timeout, retries=retries)
+        return result if isinstance(result, dict) else {}
+
+    def printers(self, timeout: float = DEFAULT_HTTP_TIMEOUT, retries: int = 1) -> dict[str, Any]:
+        result = self._request_json("GET", "/api/printers", timeout=timeout, retries=retries)
+        if not isinstance(result, dict) or not isinstance(result.get("printers"), list):
+            raise ConverterError("INVALID_RESPONSE", "The converter did not return a printer catalog.")
+        return result
+
+    def upload(
+        self,
+        path: Path,
+        filename: str,
+        on_progress: Callable[[int, int], None] | None = None,
+        on_uploaded: Callable[[], None] | None = None,
+    ) -> dict[str, Any]:
+        try:
+            size = path.stat().st_size
+        except OSError as error:
+            raise PluginError("UPLOAD_FAILED", f"Could not read the project: {error}") from error
+        if size <= 0:
+            raise PluginError("UPLOAD_FAILED", "The project file is empty.")
+
+        boundary = secrets.token_hex(16)
+        safe_name = safe_upload_name(filename)
+        prefix = (
+            f"--{boundary}\r\n"
+            f'Content-Disposition: form-data; name="file"; filename="{safe_name}"\r\n'
+            "Content-Type: application/octet-stream\r\n\r\n"
+        ).encode("utf-8")
+        suffix = f"\r\n--{boundary}--\r\n".encode("utf-8")
+        total = len(prefix) + size + len(suffix)
+        headers = self._headers(
+            {
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "Content-Length": str(total),
+            }
+        )
+
+        attempt = 0
+        while True:
+            connection = self._connection()
+            sent = 0
+            sent_file = 0
+            try:
+                connection.putrequest("POST", self._target("/api/uploads"))
+                for key, value in headers.items():
+                    connection.putheader(key, value)
+                connection.endheaders()
+                connection.send(prefix)
+                sent += len(prefix)
+                if on_progress:
+                    on_progress(sent_file, size)
+                with path.open("rb") as file_handle:
+                    while True:
+                        chunk = file_handle.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        connection.send(chunk)
+                        sent += len(chunk)
+                        sent_file += len(chunk)
+                        if on_progress:
+                            on_progress(sent_file, size)
+                connection.send(suffix)
+                sent += len(suffix)
+                if on_uploaded:
+                    on_uploaded()
+                response = connection.getresponse()
+                if response.status in RETRYABLE_HTTP_STATUS and attempt < 1:
+                    delay = self._retry_delay(attempt, response)
+                    response.close()
+                    connection.close()
+                    attempt += 1
+                    self._sleep(delay)
+                    continue
+                result = self._read_json(connection, response)
+            except (OSError, http.client.HTTPException, TimeoutError) as error:
+                connection.close()
+                if attempt < 1 and sent == 0:
+                    attempt += 1
+                    self._sleep(self._retry_delay(attempt - 1))
+                    continue
+                raise self._network_error(error) from error
+            if not isinstance(result, dict) or not isinstance(result.get("uploadId"), str):
+                raise ConverterError("INVALID_RESPONSE", "The converter did not return an upload id.")
+            return result
+
+    def create_conversion(self, upload_id: str, options: dict[str, Any]) -> dict[str, Any]:
+        payload = {
+            "uploadId": upload_id,
+            **{key: value for key, value in options.items() if value is not None},
+        }
+        result = self._request_json("POST", "/api/conversions", payload=payload, retries=1)
+        if not isinstance(result, dict) or not isinstance(result.get("id"), str):
+            raise ConverterError("INVALID_RESPONSE", "The converter did not return a job id.")
+        return result
+
+    def conversion(self, job_id: str) -> dict[str, Any]:
+        result = self._request_json(
+            "GET",
+            f"/api/conversions/{urllib.parse.quote(job_id)}",
+            retries=1,
+        )
+        if not isinstance(result, dict):
+            raise ConverterError("INVALID_RESPONSE", "The converter returned an invalid job status.")
+        return result
+
+    def delete_conversion(self, job_id: str) -> None:
+        try:
+            self._request_json(
+                "DELETE",
+                f"/api/conversions/{urllib.parse.quote(job_id)}",
+                retries=0,
+            )
+        except ConverterError as error:
+            if error.status != 404:
+                raise
+
+    def download(
+        self,
+        job_id: str,
+        destination: Path,
+        on_progress: Callable[[int, int], None] | None = None,
+    ) -> None:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        part = destination.with_name(f"{destination.name}.part")
+        try:
+            part.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+        connection = self._connection()
+        try:
+            connection.request(
+                "GET",
+                self._target(f"/api/conversions/{urllib.parse.quote(job_id)}/download"),
+                headers=self._headers(),
+            )
+            response = connection.getresponse()
+            if response.status >= 400:
+                body = response.read(MAX_JSON_BYTES + 1)
+                self._raise_error(response.status, body)
+            content_length = response.getheader("Content-Length")
+            try:
+                total = int(content_length) if content_length else 0
+            except ValueError:
+                total = 0
+            received = 0
+            with part.open("wb") as file_handle:
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    received += len(chunk)
+                    if received > MAX_DOWNLOAD_BYTES:
+                        raise ConverterError("DOWNLOAD_TOO_LARGE", "The converted project is too large.")
+                    file_handle.write(chunk)
+                    if on_progress:
+                        on_progress(received, total)
+            if total and received != total:
+                raise ConverterError("DOWNLOAD_INCOMPLETE", "The converted project download was incomplete.")
+            if received == 0:
+                raise ConverterError("DOWNLOAD_FAILED", "The converter returned an empty project.")
+            os.replace(part, destination)
+            try:
+                os.chmod(destination, 0o600)
+            except OSError:
+                pass
+        except (OSError, http.client.HTTPException, TimeoutError) as error:
+            raise self._network_error(error) from error
+        finally:
+            response.close() if "response" in locals() else None
+            connection.close()
+            try:
+                part.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def thumbnail(self, upload_id: str, plate: int | None = None) -> tuple[bytes, str]:
+        query = f"?plate={plate}" if plate is not None else ""
+        connection = self._connection()
+        try:
+            connection.request(
+                "GET",
+                self._target(f"/api/uploads/{urllib.parse.quote(upload_id)}/thumbnail{query}"),
+                headers=self._headers(),
+            )
+            response = connection.getresponse()
+            body = response.read(MAX_IMAGE_BYTES + 1)
+            if response.status >= 400:
+                self._raise_error(response.status, body)
+            if len(body) > MAX_IMAGE_BYTES:
+                raise ConverterError("INVALID_RESPONSE", "The preview image is too large.")
+            mime = (response.getheader("Content-Type") or "").split(";", 1)[0].strip().lower()
+            if mime not in {"image/png", "image/jpeg"}:
+                raise ConverterError("INVALID_RESPONSE", "The converter returned an unsupported preview.")
+            return body, mime
+        except (OSError, http.client.HTTPException, TimeoutError) as error:
+            raise self._network_error(error) from error
+        finally:
+            response.close() if "response" in locals() else None
+            connection.close()
+
+
+@dataclass
+class SourceFile:
+    path: Path
+    display_name: str
+    temporary: bool
+    mode: str
+
+
+@dataclass
+class PreparedSource:
+    source: SourceFile
+    warning: str = ""
+
+
+def inspect_3mf(path: Path, require_settings: bool = False) -> bool:
+    """Return whether the archive has project settings.
+
+    Raises when the file is missing, is a sliced print file, or has no model.
+    The archive is only listed; XML is never parsed here.
+    """
+
+    if not path.is_file():
+        raise PluginError("SOURCE_MISSING", f"The project file does not exist: {path.name}")
+    if path.name.lower().endswith(".gcode.3mf"):
+        raise PluginError("SLICED_FILE", "That file is a sliced print file, not an editable project.")
+    try:
+        with zipfile.ZipFile(path) as archive:
+            entries = archive.infolist()
+            if len(entries) > MAX_ZIP_ENTRIES:
+                raise PluginError("INVALID_PROJECT", "The 3MF file contains too many entries.")
+            names = {entry.filename for entry in entries}
+    except (OSError, zipfile.BadZipFile) as error:
+        raise PluginError("INVALID_PROJECT", f"The 3MF file could not be opened: {error}") from error
+    if "3D/3dmodel.model" not in names:
+        raise PluginError("INVALID_PROJECT", "The 3MF file does not contain a model.")
+    if any(re.match(r"^Metadata/plate_\d+\.gcode$", name, re.IGNORECASE) for name in names):
+        raise PluginError("SLICED_FILE", "That file is a sliced print file, not an editable project.")
+    has_settings = "Metadata/project_settings.config" in names
+    if require_settings and not has_settings:
+        raise PluginError(
+            "PROJECT_SETTINGS_MISSING",
+            "The exported project has no project_settings.config.",
+        )
+    return has_settings
+
+
+def cleanup_storage(directory: Path) -> None:
+    """Remove old temporary exports and partial downloads without touching results."""
+
+    cutoff = time.time() - 24 * 60 * 60
+    for name in ("exports", "imports", DEFAULT_OUTPUT_FOLDER):
+        folder = directory / name
+        if not folder.is_dir():
+            continue
+        try:
+            entries = list(folder.iterdir())
+        except OSError:
+            continue
+        for entry in entries:
+            try:
+                if not entry.is_file():
+                    continue
+                if entry.name.endswith(".part") or (
+                    name in {"exports", "imports"} and entry.name.startswith("ff3mf-")
+                ):
+                    if entry.stat().st_mtime < cutoff:
+                        entry.unlink()
+            except OSError:
+                continue
+
+
+class OrcaHost:
+    """Small adapter around the OrcaSlicer plugin host bindings."""
+
+    def plater(self) -> Any:
+        return orca.host.plater()
+
+    def project_path(self) -> str:
+        try:
+            value = self.plater().project_path()
+        except Exception:
+            return ""
+        return str(value) if value else ""
+
+    def project_dirty(self) -> bool:
+        try:
+            plater = self.plater()
+            return bool(plater.is_project_dirty() or plater.is_presets_dirty())
+        except Exception:
+            return True
+
+    def can_export_copy(self) -> bool:
+        try:
+            return hasattr(self.plater(), "export_3mf_copy")
+        except Exception:
+            return False
+
+    def export_copy(self, path: Path) -> None:
+        self.plater().export_3mf_copy(str(path))
+
+    def storage_dir(self) -> Path:
+        try:
+            raw = orca.host.plugin.storage()
+            directory = Path(str(raw))
+            directory.mkdir(parents=True, exist_ok=True)
+            return directory
+        except Exception as error:
+            raise PluginError(
+                "STORAGE_UNAVAILABLE",
+                f"The plugin data folder is not available: {error}",
+            ) from error
+
+    def app_language(self) -> str:
+        try:
+            return str(orca.host.app_language())
+        except Exception:
+            return "en_US"
+
+    def app_info(self) -> dict[str, Any]:
+        try:
+            value = orca.host.app_info()
+            return value if isinstance(value, dict) else {}
+        except Exception:
+            return {}
+
+    def confirm_use_saved(self) -> bool:
+        try:
+            result = orca.host.ui.message(
+                "This project has unsaved changes and OrcaSlicer could not export a "
+                "temporary copy. Convert the last saved project instead?",
+                title="FF-3MF Converter",
+                buttons="yes_no",
+                icon="warning",
+            )
+            return result == "yes"
+        except Exception:
+            return False
+
+    def open_folder(self, path: Path) -> None:
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(str(path))  # type: ignore[attr-defined]
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(path)])
+            else:
+                subprocess.Popen(["xdg-open", str(path)])
+        except OSError as error:
+            raise PluginError("OPEN_FOLDER_FAILED", f"Could not open the folder: {error}") from error
+
+
+class FF3MFWorkflow:
+    """Upload, conversion polling and download for one plugin instance."""
+
+    def __init__(
+        self,
+        client: ConverterClient,
+        output_dir: Path,
+        post: Callable[[dict[str, Any]], None],
+        poll_interval: float = POLL_INTERVAL_SECONDS,
+        timeout: float = POLL_TIMEOUT_SECONDS,
+        sleep: Callable[[float], Any] = time.sleep,
+    ) -> None:
+        self.client = client
+        self.output_dir = output_dir
+        self.post = post
+        self.poll_interval = poll_interval
+        self.timeout = timeout
+        self.sleep = sleep
+        self.cancel_event = threading.Event()
+        self.job_id: str | None = None
+
+    def _progress(
+        self,
+        phase: str,
+        stage: str,
+        percent: int,
+        message: str = "",
+        *,
+        indeterminate: bool = False,
+        completed_bytes: int | None = None,
+        total_bytes: int | None = None,
+    ) -> None:
+        progress: dict[str, Any] = {
+            "phase": phase,
+            "stage": stage,
+            "percent": max(0, min(100, int(percent))),
+            "message": message,
+        }
+        if indeterminate:
+            progress["indeterminate"] = True
+        if completed_bytes is not None:
+            progress["completedBytes"] = max(0, int(completed_bytes))
+        if total_bytes is not None:
+            progress["totalBytes"] = max(0, int(total_bytes))
+        try:
+            self.post({"type": "progress", "progress": progress})
+        except Exception:
+            pass
+
+    @staticmethod
+    def _preview_plates(upload: dict[str, Any]) -> list[int]:
+        plates: set[int] = set()
+        entries = upload.get("thumbnails")
+        if isinstance(entries, list):
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                try:
+                    plate = int(entry.get("plate"))
+                except (TypeError, ValueError):
+                    continue
+                if plate > 0:
+                    plates.add(plate)
+        if not plates and upload.get("hasThumbnail"):
+            plates.add(1)
+        return sorted(plates)
+
+    def analyze(self, source: SourceFile, max_upload_mb: int | None = None) -> dict[str, Any]:
+        try:
+            size = source.path.stat().st_size
+        except OSError as error:
+            raise PluginError("SOURCE_MISSING", f"Could not read the project: {error}") from error
+        if max_upload_mb and size > max_upload_mb * 1024 * 1024:
+            raise PluginError(
+                "UPLOAD_TOO_LARGE",
+                f"The project is {size // (1024 * 1024)} MB; the converter limit is {max_upload_mb} MB.",
+            )
+
+        filename = safe_upload_name(f"{source.display_name}.3mf")
+        self._progress(
+            "uploading",
+            "Uploading source",
+            0,
+            filename,
+            completed_bytes=0,
+            total_bytes=size,
+        )
+
+        def upload_progress(sent: int, total: int) -> None:
+            percent = int((sent / total) * 100) if total else 0
+            self._progress(
+                "uploading",
+                "Uploading source",
+                percent,
+                filename,
+                completed_bytes=sent,
+                total_bytes=total,
+            )
+
+        def upload_complete() -> None:
+            self._progress(
+                "analysing",
+                "Analysing source on the converter",
+                0,
+                "The converter is preparing the preview and colour data.",
+                indeterminate=True,
+            )
+
+        try:
+            upload = self.client.upload(
+                source.path,
+                filename,
+                on_progress=upload_progress,
+                on_uploaded=upload_complete,
+            )
+            upload_id = upload["uploadId"]
+            analysis = upload.get("analysis")
+            if not isinstance(analysis, dict):
+                raise ConverterError("INVALID_RESPONSE", "The converter returned no source analysis.")
+            return {
+                "uploadId": upload_id,
+                "analysis": analysis,
+                "previewPlates": self._preview_plates(upload),
+                "thumbnail": None,
+                "displayName": source.display_name,
+                "sourceMode": source.mode,
+                "fileName": filename,
+                "analyzedAt": time.time(),
+            }
+        finally:
+            if source.temporary:
+                try:
+                    source.path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+
+    def convert(
+        self,
+        upload_id: str,
+        options: dict[str, Any],
+        output_stem: str,
+    ) -> dict[str, Any]:
+        self._progress("converting", "Starting the conversion", 20)
+        job = self.client.create_conversion(upload_id, options)
+        self.job_id = str(job["id"])
+        deadline = time.monotonic() + self.timeout
+        status: dict[str, Any] = {}
+
+        while True:
+            if self.cancel_event.is_set():
+                self._delete_job()
+                raise PluginError("CANCELLED", "Conversion cancelled.")
+            if time.monotonic() > deadline:
+                raise PluginError(
+                    "CONVERSION_TIMEOUT",
+                    "The conversion did not finish before the plugin timeout.",
+                )
+            status = self.client.conversion(self.job_id)
+            state = str(status.get("status") or "")
+            if state == "failed":
+                error = status.get("error") if isinstance(status.get("error"), dict) else {}
+                raise ConverterError(
+                    str(error.get("code") or "CONVERSION_FAILED"),
+                    str(error.get("message") or "The converter could not convert this project."),
+                    [str(item) for item in error.get("details", [])] if isinstance(error.get("details"), list) else [],
+                )
+            if state == "completed":
+                break
+            stage = str(status.get("stage") or state or "converting")
+            stage_label = STAGE_LABELS.get(stage, "Converting the project")
+            try:
+                api_progress = float(status.get("progress") or 0)
+            except (TypeError, ValueError):
+                api_progress = 0.0
+            mapped = 20 + int(max(0.0, min(100.0, api_progress)) * 0.7)
+            self._progress("converting", stage_label, mapped)
+            if self.cancel_event.wait(self.poll_interval):
+                self._delete_job()
+                raise PluginError("CANCELLED", "Conversion cancelled.")
+
+        download = status.get("download") if isinstance(status.get("download"), dict) else {}
+        desired_name = str(download.get("filename") or f"{output_stem}_flashforge.3mf")
+        destination = unique_path(self.output_dir, desired_name)
+        self._progress("downloading", "Downloading the converted project", 90, destination.name)
+
+        def download_progress(received: int, total: int) -> None:
+            if self.cancel_event.is_set():
+                raise PluginError("CANCELLED", "Conversion cancelled.")
+            percent = 90 + int((received / total) * 10) if total else 90
+            self._progress(
+                "downloading",
+                "Downloading the converted project",
+                percent,
+                destination.name,
+                completed_bytes=received,
+                total_bytes=total,
+            )
+
+        try:
+            self.client.download(self.job_id, destination, on_progress=download_progress)
+        except PluginError:
+            if self.cancel_event.is_set():
+                self._delete_job()
+            raise
+        try:
+            inspect_3mf(destination, require_settings=True)
+        except PluginError:
+            destination.unlink(missing_ok=True)
+            self._delete_job()
+            raise
+        try:
+            os.chmod(destination, 0o600)
+        except OSError:
+            pass
+
+        report = status.get("report") if isinstance(status.get("report"), dict) else None
+        report_path = None
+        if report is not None:
+            report_path = destination.with_suffix(".report.json")
+            try:
+                report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+                try:
+                    os.chmod(report_path, 0o600)
+                except OSError:
+                    pass
+            except OSError:
+                report_path = None
+
+        self._progress("completed", "Conversion complete", 100, destination.name)
+        try:
+            self.client.delete_conversion(self.job_id)
+        except ConverterError:
+            pass
+
+        return {
+            "outputPath": str(destination),
+            "outputName": destination.name,
+            "outputSize": destination.stat().st_size,
+            "reportPath": str(report_path) if report_path else None,
+            "report": report,
+            "target": {
+                "printerId": options.get("printerId"),
+                "nozzle": options.get("nozzle"),
+                "processName": options.get("processName") or "",
+            },
+            "completedAt": time.time(),
+        }
+
+    def _delete_job(self) -> None:
+        if not self.job_id:
+            return
+        try:
+            self.client.delete_conversion(self.job_id)
+        except ConverterError:
+            pass
+
+
+class FlashForgePage(orca.pages.PagesPluginCapabilityBase):
+    """Main-window tab for the FF-3MF conversion workflow."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._host = OrcaHost()
+        self._storage: Path | None = None
+        self._config: PluginConfig | None = None
+        self._token_store: TokenStore | None = None
+        self._token = ""
+        self._client: ConverterClient | None = None
+        self._printers: dict[str, Any] | None = None
+        self._analysis: dict[str, Any] | None = None
+        self._analysis_stale = False
+        self._preview_cache: dict[tuple[str, int], str] = {}
+        self._preview_inflight: set[tuple[str, int]] = set()
+        self._last_result: dict[str, Any] | None = None
+        self._last_error: dict[str, Any] | None = None
+        self._connection: dict[str, Any] = {"status": "unknown", "version": "", "message": ""}
+        self._project_path = ""
+        self._project_dirty = False
+        self._project_saved = False
+        self._project_revision = 0
+        self._analysis_revision: int | None = None
+        self._analysis_source_mode: str | None = None
+        self._source_mode = "current"
+        self._selected_file: dict[str, Any] | None = None
+        self._transfer: dict[str, Any] | None = None
+        self._can_export_copy = False
+        self._app_info: dict[str, Any] = {}
+        self._app_language = "en_US"
+        self._busy: str | None = None
+        self._progress: dict[str, Any] = {
+            "phase": "idle",
+            "stage": "",
+            "percent": 0,
+            "message": "",
+        }
+        self._workflow: FF3MFWorkflow | None = None
+        self._worker: threading.Thread | None = None
+        self._probe_thread: threading.Thread | None = None
+        self._probe_generation = 0
+        self._state_lock = threading.RLock()
+        self._shutting_down = False
+
+    def get_name(self) -> str:
+        return "FF-3MF"
+
+    def get_ui(self) -> str:
+        return PANEL_HTML
+
+    def on_load(self) -> None:
+        self._shutting_down = False
+
+    def on_unload(self) -> None:
+        self._shutting_down = True
+        with self._state_lock:
+            self._probe_generation += 1
+        if self._workflow:
+            self._workflow.cancel_event.set()
+        self._cancel_transfer()
+        self._delete_selected_file()
+
+    def on_lifecycle_event(self, event: Any, context: Any) -> None:
+        try:
+            name = getattr(event, "name", None) or str(event).rsplit(".", 1)[-1]
+            self._handle_lifecycle(str(name), context)
+        except Exception as error:
+            log(f"lifecycle handler failed: {error}")
+
+    def _handle_lifecycle(self, name: str, context: Any) -> None:
+        if not self._config:
+            return
+        with self._state_lock:
+            if name == "NewProject":
+                self._project_revision += 1
+                self._project_path = ""
+                self._project_dirty = False
+                self._project_saved = False
+                if self._source_mode == "current":
+                    self._clear_analysis_locked()
+            elif name == "ProjectAfterSave":
+                path = str(getattr(context, "name", "") or "")
+                if path:
+                    self._project_path = path
+                    self._project_saved = True
+                self._project_dirty = False
+            elif name == "ProjectOpened":
+                self._project_revision += 1
+                path = str(getattr(context, "name", "") or "")
+                self._project_path = path
+                self._project_dirty = False
+                self._project_saved = bool(path)
+                if self._source_mode == "current":
+                    self._clear_analysis_locked()
+            elif name == "ProjectClosed":
+                self._project_revision += 1
+                self._project_path = ""
+                self._project_dirty = False
+                self._project_saved = False
+                if self._source_mode == "current":
+                    self._clear_analysis_locked()
+            elif name == "ProjectDirtyChanged":
+                self._project_dirty = bool(getattr(context, "dirty", False))
+                if self._project_dirty:
+                    self._project_revision += 1
+                if self._project_dirty and self._source_mode == "current":
+                    self._clear_analysis_locked()
+            elif name in {
+                "ObjectAdded",
+                "ObjectDeleted",
+                "ObjectTransformed",
+                "ObjectChanged",
+                "ObjectRenamed",
+                "PlateCreated",
+                "PlateDeleted",
+                "PlateRenamed",
+                "PresetSelected",
+                "PresetSaved",
+            }:
+                self._project_revision += 1
+                if self._source_mode == "current":
+                    self._clear_analysis_locked()
+            else:
+                return
+        self._post_snapshot()
+
+    def on_message(self, data: Any) -> None:
+        if self._shutting_down:
+            return
+        try:
+            message = data
+            if isinstance(message, str):
+                try:
+                    message = json.loads(message)
+                except json.JSONDecodeError:
+                    return
+            if not isinstance(message, dict):
+                return
+            kind = message.get("type")
+            if kind == "ready":
+                self._handle_ready()
+            elif kind == "refresh":
+                self._ensure_state()
+                self._probe_async()
+            elif kind == "save-settings":
+                self._handle_save_settings(message)
+            elif kind == "test-connection":
+                self._handle_test_connection(message)
+            elif kind == "clear-token":
+                self._handle_clear_token()
+            elif kind == "set-source":
+                self._handle_set_source(message)
+            elif kind == "file-begin":
+                self._handle_file_begin(message)
+            elif kind == "file-chunk":
+                self._handle_file_chunk(message)
+            elif kind == "clear-selected-file":
+                self._handle_clear_selected_file()
+            elif kind == "preview-request":
+                self._handle_preview_request(message)
+            elif kind == "analyze":
+                self._handle_analyze()
+            elif kind == "convert":
+                self._handle_convert(message)
+            elif kind == "cancel":
+                self._handle_cancel()
+            elif kind == "clear-result":
+                with self._state_lock:
+                    self._last_result = None
+                    self._last_error = None
+                self._post_snapshot()
+            elif kind == "open-output":
+                self._handle_open_output()
+            elif kind == "open-project-folder":
+                self._handle_open_project_folder()
+            else:
+                log(f"ignored unknown page message: {str(kind)[:40]}")
+        except PluginError as error:
+            self._report_error(error)
+        except Exception as error:
+            log(f"unexpected page handler failure: {error}")
+            log(traceback.format_exc())
+            self._report_error(
+                PluginError(
+                    "INTERNAL_ERROR",
+                    "The plugin hit an unexpected error. Open the OrcaSlicer Python log for details.",
+                )
+            )
+
+    def _ensure_state(self) -> None:
+        if self._storage is not None and self._config is not None and self._client is not None:
+            return
+        self._storage = self._host.storage_dir()
+        cleanup_storage(self._storage)
+        self._token_store = TokenStore(self._storage)
+        self._token = self._token_store.read()
+        self._config = self._load_config()
+        self._app_info = self._host.app_info()
+        self._app_language = self._host.app_language()
+        self._can_export_copy = self._host.can_export_copy()
+        self._client = self._make_client()
+        self._refresh_project_state()
+
+    def _load_config(self) -> PluginConfig:
+        try:
+            raw = self.get_config()
+            value = json.loads(raw) if isinstance(raw, str) and raw.strip() else {}
+        except Exception as error:
+            log(f"could not read plugin config: {error}")
+            value = {}
+        return PluginConfig.from_dict(value)
+
+    def _save_config(self) -> None:
+        if self._config is None:
+            return
+        try:
+            saved = self.save_config(json.dumps(self._config.to_dict()))
+            if saved is False:
+                raise PluginError("CONFIG_SAVE_FAILED", "OrcaSlicer could not save the plugin settings.")
+        except PluginError:
+            raise
+        except Exception as error:
+            raise PluginError("CONFIG_SAVE_FAILED", f"Could not save the plugin settings: {error}") from error
+
+    def _make_client(self, api_url: str | None = None, token: str | None = None) -> ConverterClient:
+        if self._config is None:
+            raise PluginError("NOT_READY", "The plugin is not initialized yet.")
+        return ConverterClient(
+            api_url or self._config.api_url,
+            self._token if token is None else token,
+        )
+
+    def _refresh_project_state(self) -> None:
+        self._project_path = self._host.project_path()
+        self._project_dirty = self._host.project_dirty()
+        self._project_saved = bool(self._project_path and Path(self._project_path).is_file())
+        self._app_info = self._host.app_info()
+        self._app_language = self._host.app_language()
+        self._can_export_copy = self._host.can_export_copy()
+
+    def _handle_ready(self) -> None:
+        self._ensure_state()
+        # A page reload loses the browser File object, so a transfer cannot
+        # resume. Drop any partial transfer from the previous page instance.
+        self._cancel_transfer()
+        selected = self._selected_file
+        if selected:
+            selected_path = selected.get("path")
+            if not isinstance(selected_path, Path) or not selected_path.is_file():
+                self._delete_selected_file()
+                if self._source_mode == "selected":
+                    self._clear_analysis_locked()
+        self._refresh_project_state()
+        self._post_snapshot()
+        self._probe_async()
+
+    def _handle_save_settings(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        assert self._config is not None
+        assert self._token_store is not None
+        config_value = message.get("config")
+        if not isinstance(config_value, dict):
+            raise PluginError("INVALID_CONFIG", "The settings message is incomplete.")
+
+        api_url = normalize_api_url(config_value.get("apiUrl"))
+        output_dir = config_value.get("outputDir")
+        if output_dir is None:
+            output_dir = ""
+        if not isinstance(output_dir, str):
+            raise PluginError("INVALID_CONFIG", "The output folder must be text.")
+        output_dir = output_dir.strip()
+        if len(output_dir) > 4096 or any(ord(character) < 32 for character in output_dir):
+            raise PluginError("INVALID_CONFIG", "The output folder contains invalid characters.")
+        if output_dir:
+            self._resolve_output_dir(
+                PluginConfig(
+                    api_url=api_url,
+                    output_dir=output_dir,
+                    last_printer_id=self._config.last_printer_id,
+                    last_nozzle=self._config.last_nozzle,
+                )
+            )
+
+        self._apply_token_action(message.get("token"))
+        url_changed = self._config.api_url != api_url
+        self._config.api_url = api_url
+        self._config.output_dir = output_dir
+        if url_changed:
+            self._printers = None
+            self._clear_analysis_locked()
+        self._save_config()
+        self._token = self._token_store.read()
+        self._client = self._make_client()
+        self._connection = {"status": "unknown", "version": "", "message": ""}
+        self._last_error = None
+        self._post_snapshot()
+        self._probe_async()
+
+    def _handle_clear_token(self) -> None:
+        self._ensure_state()
+        assert self._token_store is not None
+        self._token_store.clear()
+        self._token = ""
+        self._client = self._make_client()
+        self._last_error = None
+        self._post_snapshot()
+        self._probe_async()
+
+    def _handle_test_connection(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        config_value = message.get("config")
+        api_url = (
+            normalize_api_url(config_value.get("apiUrl"))
+            if isinstance(config_value, dict) and config_value.get("apiUrl")
+            else (self._config.api_url if self._config else DEFAULT_API_URL)
+        )
+        token = self._token_for_action(message.get("token"))
+        client = ConverterClient(api_url, token, timeout=HEALTH_TIMEOUT)
+        try:
+            health = client.health(timeout=HEALTH_TIMEOUT, retries=0)
+            try:
+                client.printers(timeout=HEALTH_TIMEOUT, retries=0)
+            except ConverterError as error:
+                self._connection = {
+                    "status": "auth-required" if error.status == 401 else "online",
+                    "version": str(health.get("version") or ""),
+                    "message": error.message,
+                }
+            else:
+                self._connection = {
+                    "status": "online",
+                    "version": str(health.get("version") or ""),
+                    "message": "",
+                }
+                self._last_error = None
+        except PluginError as error:
+            self._connection = {
+                "status": "offline",
+                "version": "",
+                "message": error.message,
+            }
+        self._post_snapshot()
+
+    def _clear_analysis_locked(self) -> None:
+        self._analysis = None
+        self._analysis_revision = None
+        self._analysis_source_mode = None
+        self._analysis_stale = False
+        self._preview_cache.clear()
+        self._last_result = None
+
+    def _max_selected_bytes(self) -> int:
+        max_mb = FALLBACK_MAX_UPLOAD_MB
+        if self._printers and isinstance(self._printers.get("maxUploadMb"), (int, float)):
+            max_mb = max(1, int(self._printers["maxUploadMb"]))
+        return max_mb * 1024 * 1024
+
+    def _send_file_error(self, transfer_id: str, error: PluginError) -> None:
+        self._post(
+            {
+                "type": "file-error",
+                "transferId": transfer_id,
+                "error": error.to_dict(),
+            }
+        )
+
+    def _cancel_transfer(self) -> None:
+        transfer = self._transfer
+        self._transfer = None
+        if not transfer:
+            return
+        handle = transfer.get("handle")
+        if handle is not None:
+            try:
+                handle.close()
+            except OSError:
+                pass
+        path = transfer.get("path")
+        if isinstance(path, Path):
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _delete_selected_file(self) -> None:
+        selected = self._selected_file
+        self._selected_file = None
+        if not selected:
+            return
+        path = selected.get("path")
+        if isinstance(path, Path):
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _handle_set_source(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        source = str(message.get("source") or "")
+        if source not in {"current", "selected"}:
+            raise PluginError("INVALID_SOURCE", "Choose the current project or a selected file.")
+        with self._state_lock:
+            if self._busy:
+                raise PluginError("BUSY", "Wait for the current operation to finish.")
+            if source == self._source_mode:
+                return
+            self._cancel_transfer()
+            self._source_mode = source
+            self._clear_analysis_locked()
+            self._last_error = None
+            self._progress = {
+                "phase": "idle",
+                "stage": "",
+                "percent": 0,
+                "message": "",
+            }
+        self._post_snapshot()
+
+    def _handle_file_begin(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        transfer_id = str(message.get("transferId") or "")
+        try:
+            if not TRANSFER_ID_RE.fullmatch(transfer_id):
+                raise PluginError("INVALID_TRANSFER", "The file transfer id is invalid.")
+            name_value = message.get("name")
+            if not isinstance(name_value, str):
+                raise PluginError("INVALID_FILE", "The selected file has no name.")
+            display_name = name_value.replace("\\", "/").rsplit("/", 1)[-1].strip()
+            display_name = re.sub(r"[\x00-\x1f]", "", display_name)[:200]
+            if not display_name.lower().endswith(".3mf"):
+                raise PluginError("INVALID_FILE", "Select an editable .3mf project file.")
+            if display_name.lower().endswith(".gcode.3mf"):
+                raise PluginError(
+                    "SLICED_FILE",
+                    "That is a sliced print file. Select the editable .3mf project instead.",
+                )
+            try:
+                size = int(message.get("size"))
+                total_chunks = int(message.get("totalChunks"))
+            except (TypeError, ValueError) as error:
+                raise PluginError("INVALID_FILE", "The selected file size is invalid.") from error
+            if size <= 0:
+                raise PluginError("INVALID_FILE", "The selected file is empty.")
+            max_bytes = self._max_selected_bytes()
+            if size > max_bytes:
+                raise PluginError(
+                    "FILE_TOO_LARGE",
+                    f"The selected file is larger than the {max_bytes // (1024 * 1024)} MB limit.",
+                )
+            expected_chunks = (size + FILE_CHUNK_BYTES - 1) // FILE_CHUNK_BYTES
+            if total_chunks != expected_chunks:
+                raise PluginError("INVALID_TRANSFER", "The file transfer chunk count is incorrect.")
+
+            with self._state_lock:
+                if self._busy:
+                    raise PluginError("BUSY", "Wait for the current operation to finish.")
+                self._cancel_transfer()
+                self._delete_selected_file()
+                assert self._storage is not None
+                import_dir = self._storage / "imports"
+                import_dir.mkdir(parents=True, exist_ok=True)
+                path = import_dir / f"ff3mf-{uuid.uuid4().hex}.3mf"
+                handle = path.open("wb")
+                self._transfer = {
+                    "id": transfer_id,
+                    "path": path,
+                    "handle": handle,
+                    "name": display_name,
+                    "size": size,
+                    "totalChunks": total_chunks,
+                    "nextIndex": 0,
+                    "received": 0,
+                }
+                self._source_mode = "selected"
+                self._clear_analysis_locked()
+                self._last_error = None
+                self._progress = {
+                    "phase": "idle",
+                    "stage": "",
+                    "percent": 0,
+                    "message": "",
+                }
+            self._post({"type": "file-started", "transferId": transfer_id})
+            self._post_snapshot()
+        except (PluginError, OSError) as error:
+            failure = (
+                error
+                if isinstance(error, PluginError)
+                else PluginError("FILE_TRANSFER_FAILED", f"The selected file could not be staged: {error}")
+            )
+            self._send_file_error(transfer_id, failure)
+            self._report_error(failure)
+
+    def _handle_file_chunk(self, message: dict[str, Any]) -> None:
+        transfer_id = str(message.get("transferId") or "")
+        transfer = self._transfer
+        if not transfer or transfer.get("id") != transfer_id:
+            self._send_file_error(
+                transfer_id,
+                PluginError("TRANSFER_NOT_ACTIVE", "The file transfer is no longer active."),
+            )
+            return
+        try:
+            try:
+                index = int(message.get("index"))
+            except (TypeError, ValueError) as error:
+                raise PluginError("INVALID_TRANSFER", "A file chunk index is invalid.") from error
+            if index != transfer["nextIndex"]:
+                raise PluginError("INVALID_TRANSFER", "File chunks arrived out of order.")
+            data = message.get("data")
+            if not isinstance(data, str):
+                raise PluginError("INVALID_TRANSFER", "A file chunk has no data.")
+            max_base64 = ((FILE_CHUNK_BYTES + 2) // 3) * 4 + 16
+            if len(data) > max_base64:
+                raise PluginError("INVALID_TRANSFER", "A file chunk is too large.")
+            try:
+                chunk = base64.b64decode(data, validate=True)
+            except ValueError as error:
+                raise PluginError("INVALID_TRANSFER", "A file chunk is not valid base64.") from error
+            if len(chunk) > FILE_CHUNK_BYTES:
+                raise PluginError("INVALID_TRANSFER", "A file chunk is too large.")
+            if transfer["received"] + len(chunk) > transfer["size"]:
+                raise PluginError("INVALID_TRANSFER", "The selected file is longer than expected.")
+            handle = transfer.get("handle")
+            if handle is None:
+                raise PluginError("INVALID_TRANSFER", "The file transfer is not open.")
+            handle.write(chunk)
+            transfer["received"] += len(chunk)
+            transfer["nextIndex"] = index + 1
+            self._post({"type": "file-chunk-ack", "transferId": transfer_id, "index": index})
+            self._post(
+                {
+                    "type": "file-progress",
+                    "transferId": transfer_id,
+                    "received": transfer["received"],
+                    "total": transfer["size"],
+                }
+            )
+            if index + 1 < transfer["totalChunks"]:
+                return
+
+            try:
+                handle.close()
+            finally:
+                transfer["handle"] = None
+            if transfer["received"] != transfer["size"]:
+                raise PluginError("INVALID_TRANSFER", "The selected file transfer was incomplete.")
+            path = transfer["path"]
+            has_settings = inspect_3mf(path)
+            try:
+                os.chmod(path, 0o600)
+            except OSError:
+                pass
+            old_selected = self._selected_file
+            if old_selected and old_selected.get("path") != path:
+                try:
+                    Path(old_selected["path"]).unlink(missing_ok=True)
+                except OSError:
+                    pass
+            with self._state_lock:
+                self._transfer = None
+                self._selected_file = {
+                    "path": path,
+                    "name": transfer["name"],
+                    "size": transfer["size"],
+                    "hasSettings": has_settings,
+                }
+                self._source_mode = "selected"
+                self._clear_analysis_locked()
+                self._last_error = None
+                self._progress = {
+                    "phase": "idle",
+                    "stage": "",
+                    "percent": 0,
+                    "message": "",
+                }
+            self._post(
+                {
+                    "type": "file-complete",
+                    "transferId": transfer_id,
+                    "name": transfer["name"],
+                    "size": transfer["size"],
+                }
+            )
+            self._post_snapshot()
+        except (PluginError, OSError, ValueError) as error:
+            if isinstance(error, PluginError):
+                failure = error
+            else:
+                failure = PluginError("FILE_TRANSFER_FAILED", f"The file transfer failed: {error}")
+            self._cancel_transfer()
+            self._send_file_error(transfer_id, failure)
+            self._report_error(failure)
+
+    def _handle_clear_selected_file(self) -> None:
+        self._ensure_state()
+        with self._state_lock:
+            if self._busy:
+                raise PluginError("BUSY", "Wait for the current operation to finish.")
+            self._cancel_transfer()
+            self._delete_selected_file()
+            if self._source_mode == "selected":
+                self._clear_analysis_locked()
+            self._last_error = None
+            self._progress = {
+                "phase": "idle",
+                "stage": "",
+                "percent": 0,
+                "message": "",
+            }
+        self._post_snapshot()
+
+    def _preview_error(self, upload_id: str, plate: int, error: PluginError) -> None:
+        self._post(
+            {
+                "type": "preview-error",
+                "uploadId": upload_id,
+                "plate": plate,
+                "error": error.to_dict(),
+            }
+        )
+
+    def _handle_preview_request(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        with self._state_lock:
+            analysis = self._analysis
+            if not analysis:
+                self._preview_error("", 0, PluginError("NO_ANALYSIS", "Analyse the source first."))
+                return
+            upload_id = str(analysis.get("uploadId") or "")
+            try:
+                plate = int(message.get("plate"))
+            except (TypeError, ValueError):
+                self._preview_error(upload_id, 0, PluginError("INVALID_PLATE", "Invalid plate preview."))
+                return
+            request_upload = message.get("uploadId")
+            if request_upload and str(request_upload) != upload_id:
+                self._preview_error(upload_id, plate, PluginError("PREVIEW_STALE", "The source changed."))
+                return
+            plates = analysis.get("previewPlates")
+            if not isinstance(plates, list) or plate not in plates:
+                self._preview_error(upload_id, plate, PluginError("PREVIEW_UNAVAILABLE", "No preview for this plate."))
+                return
+            key = (upload_id, plate)
+            cached = self._preview_cache.get(key)
+            if cached:
+                self._post({"type": "preview", "uploadId": upload_id, "plate": plate, "image": cached})
+                return
+            if key in self._preview_inflight:
+                return
+            self._preview_inflight.add(key)
+            client = self._client
+        thread = threading.Thread(
+            target=self._load_preview_worker,
+            args=(upload_id, plate, client),
+            name="ff3mf-preview",
+            daemon=True,
+        )
+        try:
+            thread.start()
+        except Exception as error:
+            with self._state_lock:
+                self._preview_inflight.discard((upload_id, plate))
+            self._preview_error(
+                upload_id,
+                plate,
+                PluginError("PREVIEW_UNAVAILABLE", f"The plate preview could not start: {error}"),
+            )
+
+    def _load_preview_worker(
+        self,
+        upload_id: str,
+        plate: int,
+        client: ConverterClient | None,
+    ) -> None:
+        key = (upload_id, plate)
+        try:
+            if client is None:
+                raise PluginError("NOT_READY", "The plugin is not initialized yet.")
+            image, mime = client.thumbnail(upload_id, plate)
+            if len(image) > MAX_THUMBNAIL_BYTES:
+                raise PluginError("PREVIEW_UNAVAILABLE", "The plate preview is too large.")
+            image_url = f"data:{mime};base64,{base64.b64encode(image).decode('ascii')}"
+            with self._state_lock:
+                current = self._analysis
+                if not current or str(current.get("uploadId") or "") != upload_id:
+                    return
+                self._preview_cache[key] = image_url
+                while len(self._preview_cache) > MAX_PREVIEW_CACHE:
+                    self._preview_cache.pop(next(iter(self._preview_cache)))
+            self._post(
+                {
+                    "type": "preview",
+                    "uploadId": upload_id,
+                    "plate": plate,
+                    "image": image_url,
+                }
+            )
+        except PluginError as error:
+            with self._state_lock:
+                current = self._analysis
+                if not current or str(current.get("uploadId") or "") != upload_id:
+                    return
+            self._preview_error(upload_id, plate, error)
+        except Exception as error:
+            log(f"plate preview failed: {error}")
+            with self._state_lock:
+                current = self._analysis
+                if not current or str(current.get("uploadId") or "") != upload_id:
+                    return
+            self._preview_error(
+                upload_id,
+                plate,
+                PluginError("PREVIEW_UNAVAILABLE", "The plate preview could not be loaded."),
+            )
+        finally:
+            with self._state_lock:
+                self._preview_inflight.discard(key)
+
+    def _token_for_action(self, value: Any) -> str:
+        if not isinstance(value, dict):
+            return self._token
+        action = value.get("action")
+        if action == "set":
+            token = value.get("value")
+            if not isinstance(token, str) or not token.strip():
+                raise PluginError("INVALID_TOKEN", "Enter an API token or choose Keep.")
+            return validate_token(token)
+        if action == "clear":
+            return ""
+        return self._token
+
+    def _apply_token_action(self, value: Any) -> None:
+        if not isinstance(value, dict):
+            return
+        action = value.get("action")
+        if action == "keep":
+            return
+        if action == "clear":
+            assert self._token_store is not None
+            self._token_store.clear()
+            self._token = ""
+            return
+        if action == "set":
+            assert self._token_store is not None
+            token = value.get("value")
+            if not isinstance(token, str) or not token.strip():
+                raise PluginError("INVALID_TOKEN", "Enter an API token or choose Keep.")
+            self._token_store.write(token)
+            self._token = token.strip()
+            return
+        raise PluginError("INVALID_TOKEN", "Unknown token action.")
+
+    def _probe_async(self) -> None:
+        with self._state_lock:
+            if self._busy:
+                return
+            self._probe_generation += 1
+            generation = self._probe_generation
+            client = self._client
+            self._connection = {"status": "checking", "version": "", "message": ""}
+            thread = threading.Thread(
+                target=self._probe_worker,
+                args=(generation, client),
+                name="ff3mf-probe",
+                daemon=True,
+            )
+            self._probe_thread = thread
+        self._post_snapshot()
+        thread.start()
+
+    @staticmethod
+    def _permission_pending(error: PluginError) -> bool:
+        if error.code != "NETWORK_ERROR":
+            return False
+        details = " ".join(str(item) for item in error.details).lower()
+        return "permission" in details or "audit" in details
+
+    def _probe_worker(self, generation: int, client: ConverterClient | None) -> None:
+        if client is None:
+            return
+
+        def current() -> bool:
+            with self._state_lock:
+                return not self._shutting_down and generation == self._probe_generation
+
+        permission_retries = 0
+        transient_retry = True
+        while True:
+            try:
+                health = client.health(timeout=HEALTH_TIMEOUT, retries=0)
+            except PluginError as error:
+                if not current():
+                    return
+                if self._permission_pending(error):
+                    if permission_retries < len(PROBE_PERMISSION_RETRY_DELAYS):
+                        delay = PROBE_PERMISSION_RETRY_DELAYS[permission_retries]
+                        permission_retries += 1
+                        log(f"network permission is pending; retrying in {delay:.0f}s")
+                        time.sleep(delay)
+                        if not current():
+                            return
+                        continue
+                    message = (
+                        "OrcaSlicer needs network permission for this host. "
+                        "Approve the prompt, then click to reconnect."
+                    )
+                elif error.code == "NETWORK_ERROR" and transient_retry:
+                    transient_retry = False
+                    time.sleep(0.5)
+                    if not current():
+                        return
+                    continue
+                else:
+                    message = error.message
+                with self._state_lock:
+                    self._connection = {
+                        "status": "offline",
+                        "version": "",
+                        "message": message,
+                    }
+                self._post_snapshot()
+                return
+            except Exception as error:
+                if not current():
+                    return
+                log(f"connection probe failed: {error}")
+                with self._state_lock:
+                    self._connection = {
+                        "status": "offline",
+                        "version": "",
+                        "message": "Could not reach the FF-3MF instance.",
+                    }
+                self._post_snapshot()
+                return
+
+            connection = {
+                "status": "online",
+                "version": str(health.get("version") or ""),
+                "message": "",
+            }
+            try:
+                printers = client.printers()
+            except ConverterError as error:
+                if not current():
+                    return
+                with self._state_lock:
+                    self._connection = {
+                        "status": "auth-required" if error.status == 401 else "online",
+                        "version": connection["version"],
+                        "message": error.message,
+                    }
+                self._post_snapshot()
+                return
+            if not current():
+                return
+            with self._state_lock:
+                self._printers = {
+                    "printers": printers.get("printers", []),
+                    "maxUploadMb": printers.get("maxUploadMb"),
+                    "generatedAt": printers.get("generatedAt"),
+                }
+                self._connection = connection
+            self._post_snapshot()
+            return
+
+    def _prepare_source(self) -> PreparedSource:
+        self._refresh_project_state()
+        saved_path = Path(self._project_path) if self._project_path else None
+        saved_warning = ""
+        saved_usable = False
+        if saved_path and saved_path.is_file():
+            try:
+                inspect_3mf(saved_path)
+                saved_usable = True
+            except PluginError as error:
+                saved_warning = error.message
+                log(f"saved project is not usable: {error.message}")
+
+        if saved_usable and not self._project_dirty:
+            return PreparedSource(
+                SourceFile(saved_path, saved_path.stem or "project", False, "saved"),
+                "",
+            )
+
+        if self._can_export_copy:
+            assert self._storage is not None
+            export_dir = self._storage / "exports"
+            export_dir.mkdir(parents=True, exist_ok=True)
+            temporary = export_dir / f"ff3mf-{uuid.uuid4().hex}.3mf"
+            try:
+                self._progress = {
+                    "phase": "preparing",
+                    "stage": "Exporting the current project",
+                    "percent": 2,
+                    "message": "",
+                }
+                self._post_snapshot()
+                self._host.export_copy(temporary)
+                try:
+                    os.chmod(temporary, 0o600)
+                except OSError:
+                    pass
+                inspect_3mf(temporary)
+                display_name = saved_path.stem if saved_path else "Untitled project"
+                return PreparedSource(
+                    SourceFile(temporary, display_name, True, "export"),
+                    "",
+                )
+            except Exception as error:
+                try:
+                    temporary.unlink(missing_ok=True)
+                except OSError:
+                    pass
+                log(f"temporary project export failed: {error}")
+
+        if saved_usable:
+            if self._project_dirty and not self._host.confirm_use_saved():
+                raise PluginError("CANCELLED", "Conversion cancelled.")
+            warning = "Using the last saved project; recent unsaved changes are not included."
+            return PreparedSource(
+                SourceFile(saved_path, saved_path.stem or "project", False, "saved"),
+                warning,
+            )
+
+        if saved_warning:
+            raise PluginError("SOURCE_MISSING", saved_warning)
+        raise PluginError(
+            "EXPORT_UNAVAILABLE",
+            "The project could not be exported. Save the project once and try again.",
+        )
+
+    def _handle_analyze(self) -> None:
+        self._ensure_state()
+        source_mode = self._source_mode
+        if source_mode == "current" and str(self._app_info.get("mode") or "").lower() == "gcode viewer":
+            raise PluginError(
+                "GCODE_VIEWER",
+                "OrcaSlicer is showing a sliced G-code file. Open the editable project before converting.",
+            )
+        with self._state_lock:
+            if self._busy:
+                raise PluginError("BUSY", "Another operation is already running.")
+            if self._transfer:
+                raise PluginError("FILE_TRANSFER_ACTIVE", "Wait for the selected file to finish transferring.")
+            self._busy = "analyze"
+            self._last_error = None
+            revision = self._project_revision if source_mode == "current" else None
+            self._clear_analysis_locked()
+            self._progress = {
+                "phase": "preparing",
+                "stage": "Preparing the source",
+                "percent": 0,
+                "message": "",
+            }
+        self._post_snapshot()
+        prepared: PreparedSource | None = None
+        try:
+            if source_mode == "selected":
+                selected = self._selected_file
+                if not selected:
+                    raise PluginError("SELECTED_FILE_MISSING", "Choose a .3mf file first.")
+                selected_path = selected.get("path")
+                if not isinstance(selected_path, Path) or not selected_path.is_file():
+                    self._delete_selected_file()
+                    raise PluginError("SELECTED_FILE_MISSING", "The selected file is no longer available.")
+                inspect_3mf(selected_path)
+                display_name = Path(str(selected.get("name") or "selected.3mf")).stem or "selected"
+                source = SourceFile(selected_path, display_name, False, "selected")
+            else:
+                prepared = self._prepare_source()
+                if revision is not None and revision != self._project_revision:
+                    raise PluginError(
+                        "PROJECT_CHANGED",
+                        "The project changed before it could be analysed. Try again.",
+                    )
+                if prepared.warning:
+                    self._last_error = {"code": "SOURCE_WARNING", "message": prepared.warning}
+                source = prepared.source
+            client = self._client
+            if client is None:
+                raise PluginError("NOT_READY", "The plugin is not initialized yet.")
+            max_upload_mb = None
+            if self._printers and isinstance(self._printers.get("maxUploadMb"), (int, float)):
+                max_upload_mb = int(self._printers["maxUploadMb"])
+            assert self._storage is not None
+            workflow = FF3MFWorkflow(
+                client,
+                self._storage / DEFAULT_OUTPUT_FOLDER,
+                self._workflow_post,
+            )
+            self._workflow = workflow
+            self._post_snapshot()
+
+            def worker() -> None:
+                try:
+                    result = workflow.analyze(source, max_upload_mb=max_upload_mb)
+                    with self._state_lock:
+                        project_changed = revision is not None and revision != self._project_revision
+                        if project_changed:
+                            self._analysis = None
+                            self._analysis_revision = None
+                            self._analysis_source_mode = None
+                            self._analysis_stale = False
+                            self._last_error = {
+                                "code": "PROJECT_CHANGED",
+                                "message": "The project changed during analysis. Analyse it again.",
+                            }
+                            self._progress = {
+                                "phase": "error",
+                                "stage": "Project changed",
+                                "percent": 0,
+                                "message": "",
+                            }
+                        else:
+                            self._analysis = result
+                            self._analysis_revision = revision
+                            self._analysis_source_mode = source_mode
+                            self._analysis_stale = False
+                            self._last_result = None
+                            self._progress = {
+                                "phase": "ready",
+                                "stage": "Source analysed",
+                                "percent": 0,
+                                "message": "",
+                            }
+                    self._post_snapshot()
+                except PluginError as error:
+                    self._report_error(error)
+                except Exception as error:
+                    log(f"analysis failed: {error}")
+                    log(traceback.format_exc())
+                    self._report_error(
+                        PluginError("ANALYZE_FAILED", "The project could not be analysed.")
+                    )
+                finally:
+                    with self._state_lock:
+                        if self._busy == "analyze":
+                            self._busy = None
+                    self._post_snapshot()
+
+            thread = threading.Thread(target=worker, name="ff3mf-analyze", daemon=True)
+            self._worker = thread
+            thread.start()
+        except Exception:
+            if prepared and prepared.source.temporary:
+                try:
+                    prepared.source.path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+            with self._state_lock:
+                self._busy = None
+            raise
+
+    def _handle_convert(self, message: dict[str, Any]) -> None:
+        self._ensure_state()
+        with self._state_lock:
+            if self._busy:
+                raise PluginError("BUSY", "Another operation is already running.")
+            if self._transfer:
+                raise PluginError("FILE_TRANSFER_ACTIVE", "Wait for the selected file to finish transferring.")
+            if not self._analysis:
+                raise PluginError("ANALYZE_REQUIRED", "Analyse the source before converting it.")
+            analysis_source = self._analysis_source_mode or "current"
+            if analysis_source != self._source_mode:
+                self._clear_analysis_locked()
+                raise PluginError("ANALYZE_REQUIRED", "The source changed. Analyse it again.")
+            if analysis_source == "current" and (
+                self._analysis_stale or self._analysis_revision != self._project_revision
+            ):
+                self._clear_analysis_locked()
+                raise PluginError("ANALYZE_REQUIRED", "The project changed. Analyse it again.")
+            if analysis_source == "selected":
+                selected = self._selected_file
+                path = selected.get("path") if selected else None
+                if not isinstance(path, Path) or not path.is_file():
+                    self._delete_selected_file()
+                    self._clear_analysis_locked()
+                    raise PluginError("ANALYZE_REQUIRED", "The selected file is no longer available.")
+            upload_id = str(self._analysis.get("uploadId") or "")
+            if not upload_id:
+                raise PluginError("ANALYZE_REQUIRED", "Analyse the project again.")
+            options = self._validate_options(message)
+            output_dir = self._output_dir()
+            assert self._config is not None
+            self._config.last_printer_id = str(options.get("printerId") or "")
+            self._config.last_nozzle = str(options.get("nozzle") or "")
+            try:
+                self._save_config()
+            except PluginError:
+                pass
+            self._busy = "convert"
+            revision = self._project_revision if analysis_source == "current" else None
+            self._last_error = None
+            self._last_result = None
+            self._progress = {
+                "phase": "preparing",
+                "stage": "Starting the conversion",
+                "percent": 20,
+                "message": "",
+            }
+        self._post_snapshot()
+
+        try:
+            client = self._client
+            if client is None:
+                raise PluginError("NOT_READY", "The plugin is not initialized yet.")
+            workflow = FF3MFWorkflow(client, output_dir, self._workflow_post)
+            self._workflow = workflow
+            display_name = str(self._analysis.get("displayName") or "project")
+            self._post_snapshot()
+
+            def worker() -> None:
+                try:
+                    result = workflow.convert(upload_id, options, display_name)
+                    with self._state_lock:
+                        self._last_result = result
+                        if revision is not None and revision != self._project_revision:
+                            self._last_error = {
+                                "code": "PROJECT_CHANGED",
+                                "message": (
+                                    "The project changed during conversion. "
+                                    "The result reflects the state when the conversion started."
+                                ),
+                            }
+                        else:
+                            self._last_error = None
+                        self._progress = {
+                            "phase": "completed",
+                            "stage": "Conversion complete",
+                            "percent": 100,
+                            "message": str(result.get("outputName") or ""),
+                        }
+                    self._post_snapshot()
+                except PluginError as error:
+                    self._report_error(error)
+                except Exception as error:
+                    log(f"conversion failed: {error}")
+                    log(traceback.format_exc())
+                    self._report_error(
+                        PluginError("CONVERSION_FAILED", "The conversion failed unexpectedly.")
+                    )
+                finally:
+                    with self._state_lock:
+                        if self._busy == "convert":
+                            self._busy = None
+                    self._post_snapshot()
+
+            thread = threading.Thread(target=worker, name="ff3mf-convert", daemon=True)
+            self._worker = thread
+            thread.start()
+        except Exception:
+            with self._state_lock:
+                self._busy = None
+            raise
+
+    def _handle_cancel(self) -> None:
+        if self._busy != "convert":
+            return
+        workflow = self._workflow
+        if workflow is None:
+            return
+        workflow.cancel_event.set()
+        self._progress = {
+            "phase": "cancelling",
+            "stage": "Cancelling the operation",
+            "percent": self._progress.get("percent", 0),
+            "message": "",
+        }
+        self._post_snapshot()
+
+    def _handle_open_output(self) -> None:
+        self._ensure_state()
+        result = self._last_result
+        if not isinstance(result, dict) or not result.get("outputPath"):
+            raise PluginError("NO_OUTPUT", "There is no converted project to show yet.")
+        path = Path(str(result["outputPath"]))
+        if not path.exists():
+            raise PluginError("NO_OUTPUT", "The converted project is no longer on disk.")
+        self._host.open_folder(path.parent)
+
+    def _handle_open_project_folder(self) -> None:
+        self._ensure_state()
+        if not self._project_path:
+            raise PluginError("NO_PROJECT", "The project has not been saved yet.")
+        path = Path(self._project_path)
+        if not path.exists():
+            raise PluginError("NO_PROJECT", "The project file is no longer on disk.")
+        self._host.open_folder(path.parent)
+
+    def _resolve_output_dir(self, config: PluginConfig) -> Path:
+        if self._storage is None:
+            raise PluginError("NOT_READY", "The plugin storage folder is not available.")
+        if config.output_dir:
+            if len(config.output_dir) > 4096 or any(
+                ord(character) < 32 for character in config.output_dir
+            ):
+                raise PluginError("INVALID_OUTPUT_DIR", "The output folder contains invalid characters.")
+            raw = Path(os.path.expanduser(config.output_dir))
+            directory = raw if raw.is_absolute() else self._storage / raw
+            try:
+                directory = directory.resolve()
+            except OSError:
+                directory = directory.absolute()
+        else:
+            directory = self._storage / DEFAULT_OUTPUT_FOLDER
+        if config.output_dir and has_denied_path_component(directory):
+            raise PluginError(
+                "INVALID_OUTPUT_DIR",
+                "OrcaSlicer blocks output paths containing conf, cert or secret.",
+            )
+        if directory.exists() and not directory.is_dir():
+            raise PluginError("INVALID_OUTPUT_DIR", "The configured output path is not a folder.")
+        if not directory.exists():
+            try:
+                directory.mkdir(parents=True)
+            except OSError as error:
+                raise PluginError("INVALID_OUTPUT_DIR", f"Could not create the output folder: {error}") from error
+        return directory
+
+    def _output_dir(self) -> Path:
+        if self._config is None:
+            raise PluginError("NOT_READY", "The plugin is not initialized yet.")
+        return self._resolve_output_dir(self._config)
+
+    def _validate_options(self, message: dict[str, Any]) -> dict[str, Any]:
+        target = message.get("target")
+        options = message.get("options")
+        if not isinstance(target, dict):
+            target = {}
+        if not isinstance(options, dict):
+            options = {}
+        printers = self._printers.get("printers") if isinstance(self._printers, dict) else None
+        if not isinstance(printers, list) or not printers:
+            raise PluginError("NO_PRINTERS", "Connect to FF-3MF and refresh the printer list first.")
+        printer_id = target.get("printerId")
+        printer = next(
+            (item for item in printers if isinstance(item, dict) and item.get("id") == printer_id),
+            None,
+        )
+        if printer is None:
+            raise PluginError("INVALID_TARGET", "Choose a supported FlashForge printer.")
+        nozzle_value = target.get("nozzle")
+        nozzles = printer.get("nozzles") if isinstance(printer.get("nozzles"), list) else []
+        nozzle = next(
+            (
+                item
+                for item in nozzles
+                if isinstance(item, dict) and str(item.get("diameter")) == str(nozzle_value)
+            ),
+            None,
+        )
+        if nozzle is None:
+            raise PluginError("INVALID_TARGET", "Choose a nozzle supported by the selected printer.")
+        process_name = target.get("processName")
+        if isinstance(process_name, str) and process_name.strip():
+            processes = nozzle.get("processes") if isinstance(nozzle.get("processes"), list) else []
+            if not any(isinstance(item, dict) and item.get("name") == process_name for item in processes):
+                raise PluginError("INVALID_TARGET", "Choose a process preset for the selected nozzle.")
+            process_name = process_name.strip()
+        else:
+            process_name = None
+
+        analysis = self._analysis or {}
+        analysis_value = analysis.get("analysis") if isinstance(analysis.get("analysis"), dict) else {}
+        colors = analysis_value.get("colors") if isinstance(analysis_value.get("colors"), list) else []
+        used_slots = {
+            int(item.get("slot"))
+            for item in colors
+            if isinstance(item, dict) and item.get("used") is True and isinstance(item.get("slot"), int)
+        }
+        max_colors = int(printer.get("maxColors") or 1)
+        keep_all = bool(options.get("keepAllColors"))
+        keep_all_slots = keep_all and max_colors > 1 and len(used_slots) > max_colors
+        target_slots = max(max_colors, len(used_slots)) if keep_all_slots else max_colors
+        color_mapping: dict[str, int] = {}
+        raw_mapping = options.get("colorMapping")
+        if isinstance(raw_mapping, dict):
+            for key, value in raw_mapping.items():
+                try:
+                    source_slot = int(str(key))
+                    target_slot = int(value)
+                except (TypeError, ValueError):
+                    continue
+                if source_slot not in used_slots:
+                    continue
+                if target_slot < 1 or target_slot > target_slots:
+                    raise PluginError("INVALID_TARGET", "A colour mapping target slot is out of range.")
+                color_mapping[str(source_slot)] = target_slot
+        if max_colors == 1 and used_slots:
+            color_mapping = {str(slot): 1 for slot in sorted(used_slots)}
+
+        layout = str(options.get("layout") or "center")
+        if layout not in {"center", "keep", "scale"}:
+            raise PluginError("INVALID_TARGET", "Layout must be center, keep or scale.")
+        return {
+            "printerId": str(printer_id),
+            "nozzle": str(nozzle_value),
+            "processName": process_name,
+            "colorMapping": color_mapping,
+            "preserveTemperatures": bool(options.get("preserveTemperatures", True)),
+            "keepAllColors": keep_all,
+            "layout": layout,
+        }
+
+    def _workflow_post(self, payload: dict[str, Any]) -> None:
+        if payload.get("type") == "progress" and isinstance(payload.get("progress"), dict):
+            with self._state_lock:
+                self._progress = payload["progress"]
+        self._post(payload)
+
+    def _post(self, payload: dict[str, Any]) -> None:
+        if self._shutting_down:
+            return
+        try:
+            self.post_message(payload)
+        except Exception:
+            pass
+
+    def _post_snapshot(self) -> None:
+        try:
+            self._post({"type": "snapshot", **self._snapshot()})
+        except Exception as error:
+            log(f"could not send page state: {error}")
+
+    def _report_error(self, error: PluginError) -> None:
+        with self._state_lock:
+            self._last_error = error.to_dict()
+            if error.code == "CANCELLED":
+                self._progress = {
+                    "phase": "cancelled",
+                    "stage": "Cancelled",
+                    "percent": 0,
+                    "message": error.message,
+                }
+            else:
+                self._progress = {
+                    "phase": "error",
+                    "stage": "Operation failed",
+                    "percent": 0,
+                    "message": error.message,
+                }
+        self._post_snapshot()
+
+    def _project_state(self) -> dict[str, Any]:
+        path = self._project_path
+        name = Path(path).stem if path else "Untitled project"
+        return {
+            "path": path,
+            "name": name or "Untitled project",
+            "dirty": self._project_dirty,
+            "saved": self._project_saved,
+            "canExportCopy": self._can_export_copy,
+        }
+
+    def _snapshot(self) -> dict[str, Any]:
+        with self._state_lock:
+            config = self._config.to_dict() if self._config else PluginConfig().to_dict()
+            analysis = self._analysis
+            if analysis and self._analysis_stale:
+                analysis = {**analysis, "stale": True}
+            result = self._last_result
+            if result and isinstance(result.get("report"), dict):
+                report = result["report"]
+                result = {
+                    **result,
+                    "report": {
+                        "stats": report.get("stats"),
+                        "warnings": report.get("warnings"),
+                        "filaments": report.get("filaments"),
+                    },
+                }
+            return {
+                "meta": {
+                    "pluginVersion": PLUGIN_VERSION,
+                    "orcaVersion": str(self._app_info.get("version") or ""),
+                    "orcaMode": str(self._app_info.get("mode") or ""),
+                    "platform": sys.platform,
+                    "language": self._app_language,
+                    "apiVersion": self._connection.get("version", ""),
+                },
+                "config": config,
+                "auth": {"configured": bool(self._token)},
+                "source": {
+                    "mode": self._source_mode,
+                    "selectedFile": (
+                        {
+                            "name": self._selected_file.get("name"),
+                            "size": self._selected_file.get("size"),
+                            "hasSettings": self._selected_file.get("hasSettings"),
+                        }
+                        if self._selected_file
+                        else None
+                    ),
+                    "transfer": (
+                        {
+                            "id": self._transfer.get("id"),
+                            "name": self._transfer.get("name"),
+                            "received": self._transfer.get("received"),
+                            "total": self._transfer.get("size"),
+                        }
+                        if self._transfer
+                        else None
+                    ),
+                },
+                "project": self._project_state(),
+                "printers": self._printers,
+                "analysis": analysis,
+                "analysisStale": self._analysis_stale,
+                "connection": dict(self._connection),
+                "busy": self._busy,
+                "progress": dict(self._progress),
+                "result": result,
+                "error": self._last_error,
+            }
+
+
+@orca.plugin
+class FF3MFOrcaPlugin(orca.base):
+    def register_capabilities(self) -> None:
+        # A worker thread is required for upload/poll/download. Network access is
+        # requested by OrcaSlicer when a connection is tested or used, so the
+        # plugin can activate for any configured FF-3MF endpoint (local or remote).
+        orca.request_permissions(threading=True)
+        orca.register_capability(FlashForgePage)

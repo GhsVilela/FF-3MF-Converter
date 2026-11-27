@@ -38,6 +38,8 @@ profiles/
   machines/   resolved machine settings per printer/nozzle
   processes/  process preset lists per printer/nozzle
   filaments/  filament preset lists per printer
+integrations/
+  orcaslicer-plugin/  OrcaSlicer 2.5+ Python plugin and embedded UI
 ```
 
 ### Conversion flow
@@ -68,6 +70,8 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run build:orca-plugin
+npm run test:orca-plugin
 npm run format
 npm run format:check
 ```
@@ -183,6 +187,8 @@ npm run typecheck
 npm run build:packages
 npm test
 npm run build
+npm run build:orca-plugin
+npm run test:orca-plugin
 ```
 
 Add tests for:
@@ -191,9 +197,36 @@ Add tests for:
 - New filament/slot mapping rules.
 - New printer profiles.
 - Error paths for malformed, oversized or sliced files.
+- New OrcaSlicer plugin client, workflow, packaging or permission behavior.
 
 Tests must not commit third-party models. Use synthetic fixtures in
 `packages/core/test/fixtures.ts`. Keep geometry small and deterministic.
+
+## OrcaSlicer plugin
+
+The plugin in `integrations/orcaslicer-plugin` targets OrcaSlicer 2.5+ only.
+
+- Keep it standard-library only. Do not add Python dependencies or a second GUI
+  toolkit.
+- Do not move conversion logic into the plugin; call the FF-3MF API.
+- Keep the API token out of the plugin JSON configuration, page snapshots and
+  logs.
+- Escape project and report strings with DOM text nodes; never interpolate 3MF
+  metadata into HTML.
+- Sanitize upload/output filenames for `..`, Windows reserved names and
+  OrcaSlicer's `conf`/`cert`/`secret` denied path components.
+- Selected files arrive as chunked base64 through the page bridge. Validate the
+  transfer id, chunk order, declared size and chunk size; write only to a
+  neutral staging path under the plugin data folder, and delete staged files
+  when cleared, replaced or unloaded.
+- Plate previews are loaded lazily per plate with `preview-request` messages and
+  cached by the plugin. Do not put every preview image into the page snapshot.
+- Do not run heavy work on the OrcaSlicer UI thread. Temporary project export,
+  host UI calls and short audited connection tests stay on the UI thread;
+  uploads, conversion polling and downloads use a worker.
+- The build script embeds the UI into one `.py` file. Keep `ui/panel.html`,
+  `ui/panel.css` and `ui/panel.js` as the source of truth and do not commit the
+  generated artifact.
 
 ## Security requirements
 
@@ -242,8 +275,13 @@ Tests must not commit third-party models. Use synthetic fixtures in
 3. `README.md` and docs reflect the shipped printer/source matrix.
 4. A converted project was opened and sliced in Flash Studio for each supported
    printer family (or the limitation is documented).
-5. Tag `vX.Y.Z`.
-6. The release workflow publishes GHCR (and Docker Hub if enabled).
+5. The OrcaSlicer plugin was installed and exercised in OrcaSlicer 2.5.0–2.5.2,
+   and a plugin-converted project was opened and sliced in Flash Studio.
+6. The release includes `ff3mf_orca_<version>.py` and its checksum. Keep the
+   plugin filename stem import-safe (no dots); OrcaSlicer imports `.py` plugins
+   by file stem.
+7. Tag `vX.Y.Z`.
+8. The release workflow publishes GHCR (and Docker Hub if enabled).
 
 ## License
 

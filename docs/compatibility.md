@@ -50,6 +50,39 @@ Run this before tagging a release, and whenever a printer profile changes.
 - [ ] The report lists kept, adapted and dropped settings.
 - [ ] The downloaded file has the expected name and opens again.
 
+## OrcaSlicer plugin checklist
+
+Test with OrcaSlicer 2.5.0 and 2.5.2 before a release:
+
+- [ ] Install `ff3mf_orca_<version>.py` through **Plugins → Install local
+      plugin**. The filename must not contain dots in its stem; OrcaSlicer
+      imports the plugin by file stem.
+- [ ] Accept the first-run permissions and confirm the FF-3MF tab appears.
+- [ ] Check offline, token-required and wrong-token states.
+- [ ] Upload & analyse a saved, clean project and convert it for AD5X.
+- [ ] Upload & analyse a modified project and confirm the temporary export
+      includes the unsaved changes.
+- [ ] Upload & analyse a project that has never been saved and confirm the
+      save-first guidance.
+- [ ] Upload & analyse a selected `.3mf` file without opening it in OrcaSlicer.
+- [ ] Reject a sliced `.gcode.3mf` selected through the file picker.
+- [ ] Confirm current-project analysis is cleared by edits while selected-file
+      analysis survives project edits.
+- [ ] Clear and replace selected files, and confirm staging files are removed.
+- [ ] Open a multi-plate source and verify the preview carousel arrows, plate
+      counter and arrow-key navigation.
+- [ ] Verify a source with only partial plate previews reports the available
+      count.
+- [ ] Verify colour mapping, keep-all-colours and single-colour collapse.
+- [ ] Cancel a running conversion and confirm the job stops.
+- [ ] Confirm the report is written next to the output.
+- [ ] Open the output in Flash Studio, verify the printer/nozzle/process and
+      filaments, then slice.
+- [ ] Check the tab in light and dark themes and at a narrow window width.
+
+Use the OrcaSlicer `python_*.log` in the data directory when a plugin action
+fails. Messages are prefixed with `[ff3mf]`.
+
 ## Known compatibility notes
 
 - Flash Studio may show a newer-file warning for Creator 5 templates because
@@ -62,3 +95,9 @@ Run this before tagging a release, and whenever a printer profile changes.
   guarantee of printer behaviour.
 - The output is a project, not a sliced print file. It does not contain G-code,
   thumbnails for the target printer, or print-time estimates.
+- The OrcaSlicer plugin requires OrcaSlicer 2.5.0 or newer because it uses the
+  Python plugin host and the Pages capability. It works with a running FF-3MF
+  instance; it does not bundle the converter.
+- Temporary export of unsaved projects depends on the host binding exposed by
+  OrcaSlicer. If it is unavailable or fails, the plugin falls back to the saved
+  project after confirmation.
