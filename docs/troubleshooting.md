@@ -66,6 +66,20 @@ busy core per active job; raise `MAX_CONCURRENT_JOBS` only when memory allows.
 Reduce concurrency on a memory-constrained host. Projects with millions of
 triangles are ultimately limited by the machine running the container.
 
+## OrcaSlicer plugin
+
+See [docs/orcaslicer-plugin.md](orcaslicer-plugin.md) for the full guide. Quick
+checks:
+
+- The plugin requires OrcaSlicer 2.5.0 or newer and a running FF-3MF instance.
+- The default URL is `http://127.0.0.1:8080`; configure Docker/remote URLs in
+  the plugin's Settings panel.
+- If the FF-3MF tab is missing, enable the plugin and check the visible
+  plugin page limit.
+- If analysis/export fails, save the project once and make sure OrcaSlicer's 3D
+  view is ready.
+- Plugin messages are prefixed with `[ff3mf]` in OrcaSlicer's `python_*.log`.
+
 ## Authentication problems
 
 If `AUTH_TOKEN` is set, enter it in the UI. The token is stored in the current

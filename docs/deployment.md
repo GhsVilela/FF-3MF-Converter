@@ -174,6 +174,13 @@ projects at once. A 100 MB project with millions of triangles can take a few
 minutes; the default `CONVERSION_TIMEOUT_SECONDS` is 600. Raise it further for
 very large multi-plate projects or slower disks.
 
+## OrcaSlicer plugin
+
+The optional OrcaSlicer 2.5+ plugin is a separate client of the API. It uses the
+same URL and optional `AUTH_TOKEN` as the browser UI. Publish the port to the
+machine running OrcaSlicer, or run the portable application locally. See
+[orcaslicer-plugin.md](orcaslicer-plugin.md).
+
 ## Updating
 
 ```bash

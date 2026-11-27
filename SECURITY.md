@@ -51,3 +51,7 @@ limiting and an optional bearer token.
   appropriate for the host.
 - Keep the host, Docker and the image updated.
 - Do not expose the container's filesystem or Docker socket.
+- The optional OrcaSlicer plugin stores its API token in OrcaSlicer's plugin data
+  folder, not in the shared project or plugin configuration. Use the same
+  `AUTH_TOKEN` and TLS guidance as the browser UI. See
+  [docs/orcaslicer-plugin.md](docs/orcaslicer-plugin.md).

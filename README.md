@@ -31,6 +31,7 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
 - [Features](#features)
 - [Supported printers](#supported-printers)
 - [Quick start](#quick-start)
+- [OrcaSlicer plugin](#orcaslicer-plugin)
 - [How it works](#how-it-works)
 - [Configuration](#configuration)
 - [CLI](#cli)
@@ -60,7 +61,8 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   centred on the target bed; models are never scaled automatically.
 - **Plate preview carousel.** The project's embedded plate renders are shown
   after upload with previous/next controls and plate dots, so you can review
-  every plate before choosing a target.
+  every plate before choosing a target. The OrcaSlicer plugin has a compact
+  version with previous/next controls and a `PLATE X OF Y` counter.
 - **Fast on large projects.** A lower-memory streaming XML scanner and rewriter
   handles multi-million-triangle projects with a 10-minute default conversion
   timeout.
@@ -72,6 +74,9 @@ The output is a **project**, not sliced G-code. Open it in Flash Studio with
   responsive report view. English and Portuguese (Brazil).
 - **Runs without Docker.** Windows, Linux and macOS portable archives include a
   native launcher, the Node.js runtime and the printer profiles.
+- **OrcaSlicer plugin.** An FF-3MF tab in OrcaSlicer 2.5+ converts either the
+  project that is currently open or a selected `.3mf` file, using a running
+  FF-3MF instance, and saves the result for Flash Studio.
 
 ## Supported printers
 
@@ -241,6 +246,35 @@ server {
 If you serve the app under a subpath such as `/ff3mf/`, strip that prefix
 before forwarding. See [docs/deployment.md](docs/deployment.md).
 
+## OrcaSlicer plugin
+
+The optional plugin adds an **FF-3MF** tab to OrcaSlicer 2.5.0 or newer.
+Install `ff3mf_orca_<version>.py` with **Plugins → Install local plugin**,
+enable it, and open the tab. The version suffix uses underscores so the file
+stem remains a valid Python module name. The plugin connects to a running FF-3MF
+instance (default `http://127.0.0.1:8080`), analyses the source, lets you pick a
+target and colour mapping, and saves the converted project for Flash Studio.
+
+Choose **Current OrcaSlicer project** to convert what is open, or **Select a
+.3mf file** to convert a project from disk. The current project is exported
+through OrcaSlicer's plugin host API, including unsaved changes when that API is
+available. A selected file is copied into the plugin's staging folder and
+uploaded directly; it does not need to be open in OrcaSlicer. Multi-plate
+previews are available through previous/next controls and a plate counter in
+the source card.
+
+The plugin never slices or prints. See
+[docs/orcaslicer-plugin.md](docs/orcaslicer-plugin.md) for installation,
+permissions, output locations and troubleshooting.
+
+To build the plugin locally:
+
+```bash
+npm run build:orca-plugin
+```
+
+The artifact is written to `build/orca-plugin/`.
+
 ## How it works
 
 1. **Analyse.** The container reads the 3MF ZIP, model XML, project settings,
@@ -332,7 +366,7 @@ download. See [docs/api.md](docs/api.md) for request and response examples.
 ## Development
 
 Requirements: Node.js 22+ and npm; Go 1.22+ and Python 3 for portable builds;
-Docker for the container build.
+Python 3.10+ for the OrcaSlicer plugin tests; Docker for the container build.
 
 ```bash
 npm ci
@@ -351,6 +385,8 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run build:orca-plugin
+npm run test:orca-plugin
 npm run format
 ```
 
@@ -370,6 +406,8 @@ profiles/
   machines/   resolved machine configs
   processes/  process presets per printer/nozzle
   filaments/  filament presets per printer
+integrations/
+  orcaslicer-plugin/  OrcaSlicer 2.5+ FF-3MF tab, tests and source UI
 docs/         architecture, conversion, printers, deployment, security
 ```
 
@@ -378,6 +416,7 @@ docs/         architecture, conversion, printers, deployment, security
 ```bash
 npm run build:packages
 npm test
+npm run test:orca-plugin
 ```
 
 The test suite covers:
@@ -388,6 +427,9 @@ The test suite covers:
   ranges in the output.
 - The profile catalog and the five supported printers.
 - Rejection of sliced `.gcode.3mf` files.
+- The OrcaSlicer plugin client, workflow, selected-file chunk transfer, source
+  switching, lazy multi-plate preview carousel, embedded UI build and an
+  end-to-end plugin upload → convert → download run against the real API.
 
 During development, converted projects are also sliced with the OrcaSlicer CLI
 to verify that the embedded configuration is accepted. See
@@ -405,7 +447,9 @@ Tags matching `v*.*.*` publish:
     `DOCKERHUB_TOKEN` secrets are configured.
 - Portable Windows x64, Linux x64, macOS arm64 and macOS x64 archives with the
   native launcher, bundled Node.js runtime and profiles.
-- `SHA256SUMS.txt` for the portable archives.
+- `ff3mf_orca_<version>.py`, a side-loadable OrcaSlicer 2.5+ plugin. The version
+  suffix uses underscores because OrcaSlicer imports `.py` plugins by file stem.
+- `SHA256SUMS.txt` for the portable archives and plugin.
 
 The `main` branch also publishes an `edge` tag. Container images are built for
 `linux/amd64` and `linux/arm64` with SBOM and provenance attestations.
