@@ -31,10 +31,20 @@ const nodeDownloads = {
     url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-linux-x64.tar.xz`,
     sha256: '00bbd05e306ea68b6e13e17360d0e2f680b493ef95f2fea1c4296ff7437530bc',
   },
+  'linux-arm64': {
+    archive: `node-v${nodeVersion}-linux-arm64.tar.xz`,
+    url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-linux-arm64.tar.xz`,
+    sha256: '06907b9c088ce62305bc1530e5c1ae1510245114645768f7750c349c5b6fe667',
+  },
   'win-x64': {
     archive: `node-v${nodeVersion}-win-x64.zip`,
     url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-win-x64.zip`,
     sha256: 'bb819d6eb8f5bfda294bbc83a7e4ec6539da67c4233d54b0d655b9248b15e29d',
+  },
+  'win-arm64': {
+    archive: `node-v${nodeVersion}-win-arm64.zip`,
+    url: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-win-arm64.zip`,
+    sha256: 'b12919e609b4fa1176ba8a155b49f761419a0c7cc97b42e6be09874a3f760ab6',
   },
   'macos-arm64': {
     archive: `node-v${nodeVersion}-darwin-arm64.tar.gz`,
@@ -113,7 +123,7 @@ async function ensureNodeRuntime(platform) {
 
   const folderName = entry.archive.replace(/\.(?:tar\.xz|tar\.gz|zip)$/, '');
   const base = path.join(extractDir, folderName);
-  const nodeBinary = path.join(base, platform === 'win-x64' ? 'node.exe' : 'bin/node');
+  const nodeBinary = path.join(base, platform.startsWith('win-') ? 'node.exe' : 'bin/node');
   if (!existsSync(nodeBinary)) throw new Error(`Node runtime not found: ${nodeBinary}`);
   return { nodeBinary, base };
 }
@@ -235,14 +245,14 @@ function buildProductionApp() {
 }
 
 function writeLauncherReadme(destination, platform) {
-  const runCommand = platform === 'win-x64' ? 'FF-3MF.exe' : './ff3mf';
+  const isWindows = platform.startsWith('win-');
+  const runCommand = isWindows ? 'FF-3MF.exe' : './ff3mf';
   const isMacOS = platform.startsWith('macos-');
-  const dataLocation =
-    platform === 'win-x64'
-      ? `  %LOCALAPPDATA%\\FF-3MF\\data\n`
-      : isMacOS
-        ? `  ~/Library/Application Support/ff3mf\n`
-        : `  $XDG_DATA_HOME/ff3mf or ~/.local/share/ff3mf\n`;
+  const dataLocation = isWindows
+    ? `  %LOCALAPPDATA%\\FF-3MF\\data\n`
+    : isMacOS
+      ? `  ~/Library/Application Support/ff3mf\n`
+      : `  $XDG_DATA_HOME/ff3mf or ~/.local/share/ff3mf\n`;
   const macOSNote = isMacOS
     ? `\nFirst launch:\n` +
       `  This build is not signed with an Apple Developer ID and is not notarized.\n` +
@@ -277,24 +287,39 @@ function buildLaunchers() {
   const launcherDir = path.join(root, 'packaging', 'launcher');
   const launchers = {
     'linux-x64': path.join(buildDir, 'launchers', 'ff3mf-linux-amd64'),
+    'linux-arm64': path.join(buildDir, 'launchers', 'ff3mf-linux-arm64'),
     'win-x64': path.join(buildDir, 'launchers', 'FF-3MF.exe'),
+    'win-arm64': path.join(buildDir, 'launchers', 'FF-3MF-arm64.exe'),
     'macos-arm64': path.join(buildDir, 'launchers', 'ff3mf-darwin-arm64'),
     'macos-x64': path.join(buildDir, 'launchers', 'ff3mf-darwin-amd64'),
   };
-  const iconResource = path.join(launcherDir, 'rsrc_windows_amd64.syso');
   mkdirSync(path.join(buildDir, 'launchers'), { recursive: true });
-  if (!existsSync(iconResource)) {
-    run(
-      'go',
-      ['run', 'github.com/akavel/rsrc@v0.10.2', '-ico', 'app.ico', '-o', 'rsrc_windows_amd64.syso'],
-      {
-        cwd: launcherDir,
-      },
-    );
+  for (const arch of ['amd64', 'arm64']) {
+    const iconResource = path.join(launcherDir, `rsrc_windows_${arch}.syso`);
+    if (!existsSync(iconResource)) {
+      run(
+        'go',
+        [
+          'run',
+          'github.com/akavel/rsrc@v0.10.2',
+          '-arch',
+          arch,
+          '-ico',
+          'app.ico',
+          '-o',
+          `rsrc_windows_${arch}.syso`,
+        ],
+        {
+          cwd: launcherDir,
+        },
+      );
+    }
   }
   for (const [goos, goarch, output] of [
     ['linux', 'amd64', launchers['linux-x64']],
+    ['linux', 'arm64', launchers['linux-arm64']],
     ['windows', 'amd64', launchers['win-x64']],
+    ['windows', 'arm64', launchers['win-arm64']],
     ['darwin', 'arm64', launchers['macos-arm64']],
     ['darwin', 'amd64', launchers['macos-x64']],
   ]) {
@@ -311,6 +336,7 @@ function buildLaunchers() {
 }
 
 async function assemble(platform, launchers) {
+  const isWindows = platform.startsWith('win-');
   const node = await ensureNodeRuntime(platform);
   const folderName = `FF-3MF-Converter-${version}-${platform}`;
   const destination = path.join(stageRoot, folderName);
@@ -319,7 +345,7 @@ async function assemble(platform, launchers) {
 
   cpSync(appDir, path.join(destination, 'app'), { recursive: true });
   mkdirSync(path.join(destination, 'runtime'), { recursive: true });
-  const nodeName = platform === 'win-x64' ? 'node.exe' : 'node';
+  const nodeName = isWindows ? 'node.exe' : 'node';
   copyFileSync(node.nodeBinary, path.join(destination, 'runtime', nodeName));
   const nodeLicense = path.join(node.base, 'LICENSE');
   if (existsSync(nodeLicense))
@@ -330,7 +356,7 @@ async function assemble(platform, launchers) {
     path.join(destination, 'THIRD_PARTY_NOTICES.md'),
   );
 
-  if (platform === 'win-x64') {
+  if (isWindows) {
     copyFileSync(launchers[platform], path.join(destination, 'FF-3MF.exe'));
     copyFileSync(
       path.join(root, 'packaging', 'launcher', 'app.ico'),
@@ -345,10 +371,10 @@ async function assemble(platform, launchers) {
   mkdirSync(artifactDir, { recursive: true });
   const artifact = path.join(
     artifactDir,
-    `FF-3MF-Converter-${version}-${platform}${platform === 'win-x64' ? '.zip' : '.tar.gz'}`,
+    `FF-3MF-Converter-${version}-${platform}${isWindows ? '.zip' : '.tar.gz'}`,
   );
   rmSync(artifact, { force: true });
-  if (platform === 'win-x64') {
+  if (isWindows) {
     run('python3', [
       '-c',
       'import shutil,sys; shutil.make_archive(sys.argv[1], "zip", root_dir=sys.argv[2], base_dir=sys.argv[3])',
@@ -371,7 +397,14 @@ async function main() {
   buildProductionApp();
   const launchers = buildLaunchers();
   const artifacts = [];
-  for (const platform of ['win-x64', 'linux-x64', 'macos-arm64', 'macos-x64']) {
+  for (const platform of [
+    'win-x64',
+    'win-arm64',
+    'linux-x64',
+    'linux-arm64',
+    'macos-arm64',
+    'macos-x64',
+  ]) {
     artifacts.push(await assemble(platform, launchers));
   }
 

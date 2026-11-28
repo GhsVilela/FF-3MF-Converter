@@ -7,14 +7,16 @@ runtime, opens the browser and keeps the app in a user-data directory.
 
 `packaging/launcher/app.ico` is the multi-resolution Windows icon (16–256 px).
 It is embedded in `FF-3MF.exe` through
-`packaging/launcher/rsrc_windows_amd64.syso`, which is generated with
+`packaging/launcher/rsrc_windows_amd64.syso` and
+`packaging/launcher/rsrc_windows_arm64.syso`, which are generated with
 [`rsrc`](https://github.com/akavel/rsrc):
 
 ```bash
 cd packaging/icon
 go run . -ico ../launcher/app.ico
 cd ../launcher
-go run github.com/akavel/rsrc@v0.10.2 -ico app.ico -o rsrc_windows_amd64.syso
+go run github.com/akavel/rsrc@v0.10.2 -arch amd64 -ico app.ico -o rsrc_windows_amd64.syso
+go run github.com/akavel/rsrc@v0.10.2 -arch arm64 -ico app.ico -o rsrc_windows_arm64.syso
 ```
 
 The icon source is `packaging/icon/main.go`. Regenerate the `.ico` and `.syso`
@@ -26,10 +28,11 @@ files whenever the brand mark changes.
 npm run build:portable
 ```
 
-This produces the Windows, Linux and macOS archives in `build/artifacts/`. The
-Windows archive contains `FF-3MF.exe` with the embedded icon, the bundled
-`runtime/node.exe`, the app and the FlashForge profiles. The macOS archives are
-built for Apple Silicon (`macos-arm64`) and Intel (`macos-x64`).
+This produces the Windows, Linux and macOS archives in `build/artifacts/`:
+`win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, `macos-arm64` and
+`macos-x64`. The Windows archives contain `FF-3MF.exe` with the embedded icon,
+the bundled `runtime/node.exe`, the app and the FlashForge profiles. The macOS
+archives are built for Apple Silicon (`macos-arm64`) and Intel (`macos-x64`).
 
 The build strips npm `.bin` and workspace symlinks from the bundled
 `node_modules`. They point at build-machine paths and are not needed at runtime;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1
+
+- Added Linux ARM64 and Windows ARM64 portable archives with the ARM64 Node.js
+  runtime and native launchers. The portable matrix is now Windows x64/ARM64,
+  Linux x64/ARM64 and macOS arm64/x64.
+- Fixed the CodeQL path-injection finding in the profile loader. Profile paths
+  are now built from validated catalog values and confined to the profile
+  directory.
+
 ## 0.5.0
 
 - Added an OrcaSlicer 2.5+ Python plugin. It adds an FF-3MF tab, exports the

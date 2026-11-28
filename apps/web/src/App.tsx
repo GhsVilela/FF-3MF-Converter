@@ -440,7 +440,7 @@ export default function App() {
               <div className="rise">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-y border-[var(--border)] py-2">
                   <span className="mono-label text-[var(--accent)]">{t('hero.kicker')}</span>
-                  <span className="mono-label text-[var(--muted)]">REV 0.5.0 / LOCAL INSTANCE</span>
+                  <span className="mono-label text-[var(--muted)]">REV 0.5.1 / LOCAL INSTANCE</span>
                 </div>
 
                 <div className="grid items-start gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-14">
@@ -605,7 +605,7 @@ export default function App() {
                     {t('common.back')}
                   </button>
                   <div className="font-mono text-[10px] text-[var(--muted)]">
-                    {fileName} · {analysis ? formatBytes(analysis.fileSize) : ''}
+                    {fileName} · {formatBytes(analysis.fileSize)}
                   </div>
                 </div>
 
