@@ -17,7 +17,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "uptimeSeconds": 42,
   "profiles": {
     "generatedAt": "2026-11-11",

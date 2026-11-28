@@ -89,8 +89,9 @@ docker run --rm -p 8080:8080 -v ff3mf_data:/data ff3mf:local
 
 ### Portable executables
 
-`scripts/build-portable.mjs` assembles the Windows, Linux and macOS archives. It
-requires Go 1.22+, Python 3 and network access for the pinned Node.js runtime.
+`scripts/build-portable.mjs` assembles the Windows and Linux archives for x64
+and ARM64, plus the macOS archives for Apple Silicon and Intel. It requires Go
+1.22+, Python 3 and network access for the pinned Node.js runtime.
 
 ```bash
 npm run build:portable

@@ -227,8 +227,8 @@ acceptable for a loopback instance.
 ### Activation fails
 
 The most common cause is a plugin filename with a dot in its stem. OrcaSlicer
-imports a side-loaded `.py` plugin by file stem, so `ff3mf_orca-0.5.0.py`
-becomes the import name `ff3mf_orca-0.5.0` and fails. Use the release artifact
+imports a side-loaded `.py` plugin by file stem, so `ff3mf_orca-0.5.1.py`
+becomes the import name `ff3mf_orca-0.5.1` and fails. Use the release artifact
 named like `ff3mf_orca_0_5_0.py`, or rename the installed file so its stem has
 no dots.
 

@@ -58,7 +58,14 @@ export function profilesDir(): string {
 }
 
 function readJson<T>(relativePath: string): T {
-  const full = path.join(profilesDir(), relativePath);
+  // Confine every profile lookup to the profile directory. This keeps caller
+  // supplied ids and catalog paths from escaping the bundled data.
+  const root = profilesDir();
+  const full = path.resolve(root, relativePath);
+  const relative = path.relative(root, full);
+  if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error(`Invalid profile path "${relativePath}"`);
+  }
   return JSON.parse(readFileSync(full, 'utf8')) as T;
 }
 
@@ -96,13 +103,15 @@ export function loadTargetProfile(
 ): TargetProfile {
   const printer = findPrinter(printerId);
   const nozzle = findNozzle(printer, nozzleDiameter);
+  // Use the catalog values, not the caller values, so an unknown or
+  // traversal-shaped id can never reach the profile file path.
   const machine = readJson<Record<string, unknown>>(
-    `machines/${printerId}/${nozzleDiameter}.json`,
+    `machines/${printer.id}/${nozzle.diameter}.json`,
   );
   const processes = readJson<ProcessPreset[]>(
-    `processes/${printerId}/${nozzleDiameter}.json`,
+    `processes/${printer.id}/${nozzle.diameter}.json`,
   ).filter((preset) => !preset.name.startsWith('fdm_'));
-  const filaments = readJson<FilamentPreset[]>(`filaments/${printerId}.json`);
+  const filaments = readJson<FilamentPreset[]>(`filaments/${printer.id}.json`);
   const template = readJson<TemplateData>(nozzle.template);
 
   const process = processName
@@ -132,7 +141,8 @@ export function findFilamentPreset(
 }
 
 export function availableMaterials(printerId: string): string[] {
-  const filaments = readJson<FilamentPreset[]>(`filaments/${printerId}.json`);
+  const printer = findPrinter(printerId);
+  const filaments = readJson<FilamentPreset[]>(`filaments/${printer.id}.json`);
   return [...new Set(filaments.map((preset) => preset.type).filter(Boolean))].sort();
 }
 

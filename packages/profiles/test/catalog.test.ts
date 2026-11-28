@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getCatalog, loadTargetProfile } from '../src/index.js';
+import { availableMaterials, getCatalog, loadTargetProfile } from '../src/index.js';
 
 describe('FlashForge profile catalog', () => {
   it('exposes the five supported printers', () => {
@@ -28,5 +28,11 @@ describe('FlashForge profile catalog', () => {
     expect(profile.nozzle.build.extruders).toBe(4);
     expect(profile.printer.maxColors).toBe(4);
     expect(profile.machine.nozzle_diameter).toHaveLength(4);
+  });
+
+  it('rejects printer and nozzle values that are not in the catalog', () => {
+    expect(() => loadTargetProfile('../../etc', '0.4')).toThrow(/Unknown printer/);
+    expect(() => loadTargetProfile('ad5x', '../../0.4')).toThrow(/does not support/);
+    expect(() => availableMaterials('../ad5x')).toThrow(/Unknown printer/);
   });
 });

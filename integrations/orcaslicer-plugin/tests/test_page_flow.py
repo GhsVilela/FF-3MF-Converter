@@ -91,7 +91,7 @@ class FakeProbeClient:
         self.health_calls += 1
         if self.health_calls <= self.failures:
             raise self.error_factory()
-        return {"version": "0.5.0"}
+        return {"version": "0.5.1"}
 
     def printers(self, **kwargs: Any) -> dict[str, Any]:
         return {

@@ -5,8 +5,14 @@
 The release page includes self-contained archives for users who do not want
 Docker:
 
-- Windows x64: extract `FF-3MF-Converter-<version>-win-x64.zip` and run `FF-3MF.exe`.
-- Linux x64: extract `FF-3MF-Converter-<version>-linux-x64.tar.gz` and run `./ff3mf`.
+- Windows x64: extract `FF-3MF-Converter-<version>-win-x64.zip` and run
+  `FF-3MF.exe`.
+- Windows ARM64: extract `FF-3MF-Converter-<version>-win-arm64.zip` and run
+  `FF-3MF.exe`.
+- Linux x64: extract `FF-3MF-Converter-<version>-linux-x64.tar.gz` and run
+  `./ff3mf`.
+- Linux ARM64: extract `FF-3MF-Converter-<version>-linux-arm64.tar.gz` and run
+  `./ff3mf`.
 - macOS Apple Silicon: extract
   `FF-3MF-Converter-<version>-macos-arm64.tar.gz` and run `./ff3mf`.
 - macOS Intel: extract `FF-3MF-Converter-<version>-macos-x64.tar.gz` and run

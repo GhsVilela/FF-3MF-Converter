@@ -172,9 +172,14 @@ to switch registries. See [.env.example](.env.example) for optional settings.
 
 The release page includes portable archives that do not need Docker:
 
-- **Windows x64:** `FF-3MF-Converter-<version>-win-x64.zip` — extract and run `FF-3MF.exe`.
+- **Windows x64:** `FF-3MF-Converter-<version>-win-x64.zip` — extract and run
+  `FF-3MF.exe`.
+- **Windows ARM64:** `FF-3MF-Converter-<version>-win-arm64.zip` — extract and run
+  `FF-3MF.exe`.
 - **Linux x64:** `FF-3MF-Converter-<version>-linux-x64.tar.gz` — extract and run
   `./ff3mf`.
+- **Linux ARM64:** `FF-3MF-Converter-<version>-linux-arm64.tar.gz` — extract and
+  run `./ff3mf`.
 - **macOS Apple Silicon:** `FF-3MF-Converter-<version>-macos-arm64.tar.gz` —
   extract and run `./ff3mf`.
 - **macOS Intel:** `FF-3MF-Converter-<version>-macos-x64.tar.gz` — extract and
@@ -445,8 +450,8 @@ Tags matching `v*.*.*` publish:
   - `ghsvilela/ff-3mf-converter` on Docker Hub when `DOCKERHUB_ENABLED=true` is
     set as a repository variable and `DOCKERHUB_USERNAME` /
     `DOCKERHUB_TOKEN` secrets are configured.
-- Portable Windows x64, Linux x64, macOS arm64 and macOS x64 archives with the
-  native launcher, bundled Node.js runtime and profiles.
+- Portable Windows x64/ARM64, Linux x64/ARM64 and macOS arm64/x64 archives with
+  the native launcher, bundled Node.js runtime and profiles.
 - `ff3mf_orca_<version>.py`, a side-loadable OrcaSlicer 2.5+ plugin. The version
   suffix uses underscores because OrcaSlicer imports `.py` plugins by file stem.
 - `SHA256SUMS.txt` for the portable archives and plugin.
